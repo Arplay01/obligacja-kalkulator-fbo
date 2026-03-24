@@ -1,0 +1,7 @@
+interface:
+  display_name: "Session Wrap Up"
+  short_description: "Session log, handoff, and /end workflow"
+  default_prompt: "Use $session-wrap-up to close this session, append a concise JSONL entry, and capture the next step."
+
+policy:
+  allow_implicit_invocation: true

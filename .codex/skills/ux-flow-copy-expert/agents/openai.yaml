@@ -1,0 +1,7 @@
+interface:
+  display_name: "UX Flow Copy Expert"
+  short_description: "Flow, labels, helper text, and novice clarity"
+  default_prompt: "Use $ux-flow-copy-expert to simplify this flow and rewrite the UI copy for clarity."
+
+policy:
+  allow_implicit_invocation: true

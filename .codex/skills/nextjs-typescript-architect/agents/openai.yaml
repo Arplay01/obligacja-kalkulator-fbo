@@ -1,0 +1,7 @@
+interface:
+  display_name: "Next.js TS Architect"
+  short_description: "Typed frontend implementation and app structure"
+  default_prompt: "Use $nextjs-typescript-architect to implement this feature with clear types and maintainable Next.js structure."
+
+policy:
+  allow_implicit_invocation: true

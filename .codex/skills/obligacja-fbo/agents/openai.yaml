@@ -1,0 +1,7 @@
+interface:
+  display_name: "Obligacja FBO Orchestrator"
+  short_description: "Repo routing, delegation, and specialist handoffs"
+  default_prompt: "Use $obligacja-fbo to route this repository task to the right specialist skill with focused reads and safe delegation."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Product Spec Lead"
+  short_description: "MVP scope, PRD, and acceptance criteria"
+  default_prompt: "Use $product-spec-lead to turn this idea into a scoped product spec with clear acceptance criteria."
+
+policy:
+  allow_implicit_invocation: true

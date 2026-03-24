@@ -1,0 +1,7 @@
+interface:
+  display_name: "Finance Logic Analyst"
+  short_description: "Official-source financial rules and calculation logic"
+  default_prompt: "Use $finance-logic-analyst to verify this bond logic against official sources and produce implementation-ready rules."
+
+policy:
+  allow_implicit_invocation: true

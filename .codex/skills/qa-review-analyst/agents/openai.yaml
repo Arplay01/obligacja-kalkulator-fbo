@@ -1,0 +1,7 @@
+interface:
+  display_name: "QA Review Analyst"
+  short_description: "Findings-first review and acceptance coverage"
+  default_prompt: "Use $qa-review-analyst to review this change for bugs, regressions, and missing validation."
+
+policy:
+  allow_implicit_invocation: true

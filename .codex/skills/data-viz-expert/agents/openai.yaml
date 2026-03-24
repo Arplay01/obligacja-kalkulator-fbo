@@ -1,0 +1,7 @@
+interface:
+  display_name: "Data Viz Expert"
+  short_description: "Readable results, tables, and charts"
+  default_prompt: "Use $data-viz-expert to choose the clearest way to present these calculator results."
+
+policy:
+  allow_implicit_invocation: true
