@@ -11,10 +11,10 @@ git add .
 COMMIT_MSG="Szybka aktualizacja projektu: $(date +'%Y-%m-%d %H:%M')"
 git commit -m "$COMMIT_MSG"
 
-# 3. Wysyłanie na serwer
+# 3. Wysyłanie na serwer ( -u ustawia upstream przy pierwszym pushu na gałąź )
 echo "⬆️ Wypychanie zmian na GitHub..."
-git push
-if [ $? -ne 0 ]; then
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if ! git push -u origin "$BRANCH"; then
     echo "❌ Błąd podczas wysyłania na GitHub. Sprawdź połączenie lub status repozytorium."
     exit 1
 fi
