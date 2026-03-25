@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Co stanie się z moimi pieniędzmi? — autonomiczna iteracja PoC</title>
+  <style>
+    :root {
+      --paper: #f7f1e7;
+      --paper-deep: #efe6d8;
+      --ink: #171514;
+      --muted: #5a5550;
+      --rule: rgba(23, 21, 20, 0.15);
+      --rule-strong: rgba(23, 21, 20, 0.32);
+      --accent: #8f2d1f;
+      --account: #315f8d;
+      --tos: #9a5c37;
+      --edo: #2f6245;
+      --threshold: #7a7369;
+      --good: #2f6245;
+      --bad: #8f2d1f;
+      --shadow: 0 12px 32px rgba(23, 21, 20, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0)),
+        linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(23, 21, 20, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 21, 20, 0.02) 1px, transparent 1px);
+      background-size: 100% 30px, 30px 100%;
+      mask-image: linear-gradient(180deg, black 0%, rgba(0, 0, 0, 0.25) 100%);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .sheet {
+      width: min(1120px, calc(100% - 28px));
+      margin: 18px auto 32px;
+      padding: 18px 0 26px;
+      position: relative;
+      border-top: 6px solid var(--ink);
+      box-shadow: var(--shadow);
+    }
+
+    .sheet::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      bottom: 18px;
+      left: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent), transparent 80%);
+      opacity: 0.9;
+    }
+
+    .masthead {
+      margin: 0 0 22px;
+      padding-left: 22px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 34px;
+      padding: 0 0 24px 22px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+
+    .setup {
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .setup-label,
+    .answer-label,
+    .board-label {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .setup-line {
+      margin: 0;
+      max-width: 12ch;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    .inline-number {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 150px;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 4px;
+      margin: 0 2px;
+    }
+
+    .amount-input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      padding: 0;
+      outline: none;
+    }
+
+    .amount-suffix {
+      flex: 0 0 auto;
+      font-size: 1.15rem;
+      color: var(--muted);
+      text-transform: lowercase;
+    }
+
+    .inline-horizon {
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .controls-meta {
+      display: grid;
+      gap: 12px;
+      max-width: 38rem;
+    }
+
+    .slider-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .horizon-range {
+      appearance: none;
+      width: 100%;
+      height: 18px;
+      margin: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .horizon-range::-webkit-slider-runnable-track {
+      height: 2px;
+      background: linear-gradient(90deg, var(--ink), var(--accent));
+    }
+
+    .horizon-range::-moz-range-track {
+      height: 2px;
+      background: linear-gradient(90deg, var(--ink), var(--accent));
+    }
+
+    .horizon-range::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      margin-top: -8px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      box-shadow: 0 0 0 4px rgba(143, 45, 31, 0.1);
+    }
+
+    .horizon-range::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      box-shadow: 0 0 0 4px rgba(143, 45, 31, 0.1);
+    }
+
+    .inflation-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 14px 18px;
+      padding-top: 4px;
+    }
+
+    .inflation-title {
+      font-size: 0.94rem;
+      color: var(--muted);
+    }
+
+    .inflation-button {
+      appearance: none;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      padding: 0 0 3px;
+      cursor: pointer;
+      color: var(--ink);
+      font-size: 1rem;
+      transition: color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .inflation-button[aria-pressed="true"] {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .microline {
+      margin: 0;
+      max-width: 54ch;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .answer {
+      display: grid;
+      align-content: end;
+      gap: 12px;
+      padding-right: 10px;
+    }
+
+    .answer-headline {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: clamp(3rem, 6vw, 6.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      max-width: 11ch;
+    }
+
+    .answer-body {
+      margin: 0;
+      max-width: 50ch;
+      font-size: 1.08rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .needline {
+      padding: 18px 0 18px 22px;
+      border-bottom: 1px solid var(--rule);
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      line-height: 1.35;
+      max-width: 64ch;
+    }
+
+    .needline strong {
+      color: var(--accent);
+    }
+
+    .board {
+      padding: 22px 0 0 22px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .board-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px 24px;
+      padding-right: 8px;
+    }
+
+    .board-copy {
+      margin: 8px 0 0;
+      max-width: 50ch;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .chart-stage {
+      padding: 10px 0 8px;
+    }
+
+    .chart {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .chart text {
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+      fill: var(--muted);
+    }
+
+    .chart .axis-label {
+      font-size: 12px;
+      fill: var(--muted);
+    }
+
+    .chart .product-label {
+      font-size: 18px;
+      font-weight: 700;
+      fill: var(--ink);
+    }
+
+    .chart .product-note {
+      font-size: 13px;
+    }
+
+    .chart .track {
+      stroke: rgba(23, 21, 20, 0.12);
+      stroke-width: 2;
+    }
+
+    .chart .start-line {
+      stroke: rgba(23, 21, 20, 0.36);
+      stroke-width: 2;
+    }
+
+    .chart .threshold-line {
+      stroke: var(--threshold);
+      stroke-width: 2;
+      stroke-dasharray: 7 6;
+    }
+
+    .chart .value-line {
+      stroke-width: 8;
+      stroke-linecap: round;
+      transform-origin: left center;
+      transition: d 0.28s ease;
+    }
+
+    .chart .value-dot {
+      stroke: var(--paper);
+      stroke-width: 3;
+    }
+
+    .chart .end-value {
+      font-size: 13px;
+      font-weight: 700;
+      fill: var(--ink);
+    }
+
+    .ledger {
+      display: grid;
+      margin: 4px 0 0;
+      padding-right: 8px;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 0.9fr) minmax(200px, 0.8fr);
+      gap: 20px;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid var(--rule);
+    }
+
+    .ledger-row strong {
+      display: block;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+
+    .ledger-row span,
+    .ledger-row p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.45;
+    }
+
+    .ledger-row.is-winner strong:first-child {
+      color: var(--accent);
+    }
+
+    .ledger-value strong {
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 1.18rem;
+      color: var(--ink);
+    }
+
+    .ledger-delta.good {
+      color: var(--good);
+    }
+
+    .ledger-delta.bad {
+      color: var(--bad);
+    }
+
+    .reading {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      padding: 20px 0 20px 22px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .reading p {
+      margin: 0;
+      padding-left: 14px;
+      border-left: 2px solid var(--rule);
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    .reading strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .footline {
+      display: grid;
+      gap: 8px;
+      padding: 16px 0 0 22px;
+    }
+
+    .footline p {
+      margin: 0;
+      max-width: 78ch;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .footline strong {
+      color: var(--ink);
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    @media (max-width: 960px) {
+      .intro,
+      .reading {
+        grid-template-columns: 1fr;
+      }
+
+      .answer-headline,
+      .setup-line {
+        max-width: none;
+      }
+
+      .ledger-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sheet {
+        width: min(100% - 16px, 100%);
+        margin-top: 8px;
+        padding-top: 12px;
+      }
+
+      .sheet::before {
+        top: 12px;
+        bottom: 12px;
+      }
+
+      .masthead,
+      .intro,
+      .needline,
+      .board,
+      .reading,
+      .footline {
+        padding-left: 14px;
+      }
+
+      .intro,
+      .reading {
+        gap: 16px;
+      }
+
+      .setup-line {
+        font-size: clamp(1.9rem, 10vw, 3rem);
+      }
+
+      .inline-number {
+        min-width: 124px;
+      }
+
+      .amount-suffix {
+        font-size: 0.95rem;
+      }
+
+      .answer-headline {
+        font-size: clamp(2.5rem, 14vw, 4.2rem);
+      }
+
+      .board-copy,
+      .answer-body,
+      .needline {
+        max-width: none;
+      }
+
+      .reading p {
+        padding-left: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <p class="masthead">Autonomiczna iteracja PoC • dane ilustracyjne</p>
+
+    <div class="intro">
+      <div class="setup">
+        <p class="setup-label">Twój scenariusz</p>
+        <p class="setup-line">
+          Mam
+          <span class="inline-number">
+            <input id="amountInput" class="amount-input" type="number" min="1000" max="200000" step="100" value="20000" inputmode="numeric" aria-label="Kwota oszczędności">
+            <span class="amount-suffix">zł</span>
+          </span>
+          i mogę odłożyć te pieniądze na
+          <span class="inline-horizon" id="horizonText">6 lat</span>.
+        </p>
+
+        <div class="controls-meta">
+          <div class="slider-wrap">
+            <input id="horizonRange" class="horizon-range" type="range" min="1" max="10" step="1" value="6" aria-label="Horyzont oszczędzania">
+            <div class="range-labels">
+              <span>1 rok</span>
+              <span>10 lat</span>
+            </div>
+          </div>
+
+          <div class="inflation-row" aria-label="Preset inflacji">
+            <span class="inflation-title">Zakładam inflację:</span>
+            <button class="inflation-button" type="button" data-value="0.02" data-label="spokojną" aria-pressed="false">spokojną 2,0%</button>
+            <button class="inflation-button" type="button" data-value="0.035" data-label="bazową" aria-pressed="true">bazową 3,5%</button>
+            <button class="inflation-button" type="button" data-value="0.06" data-label="podwyższoną" aria-pressed="false">podwyższoną 6,0%</button>
+          </div>
+
+          <p class="microline">To nie jest narzędzie do szukania “najwyższego procentu”, tylko do zrozumienia, co ten wybór robi z Twoimi pieniędzmi.</p>
+        </div>
+      </div>
+
+      <div class="answer">
+        <p class="answer-label">Najkrótsza odpowiedź</p>
+        <h1 id="headline" class="answer-headline">Tylko EDO wyraźnie wychodzą ponad inflację.</h1>
+        <p id="headlineBody" class="answer-body">
+          W tej uproszczonej symulacji EDO najlepiej bronią wartość pieniędzy po 6 latach, ale ta przewaga ma sens tylko wtedy, gdy naprawdę możesz dać tym środkom czas.
+        </p>
+      </div>
+    </div>
+
+    <p id="needLine" class="needline">
+      Żeby <strong>20 000 zł</strong> za <strong>6 lat</strong> miało podobną siłę nabywczą jak dziś, potrzebujesz około <strong>24 000 zł</strong>.
+    </p>
+
+    <div class="board">
+      <div class="board-top">
+        <div>
+          <p class="board-label">Po wybranym czasie</p>
+          <p class="board-copy">Linie nie pokazują “kto wygrał konkurs”, tylko gdzie kończy się każda opcja wobec progu potrzebnego, żeby nie oddać wszystkiego inflacji.</p>
+        </div>
+        <span class="caption" id="scenarioStamp">20 000 zł • 6 lat • inflacja bazowa</span>
+      </div>
+
+      <div class="chart-stage">
+        <svg id="chart" class="chart" viewBox="0 0 980 260" role="img" aria-labelledby="chartTitle chartDesc">
+          <title id="chartTitle">Porównanie konta oszczędnościowego, TOS i EDO po wybranym czasie</title>
+          <desc id="chartDesc">Wykres pokazuje punkt startowy, próg potrzebny do utrzymania siły nabywczej i końcową wartość każdej opcji.</desc>
+        </svg>
+      </div>
+
+      <div id="ledger" class="ledger" aria-live="polite"></div>
+    </div>
+
+    <div class="reading">
+      <p id="meaningText"><strong>Co to znaczy</strong>Przy tym układzie czasu i inflacji najważniejsze jest to, czy wynik realnie broni Twoich pieniędzy przed utratą siły nabywczej.</p>
+      <p id="senseText"><strong>Ma sens, gdy</strong>Najlepsza opcja jest dobra tylko wtedy, gdy pasuje do tego, kiedy możesz potrzebować gotówki.</p>
+      <p id="riskText"><strong>Nie musi mieć sensu, gdy</strong>Jeśli te pieniądze mogą być potrzebne wcześniej, sama najwyższa liczba może okazać się mniej ważna niż elastyczność.</p>
+    </div>
+
+    <div class="footline">
+      <p id="nextLine"><strong>Co dalej?</strong> Najpierw porównaj ten wynik z własną potrzebą dostępu do pieniędzy. Dopiero potem sprawdź aktualne warunki emisji, bo tutaj liczby są ilustracyjne.</p>
+      <p id="disclaimerLine">Symulacja PoC na danych mockowych. Uproszczenia są celowe: stała inflacja przez cały okres, benchmark konta 4,00% rocznie, uproszczone zasady TOS i EDO, bez pełnej logiki wszystkich wyjątków produktu.</p>
+    </div>
+  </main>
+
+  <script>
+    const state = {
+      amount: 20000,
+      horizon: 6,
+      inflation: 0.035,
+      inflationLabel: "bazowa"
+    };
+
+    const taxRate = 0.19;
+
+    const productMeta = {
+      account: {
+        label: "Konto oszczędnościowe",
+        shortLabel: "konto",
+        note: "najwięcej swobody i najszybszy dostęp do pieniędzy",
+        color: "var(--account)"
+      },
+      tos: {
+        label: "TOS",
+        shortLabel: "TOS",
+        note: "3 lata, stałe oprocentowanie, spokojny środek",
+        color: "var(--tos)"
+      },
+      edo: {
+        label: "EDO",
+        shortLabel: "EDO",
+        note: "na dłuższy termin, z myślą o inflacji",
+        color: "var(--edo)"
+      }
+    };
+
+    const amountInput = document.getElementById("amountInput");
+    const horizonRange = document.getElementById("horizonRange");
+    const horizonText = document.getElementById("horizonText");
+    const inflationButtons = Array.from(document.querySelectorAll(".inflation-button"));
+
+    const headline = document.getElementById("headline");
+    const headlineBody = document.getElementById("headlineBody");
+    const needLine = document.getElementById("needLine");
+    const scenarioStamp = document.getElementById("scenarioStamp");
+    const chart = document.getElementById("chart");
+    const ledger = document.getElementById("ledger");
+    const meaningText = document.getElementById("meaningText");
+    const senseText = document.getElementById("senseText");
+    const riskText = document.getElementById("riskText");
+    const nextLine = document.getElementById("nextLine");
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("pl-PL", {
+        style: "currency",
+        currency: "PLN",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function formatCurrencyCompact(value) {
+      return new Intl.NumberFormat("pl-PL", {
+        maximumFractionDigits: 0
+      }).format(Math.round(value)) + " zł";
+    }
+
+    function formatPercent(value) {
+      return new Intl.NumberFormat("pl-PL", {
+        style: "percent",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }).format(value);
+    }
+
+    function yearLabel(years) {
+      if (years === 1) return "1 rok";
+      if (years >= 2 && years <= 4) return `${years} lata`;
+      return `${years} lat`;
+    }
+
+    function sanitizeAmount(rawValue) {
+      const numeric = Number(rawValue);
+      if (!Number.isFinite(numeric)) {
+        return state.amount;
+      }
+
+      return Math.max(1000, Math.min(200000, Math.round(numeric / 100) * 100));
+    }
+
+    function accountEnd(amount, years) {
+      const accountNetRate = 0.04 * (1 - taxRate);
+      return amount * Math.pow(1 + accountNetRate, years);
+    }
+
+    function tosEnd(amount, years) {
+      if (years === 0) return amount;
+
+      const rate = 0.0465;
+      let value = amount;
+      let remainingYears = years;
+
+      while (remainingYears > 0) {
+        if (remainingYears >= 3) {
+          const grossBlock = value * Math.pow(1 + rate, 3);
+          const profitBlock = grossBlock - value;
+          value = grossBlock - profitBlock * taxRate;
+          remainingYears -= 3;
+        } else {
+          const grossPartial = value * Math.pow(1 + rate, remainingYears);
+          const profitPartial = grossPartial - value;
+          const fee = value * 0.01;
+          const taxBase = Math.max(profitPartial - fee, 0);
+          value = grossPartial - fee - taxBase * taxRate;
+          remainingYears = 0;
+        }
+      }
+
+      return value;
+    }
+
+    function edoEnd(amount, years, inflation) {
+      if (years === 0) return amount;
+
+      let capital = amount;
+
+      for (let year = 1; year <= years; year += 1) {
+        const rate = year === 1 ? 0.056 : inflation + 0.02;
+        capital *= 1 + rate;
+      }
+
+      const fee = years < 10 ? amount * 0.03 : 0;
+      const grossProfit = capital - amount;
+      const taxBase = Math.max(grossProfit - fee, 0);
+      return capital - fee - taxBase * taxRate;
+    }
+
+    function realEnd(nominalEnd, years, inflation) {
+      return nominalEnd / Math.pow(1 + inflation, years);
+    }
+
+    function buildResults() {
+      const threshold = state.amount * Math.pow(1 + state.inflation, state.horizon);
+
+      const results = [
+        { id: "account", nominalEnd: accountEnd(state.amount, state.horizon) },
+        { id: "tos", nominalEnd: tosEnd(state.amount, state.horizon) },
+        { id: "edo", nominalEnd: edoEnd(state.amount, state.horizon, state.inflation) }
+      ].map((item) => {
+        const meta = productMeta[item.id];
+        const real = realEnd(item.nominalEnd, state.horizon, state.inflation);
+        const deltaToThreshold = item.nominalEnd - threshold;
+
+        return {
+          ...item,
+          ...meta,
+          realEnd: real,
+          deltaToThreshold,
+          beatsInflation: item.nominalEnd >= threshold
+        };
+      });
+
+      const sorted = [...results].sort((a, b) => b.realEnd - a.realEnd);
+      return {
+        results,
+        sorted,
+        winner: sorted[0],
+        runnerUp: sorted[1],
+        threshold
+      };
+    }
+
+    function narrativeFor(winner, runnerUp, threshold, results) {
+      const aboveCount = results.filter((item) => item.beatsInflation).length;
+      const gap = winner.realEnd - runnerUp.realEnd;
+      const smallGap = gap < Math.max(250, state.amount * 0.0125);
+
+      if (winner.id === "account") {
+        return {
+          headline: "Przy krótszym terminie wygrywa prostota konta.",
+          body: `Tutaj konto daje najwyższy wynik realny głównie dlatego, że ${yearLabel(state.horizon)} to za mało, by dłuższe obligacje zdążyły pokazać pełną przewagę bez kosztu wcześniejszego wyjścia.`,
+          meaning: `To jest bardziej sygnał o znaczeniu płynności niż pochwała konta jako “najlepszego produktu”. W tym scenariuszu dostęp do pieniędzy okazuje się ważniejszy niż pogoń za odrobinę wyższym wynikiem na papierze.`,
+          sense: "To ma sens, gdy te środki mogą być potrzebne szybciej albo pełnią rolę poduszki bezpieczeństwa.",
+          risk: smallGap
+            ? "Różnica jest niewielka, więc już mała zmiana inflacji albo wydłużenie czasu może przesunąć przewagę na obligacje."
+            : "Jeśli jednak naprawdę możesz poczekać dłużej, przewaga konta nie musi się utrzymać.",
+          next: "Co dalej? Jeśli to pieniądze na bezpieczeństwo, potraktuj konto jako punkt odniesienia. Jeśli nie będą Ci potrzebne szybko, sprawdź ponownie scenariusz z dłuższym czasem."
+        };
+      }
+
+      if (winner.id === "tos") {
+        return {
+          headline: aboveCount <= 1
+            ? "TOS są tu najspokojniejszym kompromisem."
+            : "W tym układzie TOS wypadają najlepiej bez wchodzenia w najdłuższy termin.",
+          body: `Stałe oprocentowanie na 3 lata daje tu najbardziej użyteczny środek: wynik lepszy niż konto, ale bez pełnej zależności od bardzo długiego horyzontu jak w EDO.`,
+          meaning: `Najważniejsze nie jest tu samo “pierwsze miejsce”, tylko to, że TOS dają równowagę między wynikiem a długością zobowiązania.`,
+          sense: "To ma sens, gdy chcesz czegoś prostszego niż EDO i jednocześnie nie chcesz zostawiać pieniędzy wyłącznie na koncie.",
+          risk: "Nie musi to mieć sensu, jeśli liczysz na pełną elastyczność albo wiesz, że te środki mogą być potrzebne szybciej niż planujesz.",
+          next: "Co dalej? Jeśli taki średni termin brzmi realnie, sprawdź aktualne warunki emisji TOS i porównaj je z własną potrzebą dostępu do pieniędzy."
+        };
+      }
+
+      if (aboveCount === 0) {
+        return {
+          headline: "Nawet najlepsza opcja ledwo dogania tu inflację.",
+          body: `${winner.label} wciąż kończy najwyżej, ale próg potrzebny do utrzymania siły nabywczej to około ${formatCurrency(threshold)}. To oznacza, że najważniejsze jest tu nie “ile zarobisz”, tylko jak mało oddasz inflacji.`,
+          meaning: "To trudniejszy scenariusz: wynik nie daje dużego komfortu i pokazuje raczej ograniczenia otoczenia niż oczywistego zwycięzcę.",
+          sense: "Ma sens potraktować ten ekran jako sygnał ostrzegawczy, a nie prostą odpowiedź “co wybrać”.",
+          risk: "Nie warto wyciągać z tego wniosku, że jedna opcja magicznie rozwiązuje problem, skoro wszystkie są blisko progu inflacji.",
+          next: "Co dalej? Sprawdź, czy możesz wydłużyć horyzont albo porównaj scenariusz z innym presetem inflacji, bo tutaj margines bezpieczeństwa jest mały."
+        };
+      }
+
+      return {
+        headline: aboveCount === 1
+          ? "Tylko EDO wyraźnie wychodzą ponad inflację."
+          : smallGap
+            ? "EDO są z przodu, ale to nie jest nokaut."
+            : "Na dłuższym dystansie EDO najlepiej bronią pieniądze przed inflacją.",
+        body: `W tej uproszczonej symulacji ${winner.label} dają najwyższą wartość realną po ${yearLabel(state.horizon)}. To nie znaczy, że są zawsze najlepsze, tylko że przy ${state.inflationLabel} inflacji i takim czasie właśnie one najlepiej utrzymują siłę nabywczą.`,
+        meaning: smallGap
+          ? `Przewaga nad ${runnerUp.label.toLowerCase()} jest zauważalna, ale nie ogromna. Traktuj ten wynik jak podpowiedź, nie jak wyrok.`
+          : "Najważniejsze jest to, że dłuższy termin zaczyna tutaj realnie pracować na korzyść pieniędzy, a nie tylko ładnie wyglądać w tabeli.",
+        sense: "To ma sens, gdy naprawdę możesz zostawić te środki na dłużej i nie będą Ci potrzebne po drodze.",
+        risk: state.horizon <= 5
+          ? "Jeśli ten czas nie jest pewny, koszt wcześniejszego wyjścia może szybko zjeść część tej przewagi."
+          : "Nie musi to mieć sensu, jeśli potrzebujesz pełnej swobody albo psychicznie nie chcesz wiązać tych pieniędzy na dłużej.",
+        next: "Co dalej? Najpierw sprawdź, czy ten horyzont jest dla Ciebie realny. Jeśli tak, dopiero wtedy porównaj aktualne warunki emisji EDO z kontem i TOS."
+      };
+    }
+
+    function renderChart(results, threshold) {
+      const width = 980;
+      const height = 260;
+      const padding = { top: 38, right: 80, bottom: 26, left: 240 };
+      const chartWidth = width - padding.left - padding.right;
+      const rowsY = [92, 146, 200];
+      const allValues = [state.amount, threshold, ...results.map((item) => item.nominalEnd)];
+      const minValue = Math.min(state.amount, ...allValues) * 0.96;
+      const maxValue = Math.max(...allValues) * 1.08;
+
+      const x = (value) => padding.left + ((value - minValue) / (maxValue - minValue || 1)) * chartWidth;
+
+      const startX = x(state.amount);
+      const thresholdX = x(threshold);
+
+      const lines = results.map((item, index) => {
+        const y = rowsY[index];
+        const endX = x(item.nominalEnd);
+        const anchor = endX > thresholdX ? "start" : "end";
+        const valueLabelX = anchor === "start" ? Math.min(endX + 10, width - 10) : Math.max(endX - 10, padding.left + 20);
+
+        return `
+          <text class="product-label" x="16" y="${y - 6}">${item.label}</text>
+          <text class="product-note" x="16" y="${y + 14}">${item.note}</text>
+          <line class="track" x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}"></line>
+          <path class="value-line" d="M ${startX} ${y} L ${endX} ${y}" stroke="${item.color}"></path>
+          <circle class="value-dot" cx="${endX}" cy="${y}" r="6" fill="${item.color}"></circle>
+          <text class="end-value" x="${valueLabelX}" y="${y - 10}" text-anchor="${anchor}">${formatCurrencyCompact(item.nominalEnd)}</text>
+        `;
+      }).join("");
+
+      chart.innerHTML = `
+        <title id="chartTitle">Porównanie konta oszczędnościowego, TOS i EDO po wybranym czasie</title>
+        <desc id="chartDesc">Wykres pokazuje punkt startowy, próg potrzebny do utrzymania siły nabywczej i końcową wartość każdej opcji.</desc>
+        <line class="start-line" x1="${startX}" y1="${padding.top}" x2="${startX}" y2="${height - padding.bottom}"></line>
+        <text class="axis-label" x="${startX}" y="${padding.top - 10}" text-anchor="middle">dziś: ${formatCurrencyCompact(state.amount)}</text>
+        <line class="threshold-line" x1="${thresholdX}" y1="${padding.top}" x2="${thresholdX}" y2="${height - padding.bottom}"></line>
+        <text class="axis-label" x="${thresholdX}" y="${height - 8}" text-anchor="middle">próg siły nabywczej: ${formatCurrencyCompact(threshold)}</text>
+        ${lines}
+      `;
+    }
+
+    function renderLedger(results, winner) {
+      ledger.innerHTML = results.map((item) => {
+        const deltaText = item.deltaToThreshold >= 0
+          ? `około ${formatCurrency(item.deltaToThreshold)} ponad próg inflacji`
+          : `około ${formatCurrency(Math.abs(item.deltaToThreshold))} poniżej progu inflacji`;
+
+        return `
+          <div class="ledger-row ${item.id === winner.id ? "is-winner" : ""}">
+            <div>
+              <strong>${item.label}</strong>
+              <span>${item.note}</span>
+            </div>
+            <div class="ledger-value">
+              <span>Na końcu zobaczysz ${formatCurrency(item.nominalEnd)}</span>
+              <strong>${formatCurrency(item.realEnd)} w dzisiejszych pieniądzach</strong>
+            </div>
+            <p class="ledger-delta ${item.deltaToThreshold >= 0 ? "good" : "bad"}">${deltaText}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function render() {
+      state.amount = sanitizeAmount(state.amount);
+      amountInput.value = state.amount;
+      horizonText.textContent = yearLabel(state.horizon);
+      scenarioStamp.textContent = `${formatCurrency(state.amount)} • ${yearLabel(state.horizon)} • inflacja ${state.inflationLabel}`;
+
+      inflationButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(Number(button.dataset.value) === state.inflation));
+      });
+
+      const { results, winner, runnerUp, threshold } = buildResults();
+      const narrative = narrativeFor(winner, runnerUp, threshold, results);
+
+      headline.textContent = narrative.headline;
+      headlineBody.textContent = narrative.body;
+
+      needLine.innerHTML = `Żeby <strong>${formatCurrency(state.amount)}</strong> za <strong>${yearLabel(state.horizon)}</strong> miało podobną siłę nabywczą jak dziś, potrzebujesz około <strong>${formatCurrency(threshold)}</strong>.`;
+
+      renderChart(results, threshold);
+      renderLedger(results, winner);
+
+      meaningText.innerHTML = `<strong>Co to znaczy</strong>${narrative.meaning}`;
+      senseText.innerHTML = `<strong>Ma sens, gdy</strong>${narrative.sense}`;
+      riskText.innerHTML = `<strong>Nie musi mieć sensu, gdy</strong>${narrative.risk}`;
+      nextLine.innerHTML = `<strong>Co dalej?</strong> ${narrative.next}`;
+    }
+
+    amountInput.addEventListener("change", () => {
+      state.amount = sanitizeAmount(amountInput.value);
+      render();
+    });
+
+    amountInput.addEventListener("blur", () => {
+      state.amount = sanitizeAmount(amountInput.value);
+      render();
+    });
+
+    horizonRange.addEventListener("input", () => {
+      state.horizon = Number(horizonRange.value);
+      render();
+    });
+
+    inflationButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.inflation = Number(button.dataset.value);
+        state.inflationLabel = button.dataset.label;
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>

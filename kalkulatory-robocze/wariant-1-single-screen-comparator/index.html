@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FBO PoC | Single-screen comparator</title>
+  <style>
+    :root {
+      --bg: #f4efe5;
+      --bg-strong: #e6dcc7;
+      --surface: rgba(255, 251, 244, 0.88);
+      --surface-strong: #fffdf7;
+      --surface-muted: #f6f0e6;
+      --ink: #203029;
+      --ink-soft: #57685f;
+      --line: rgba(75, 95, 86, 0.16);
+      --accent-account: #255b63;
+      --accent-tos: #5f7d50;
+      --accent-edo: #bf6f48;
+      --accent-threshold: #b58a45;
+      --good: #2f6d4d;
+      --warn: #9c5f32;
+      --shadow: 0 22px 60px rgba(45, 47, 37, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --font-body: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(199, 176, 136, 0.24), transparent 26%),
+        radial-gradient(circle at right 20%, rgba(88, 124, 100, 0.13), transparent 24%),
+        linear-gradient(180deg, #f7f2e8 0%, #f1ebdf 52%, #ece5d9 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 30px 22px 44px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.75fr);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .hero-copy,
+    .reading-note,
+    .panel {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-copy {
+      padding: 30px;
+    }
+
+    .eyebrow,
+    .section-kicker,
+    .card-kicker,
+    .label {
+      margin: 0 0 10px;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(2.55rem, 4vw, 4.7rem);
+    }
+
+    .lead {
+      max-width: 62ch;
+      margin: 18px 0 0;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .meta-pill,
+    .legend-chip,
+    .delta,
+    .micro-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      line-height: 1.35;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(81, 96, 83, 0.14);
+      color: var(--ink-soft);
+    }
+
+    .reading-note {
+      padding: 28px 26px;
+      align-self: stretch;
+      background: linear-gradient(180deg, rgba(255, 251, 244, 0.88), rgba(247, 239, 226, 0.88));
+    }
+
+    .reading-note h2 {
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+    }
+
+    .note-points {
+      display: grid;
+      gap: 14px;
+    }
+
+    .note-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .note-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 0.92rem;
+      font-weight: 700;
+      background: rgba(37, 91, 99, 0.12);
+      color: var(--accent-account);
+    }
+
+    .note-item p {
+      margin: 0;
+      line-height: 1.55;
+      color: var(--ink-soft);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(290px, 360px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .controls {
+      position: sticky;
+      top: 20px;
+      padding: 26px;
+      display: grid;
+      gap: 22px;
+      background:
+        radial-gradient(circle at top right, rgba(178, 147, 88, 0.12), transparent 28%),
+        linear-gradient(180deg, rgba(255, 251, 244, 0.92), rgba(248, 241, 229, 0.92));
+    }
+
+    .controls h2 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .controls-intro {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    .field {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field > span,
+    .field-header span {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .field-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .field small {
+      display: block;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      height: 56px;
+      padding: 0 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(69, 87, 77, 0.18);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--ink);
+      font-size: 1.08rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: rgba(37, 91, 99, 0.38);
+      box-shadow: 0 0 0 5px rgba(37, 91, 99, 0.08);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .error {
+      min-height: 1.4em;
+      color: #a34e3b;
+      font-weight: 600;
+    }
+
+    .amount-preview {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.54);
+      color: var(--ink-soft);
+    }
+
+    .amount-preview strong {
+      color: var(--ink);
+    }
+
+    .range-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    output {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(37, 91, 99, 0.09);
+      color: var(--accent-account);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-account);
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+    }
+
+    .inflation-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .inflation-button {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(82, 98, 88, 0.15);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .inflation-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(37, 91, 99, 0.24);
+      box-shadow: 0 14px 28px rgba(37, 91, 99, 0.08);
+    }
+
+    .inflation-button.active {
+      border-color: rgba(37, 91, 99, 0.4);
+      background: rgba(37, 91, 99, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(37, 91, 99, 0.12);
+    }
+
+    .inflation-name {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .inflation-button small {
+      margin: 0;
+      color: var(--ink-soft);
+    }
+
+    .assumptions-card {
+      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 253, 247, 0.78);
+      border: 1px solid rgba(82, 98, 88, 0.12);
+    }
+
+    .assumptions-card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    .results {
+      padding: 28px;
+      display: grid;
+      gap: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(95, 125, 80, 0.08), transparent 25%),
+        linear-gradient(180deg, rgba(255, 251, 244, 0.92), rgba(255, 251, 244, 0.9));
+    }
+
+    .results-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(250px, 0.7fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .results-header h2 {
+      font-size: clamp(2rem, 3vw, 3.1rem);
+      max-width: 17ch;
+    }
+
+    .results-header p {
+      margin: 12px 0 0;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      max-width: 62ch;
+    }
+
+    .result-facts {
+      display: grid;
+      gap: 12px;
+    }
+
+    .fact {
+      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(82, 98, 88, 0.12);
+    }
+
+    .fact span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .fact strong {
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .legend-chip::before,
+    .delta::before,
+    .micro-note::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.95;
+      flex: 0 0 auto;
+    }
+
+    .legend-chip.threshold::before {
+      width: 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent 0 15%, currentColor 15% 85%, transparent 85% 100%);
+      opacity: 1;
+    }
+
+    .chart-frame {
+      padding: 20px 14px 6px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(248, 242, 231, 0.72));
+      border: 1px solid rgba(82, 98, 88, 0.12);
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .summary-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(82, 98, 88, 0.12);
+      display: grid;
+      gap: 16px;
+    }
+
+    .summary-card.account {
+      box-shadow: inset 0 4px 0 rgba(37, 91, 99, 0.86);
+    }
+
+    .summary-card.tos {
+      box-shadow: inset 0 4px 0 rgba(95, 125, 80, 0.86);
+    }
+
+    .summary-card.edo {
+      box-shadow: inset 0 4px 0 rgba(191, 111, 72, 0.86);
+    }
+
+    .card-head {
+      display: grid;
+      gap: 10px;
+    }
+
+    .card-head-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .card-head h3 {
+      font-size: 1.5rem;
+    }
+
+    .card-subtitle {
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .delta {
+      justify-self: start;
+      min-height: 32px;
+      padding: 6px 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .delta.good {
+      color: var(--good);
+    }
+
+    .delta.warn {
+      color: var(--warn);
+    }
+
+    .values {
+      display: grid;
+      gap: 10px;
+    }
+
+    .value-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .value-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .value-label {
+      color: var(--ink-soft);
+    }
+
+    .value-amount {
+      font-weight: 700;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .interpretation {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    .micro-note {
+      min-height: auto;
+      padding: 9px 12px;
+      font-size: 0.85rem;
+    }
+
+    .next-step {
+      margin-top: 24px;
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(191, 111, 72, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(255, 251, 244, 0.92), rgba(247, 239, 226, 0.92));
+    }
+
+    .next-header h2 {
+      font-size: clamp(1.9rem, 3vw, 2.6rem);
+      max-width: 18ch;
+    }
+
+    .next-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .next-card {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(82, 98, 88, 0.12);
+      display: grid;
+      gap: 10px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .next-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(45, 47, 37, 0.08);
+      border-color: rgba(37, 91, 99, 0.2);
+    }
+
+    .next-card h3 {
+      font-size: 1.5rem;
+    }
+
+    .next-card p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    .next-link {
+      margin-top: 8px;
+      font-weight: 700;
+      color: var(--accent-account);
+    }
+
+    .trust-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 24px;
+    }
+
+    .trust-note,
+    .assumptions-details {
+      padding: 24px 26px;
+    }
+
+    .trust-note p {
+      margin: 0;
+      line-height: 1.65;
+      color: var(--ink-soft);
+    }
+
+    .trust-note p + p {
+      margin-top: 14px;
+    }
+
+    details summary {
+      cursor: pointer;
+      list-style: none;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details summary::after {
+      content: "+";
+      float: right;
+      font-size: 1.6rem;
+      color: var(--ink-soft);
+    }
+
+    details[open] summary::after {
+      content: "–";
+    }
+
+    .assumptions-details p,
+    .assumptions-details ul {
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+
+    .assumptions-details ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+    }
+
+    .chart-text {
+      font-family: var(--font-body);
+      fill: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .chart-text.axis-label {
+      font-size: 13px;
+      fill: rgba(87, 104, 95, 0.88);
+    }
+
+    .chart-line {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 4;
+    }
+
+    .chart-point {
+      stroke: rgba(255, 251, 244, 0.92);
+      stroke-width: 3;
+    }
+
+    .chart-grid {
+      stroke: rgba(82, 98, 88, 0.14);
+      stroke-width: 1;
+    }
+
+    .chart-domain {
+      stroke: rgba(82, 98, 88, 0.24);
+      stroke-width: 1.4;
+    }
+
+    .chart-note {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      margin: -4px 0 0;
+    }
+
+    @media (max-width: 1060px) {
+      .hero,
+      .workspace,
+      .results-header,
+      .trust-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      .cards,
+      .next-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 18px 14px 36px;
+      }
+
+      .hero-copy,
+      .reading-note,
+      .controls,
+      .results,
+      .next-step,
+      .trust-note,
+      .assumptions-details {
+        padding: 22px 18px;
+      }
+
+      .chart-frame {
+        padding: 16px 8px 4px;
+      }
+
+      .results-header h2,
+      .next-header h2 {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Wariant 1 • Single-screen comparator</p>
+        <h1>Co może stać się z Twoimi pieniędzmi w czasie?</h1>
+        <p class="lead">
+          Jeden ekran, trzy bezpieczne opcje i jedna ważna linia odniesienia:
+          ile pieniędzy potrzebujesz po latach, żeby zachować dzisiejszą siłę nabywczą.
+          To spokojny szkic edukacyjny, który ma pomóc zrozumieć różnice, a nie sprzedać obligacje.
+        </p>
+        <div class="hero-meta">
+          <span class="meta-pill">Dane ilustracyjne / mockowe</span>
+          <span class="meta-pill">Aktualizacja założeń PoC: marzec 2026</span>
+          <span class="meta-pill">Bez tonu „ta opcja zawsze wygrywa”</span>
+        </div>
+      </div>
+
+      <aside class="reading-note">
+        <h2>Jak czytać ten ekran</h2>
+        <div class="note-points">
+          <div class="note-item">
+            <span class="note-index">1</span>
+            <p>Najpierw spójrz na linię przerywaną. To próg utrzymania siły nabywczej przy wybranej inflacji.</p>
+          </div>
+          <div class="note-item">
+            <span class="note-index">2</span>
+            <p>Potem porównaj trzy linie: konto, 3-latki i 10-latki. To pokazuje nie tylko wzrost nominalny, ale też odporność na wzrost cen.</p>
+          </div>
+          <div class="note-item">
+            <span class="note-index">3</span>
+            <p>Na końcu przeczytaj karty pod wykresem. Każda tłumaczy prostym językiem, co ten wynik może znaczyć dla początkującej osoby.</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel controls">
+        <div>
+          <p class="section-kicker">Twój scenariusz</p>
+          <h2>Ustaw tylko to, co naprawdę potrzebne</h2>
+          <p class="controls-intro">
+            W tym wariancie nic nie liczymy na osobnym ekranie.
+            Zmieniasz kwotę, horyzont albo inflację i od razu widzisz, jak przesuwa się cały obraz.
+          </p>
+        </div>
+
+        <label class="field" for="amount">
+          <span>Ile chcesz odłożyć?</span>
+          <input id="amount" name="amount" type="number" min="100" step="100" value="10000" inputmode="numeric" aria-describedby="amount-helper amount-error">
+          <div class="amount-preview">
+            <span>To odpowiada mniej więcej</span>
+            <strong id="bondCount">100 szt. po 100 zł</strong>
+          </div>
+          <small id="amount-helper">Dla prostoty PoC przyjmujemy pełne setki, bo obligacje kupuje się po 100 zł.</small>
+          <small class="error" id="amount-error" aria-live="polite"></small>
+        </label>
+
+        <div class="field">
+          <div class="field-header">
+            <span>Na jak długo chcesz odłożyć te pieniądze?</span>
+            <output id="years-output" for="years">5 lat</output>
+          </div>
+          <div class="range-wrap">
+            <input id="years" name="years" type="range" min="1" max="10" value="5">
+            <div class="range-labels">
+              <span>1 rok</span>
+              <span>5 lat</span>
+              <span>10 lat</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span>Jaki scenariusz inflacji chcesz zobaczyć?</span>
+          <div class="inflation-grid" id="inflation-grid">
+            <button class="inflation-button" type="button" data-key="low">
+              <div class="inflation-name">
+                <span>Niska</span>
+                <strong>2,0%</strong>
+              </div>
+              <small>Spokojniejszy wariant, w którym ceny rosną wolniej.</small>
+            </button>
+            <button class="inflation-button active" type="button" data-key="medium">
+              <div class="inflation-name">
+                <span>Umiarkowana</span>
+                <strong>3,5%</strong>
+              </div>
+              <small>Domyślny scenariusz PoC, dobry do pierwszego porównania.</small>
+            </button>
+            <button class="inflation-button" type="button" data-key="high">
+              <div class="inflation-name">
+                <span>Wysoka</span>
+                <strong>6,0%</strong>
+              </div>
+              <small>Mocniej pokazuje, jak inflacja podnosi poprzeczkę dla oszczędności.</small>
+            </button>
+          </div>
+          <small id="inflation-helper">
+            Inflacja w tym PoC jest stała przez cały horyzont. To świadome uproszczenie edukacyjne.
+          </small>
+        </div>
+
+        <div class="assumptions-card">
+          <p class="label">Przykładowe założenia PoC</p>
+          <ul>
+            <li>Konto oszczędnościowe: 4,0% rocznie jako benchmark ilustracyjny.</li>
+            <li>3-latki (TOS): 4,65% stałe, z uproszczonym rolloverem po 3 latach.</li>
+            <li>10-latki (EDO): 5,60% w 1. roku, potem inflacja + 2,0 p.p.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="panel results" aria-labelledby="results-heading">
+        <header class="results-header">
+          <div>
+            <p class="section-kicker">Natychmiastowe porównanie</p>
+            <h2 id="results-heading">Liczby rosną nominalnie. Pytanie brzmi: czy nadążają za cenami?</h2>
+            <p id="takeaway-text">
+              Przy umiarkowanej inflacji po 5 latach różnica między „więcej złotówek” a „więcej realnej wartości”
+              robi się wyraźna. To właśnie ma pokazać ten wykres.
+            </p>
+          </div>
+
+          <div class="result-facts">
+            <div class="fact">
+              <span>Aby utrzymać dzisiejszą siłę nabywczą po tym horyzoncie, potrzebujesz około</span>
+              <strong id="threshold-value">11 877 zł</strong>
+            </div>
+            <div class="fact">
+              <span id="gap-label">Największy zapas ponad inflację</span>
+              <strong id="gap-value">10-latki +1 200 zł</strong>
+            </div>
+          </div>
+        </header>
+
+        <div class="chart-legend" aria-hidden="true">
+          <span class="legend-chip" style="color: var(--accent-account);">Konto oszczędnościowe</span>
+          <span class="legend-chip" style="color: var(--accent-tos);">3-latki (TOS)</span>
+          <span class="legend-chip" style="color: var(--accent-edo);">10-latki (EDO)</span>
+          <span class="legend-chip threshold" style="color: var(--accent-threshold);">Próg utrzymania siły nabywczej</span>
+        </div>
+
+        <div class="chart-frame">
+          <svg id="comparison-chart" viewBox="0 0 860 420" role="img" aria-labelledby="chart-title chart-desc">
+            <title id="chart-title">Porównanie wartości oszczędności w czasie</title>
+            <desc id="chart-desc">
+              Wykres pokazuje konto oszczędnościowe, 3-latki, 10-latki i linię utrzymania siły nabywczej.
+            </desc>
+          </svg>
+        </div>
+
+        <p class="chart-note">
+          Linia przerywana pokazuje próg, który trzeba osiągnąć, żeby po latach kupić mniej więcej tyle samo co dziś.
+          Jeśli seria kończy się pod nią, nominalny wzrost nie wystarczył na pełną ochronę przed inflacją.
+        </p>
+
+        <div class="cards" id="summary-cards" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <section class="panel next-step">
+      <div class="next-header">
+        <p class="section-kicker">Co dalej?</p>
+        <h2>Jeśli ten ekran już coś Ci rozjaśnił, następny krok może być bardzo prosty.</h2>
+      </div>
+
+      <div class="next-grid">
+        <a class="next-card" href="#" aria-label="Placeholder link: Jak kupić obligacje krok po kroku">
+          <p class="card-kicker">Krok praktyczny</p>
+          <h3>Jak kupić obligacje krok po kroku</h3>
+          <p>Zobacz spokojną instrukcję dla początkujących: gdzie wejść, co kliknąć i czego się nie bać.</p>
+          <span class="next-link">Przejdź do przewodnika placeholder</span>
+        </a>
+
+        <a class="next-card" href="#" aria-label="Placeholder link: Chcę lepiej zrozumieć obligacje">
+          <p class="card-kicker">Krok edukacyjny</p>
+          <h3>Chcę lepiej zrozumieć obligacje</h3>
+          <p>Krótko wyjaśnij sobie, czym różnią się 3-latki, 10-latki i konto oszczędnościowe.</p>
+          <span class="next-link">Przejdź do wyjaśnienia placeholder</span>
+        </a>
+
+        <a class="next-card" href="#" aria-label="Placeholder link: Zapisz wynik i wróć później">
+          <p class="card-kicker">Krok bez presji</p>
+          <h3>Zapisz wynik i wróć później</h3>
+          <p>Jeśli jeszcze nie chcesz decydować, zachowaj wynik jako punkt odniesienia i wróć do niego na spokojnie.</p>
+          <span class="next-link">Zapisz wynik placeholder</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="trust-grid">
+      <div class="panel trust-note">
+        <p class="section-kicker">Disclaimer edukacyjny</p>
+        <p>
+          Ten prototyp ma charakter edukacyjny i eksploracyjny. Pokazuje spójny scenariusz PoC,
+          a nie ofertę, rekomendację inwestycyjną ani obietnicę wyniku.
+        </p>
+        <p>
+          Dane są ilustracyjne / mockowe. Benchmark konta oszczędnościowego jest ręcznym założeniem PoC,
+          a wpływ inflacji został celowo uproszczony do trzech stałych scenariuszy.
+        </p>
+      </div>
+
+      <details class="panel assumptions-details">
+        <summary>Jakie uproszczenia przyjął ten PoC?</summary>
+        <p>
+          To jest ekran do zrozumienia różnic, nie pełny kalkulator produkcyjny. Dlatego jawnie upraszcza kilka elementów:
+        </p>
+        <ul>
+          <li>inflacja pozostaje stała przez cały wybrany horyzont,</li>
+          <li>konto oszczędnościowe działa tu jako ilustracyjny benchmark 4,0% rocznie,</li>
+          <li>3-latki korzystają z uproszczonego rollovera do kolejnych emisji o tych samych regułach,</li>
+          <li>10-latki przy krótszym horyzoncie uwzględniają uproszczoną opłatę za wcześniejszy wykup,</li>
+          <li>pomijamy dokładne zaokrąglenia wynikające z kupowania pełnych sztuk w kolejnych cyklach.</li>
+        </ul>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      amount: 10000,
+      years: 5,
+      inflationKey: "medium",
+    };
+
+    const inflationScenarios = {
+      low: {
+        label: "niska",
+        rate: 0.02,
+      },
+      medium: {
+        label: "umiarkowana",
+        rate: 0.035,
+      },
+      high: {
+        label: "wysoka",
+        rate: 0.06,
+      },
+    };
+
+    const productMeta = {
+      account: {
+        name: "Konto oszczędnościowe",
+        shortName: "konto",
+        kicker: "Płynność i prostota",
+        subtitle: "Najłatwiej je uruchomić i w każdej chwili ruszyć pieniądze.",
+        tone: "account",
+        color: "#255b63",
+      },
+      tos: {
+        name: "3-latki (TOS)",
+        shortName: "3-latki",
+        kicker: "Spokojny środek",
+        subtitle: "Stałe oprocentowanie daje przewidywalność, ale nie reaguje na inflację.",
+        tone: "tos",
+        color: "#5f7d50",
+      },
+      edo: {
+        name: "10-latki (EDO)",
+        shortName: "10-latki",
+        kicker: "Długi oddech",
+        subtitle: "Dłuższy termin i indeksacja pomagają lepiej bronić realnej wartości.",
+        tone: "edo",
+        color: "#bf6f48",
+      },
+    };
+
+    const amountInput = document.getElementById("amount");
+    const amountError = document.getElementById("amount-error");
+    const bondCount = document.getElementById("bondCount");
+    const yearsInput = document.getElementById("years");
+    const yearsOutput = document.getElementById("years-output");
+    const inflationButtons = Array.from(document.querySelectorAll(".inflation-button"));
+    const chartEl = document.getElementById("comparison-chart");
+    const summaryCards = document.getElementById("summary-cards");
+    const thresholdValue = document.getElementById("threshold-value");
+    const gapLabel = document.getElementById("gap-label");
+    const gapValue = document.getElementById("gap-value");
+    const takeawayHeading = document.getElementById("results-heading");
+    const takeawayText = document.getElementById("takeaway-text");
+    const currencyFormatter = new Intl.NumberFormat("pl-PL", {
+      style: "currency",
+      currency: "PLN",
+      maximumFractionDigits: 0,
+    });
+
+    function formatCurrency(value) {
+      return currencyFormatter.format(Math.round(value));
+    }
+
+    function formatSignedCurrency(value) {
+      return `${value >= 0 ? "+" : "−"}${formatCurrency(Math.abs(value))}`;
+    }
+
+    function describeInflationGap(value) {
+      if (value >= 0) {
+        return `zapas ${formatCurrency(value)} ponad inflację`;
+      }
+
+      return `brakuje ${formatCurrency(Math.abs(value))} do linii siły nabywczej`;
+    }
+
+    function formatAxisValue(value) {
+      if (value >= 1000) {
+        const compact = Math.round((value / 1000) * 10) / 10;
+        return `${compact.toLocaleString("pl-PL")} tys. zł`;
+      }
+      return `${Math.round(value).toLocaleString("pl-PL")} zł`;
+    }
+
+    function yearsLabel(value) {
+      if (value === 1) {
+        return "1 rok";
+      }
+      if (value >= 2 && value <= 4) {
+        return `${value} lata`;
+      }
+      return `${value} lat`;
+    }
+
+    function roundMoney(value) {
+      return Math.round(value * 100) / 100;
+    }
+
+    function computeInflationThreshold(amount, years, inflationRate) {
+      return amount * Math.pow(1 + inflationRate, years);
+    }
+
+    function computeAccount(amount, years, inflationRate) {
+      const grossRate = 0.04;
+      const netRate = grossRate * (1 - 0.19);
+      const nominalEnd = amount * Math.pow(1 + netRate, years);
+      return buildResult("account", amount, years, nominalEnd, inflationRate);
+    }
+
+    function computeTos(amount, years, inflationRate) {
+      const rate = 0.0465;
+      let principal = amount;
+      const fullBlocks = Math.floor(years / 3);
+      const partialYears = years % 3;
+
+      for (let index = 0; index < fullBlocks; index += 1) {
+        const grossBlock = principal * Math.pow(1 + rate, 3);
+        const profitBlock = grossBlock - principal;
+        principal = grossBlock - (profitBlock * 0.19);
+      }
+
+      let nominalEnd = principal;
+
+      if (partialYears > 0) {
+        const grossPartial = principal * Math.pow(1 + rate, partialYears);
+        const profitPartial = grossPartial - principal;
+        const fee = principal * 0.01;
+        const taxBase = Math.max(profitPartial - fee, 0);
+        nominalEnd = grossPartial - fee - (taxBase * 0.19);
+      }
+
+      return buildResult("tos", amount, years, nominalEnd, inflationRate);
+    }
+
+    function computeEdo(amount, years, inflationRate) {
+      let capital = amount;
+
+      for (let year = 1; year <= years; year += 1) {
+        const yearlyRate = year === 1 ? 0.056 : inflationRate + 0.02;
+        capital *= 1 + yearlyRate;
+      }
+
+      const fee = years < 10 ? amount * 0.03 : 0;
+      const grossProfit = capital - amount;
+      const taxBase = Math.max(grossProfit - fee, 0);
+      const nominalEnd = capital - fee - (taxBase * 0.19);
+
+      return buildResult("edo", amount, years, nominalEnd, inflationRate);
+    }
+
+    function buildResult(productId, amount, years, nominalEnd, inflationRate) {
+      const inflationThreshold = computeInflationThreshold(amount, years, inflationRate);
+      const realEnd = nominalEnd / Math.pow(1 + inflationRate, years);
+
+      return {
+        id: productId,
+        nominalEnd: roundMoney(nominalEnd),
+        nominalProfit: roundMoney(nominalEnd - amount),
+        realEnd: roundMoney(realEnd),
+        realGain: roundMoney(realEnd - amount),
+        inflationGap: roundMoney(nominalEnd - inflationThreshold),
+      };
+    }
+
+    function buildSeries(amount, years, inflationRate) {
+      const yearsRange = Array.from({ length: years + 1 }, (_, index) => index);
+
+      const threshold = yearsRange.map((year) => ({
+        year,
+        value: computeInflationThreshold(amount, year, inflationRate),
+      }));
+
+      const account = yearsRange.map((year) => ({
+        year,
+        value: year === 0 ? amount : computeAccount(amount, year, inflationRate).nominalEnd,
+      }));
+
+      const tos = yearsRange.map((year) => ({
+        year,
+        value: year === 0 ? amount : computeTos(amount, year, inflationRate).nominalEnd,
+      }));
+
+      const edo = yearsRange.map((year) => ({
+        year,
+        value: year === 0 ? amount : computeEdo(amount, year, inflationRate).nominalEnd,
+      }));
+
+      return { threshold, account, tos, edo };
+    }
+
+    function buildTakeaway(results, years, inflationScenario) {
+      const ordered = [...results].sort((left, right) => right.inflationGap - left.inflationGap);
+      const aboveThreshold = ordered.filter((item) => item.inflationGap >= 0);
+      const leader = ordered[0];
+      const trailer = ordered[ordered.length - 1];
+
+      if (aboveThreshold.length === 0) {
+        return {
+          title: `Przy ${inflationScenario.label} inflacji żadna opcja nie zostawia pełnego zapasu ponad wzrost cen.`,
+          text: `Najbliżej linii utrzymania siły nabywczej wypada ${productMeta[leader.id].name.toLowerCase()}, a koszt inflacji najmocniej widać przy ${productMeta[trailer.id].name.toLowerCase()}.`,
+        };
+      }
+
+      if (aboveThreshold.length === 1) {
+        return {
+          title: `Przy ${inflationScenario.label} inflacji po ${yearsLabel(years)} tylko jedna ścieżka kończy wyraźnie nad linią siły nabywczej: ${productMeta[leader.id].name.toLowerCase()}.`,
+          text: `To dobry moment na „aha”: sam wzrost salda nie wystarcza. Najważniejsze jest to, ile zostaje po zderzeniu z cenami, a nie tylko ile złotówek widzisz na końcu.`,
+        };
+      }
+
+      return {
+        title: `Największy zapas ponad inflację widać przy ${productMeta[leader.id].name.toLowerCase()}, ale każda opcja płaci za to czymś innym.`,
+        text: `Konto daje największą elastyczność, 3-latki przewidywalność, a 10-latki najwięcej czasu na dogonienie inflacji. Ten ekran ma pokazać właśnie ten kompromis, nie ogłosić zwycięzcę.`,
+      };
+    }
+
+    function buildInterpretation(result, years) {
+      const meta = productMeta[result.id];
+
+      let inflationSentence;
+
+      if (result.inflationGap > state.amount * 0.05) {
+        inflationSentence = "W tym scenariuszu zostaje wyraźny zapas ponad wzrost cen.";
+      } else if (result.inflationGap > 0) {
+        inflationSentence = "Ta opcja mniej więcej utrzymuje siłę nabywczą i zostawia mały margines bezpieczeństwa.";
+      } else if (result.inflationGap > -state.amount * 0.05) {
+        inflationSentence = "Nominalnie rośnie, ale inflacja zabiera dużą część efektu.";
+      } else {
+        inflationSentence = "Na papierze wygląda lepiej niż w dzisiejszej sile nabywczej.";
+      }
+
+      if (result.id === "account") {
+        return `${meta.subtitle} Po ${yearsLabel(years)} ${inflationSentence}`;
+      }
+
+      if (result.id === "tos") {
+        return `${meta.subtitle} Dla średniego terminu daje więcej spokoju niż pogoń za najwyższą liczbą. ${inflationSentence}`;
+      }
+
+      return `${meta.subtitle} W dłuższym horyzoncie właśnie to powiązanie z inflacją robi największą różnicę. ${inflationSentence}`;
+    }
+
+    function buildCardNote(result, years) {
+      if (result.id === "tos" && years % 3 !== 0) {
+        return "Ten wynik zakłada zakończenie oszczędzania w trakcie 3-letniego cyklu i uwzględnia uproszczoną opłatę za wcześniejszy wykup.";
+      }
+
+      if (result.id === "edo" && years < 10) {
+        return "Ten wynik zakłada wyjście przed końcem 10-letniego terminu i uwzględnia uproszczoną opłatę za wcześniejszy wykup.";
+      }
+
+      return "";
+    }
+
+    function renderCards(results) {
+      summaryCards.innerHTML = "";
+
+      results.forEach((result) => {
+        const meta = productMeta[result.id];
+        const note = buildCardNote(result, state.years);
+        const card = document.createElement("article");
+        card.className = `summary-card ${meta.tone}`;
+
+        const deltaClass = result.inflationGap >= 0 ? "good" : "warn";
+        const deltaCopy = describeInflationGap(result.inflationGap);
+
+        card.innerHTML = `
+          <div class="card-head">
+            <div class="card-head-top">
+              <div>
+                <p class="card-kicker">${meta.kicker}</p>
+                <h3>${meta.name}</h3>
+              </div>
+            </div>
+            <p class="card-subtitle">${meta.subtitle}</p>
+            <span class="delta ${deltaClass}">${deltaCopy}</span>
+          </div>
+          <div class="values">
+            <div class="value-row">
+              <span class="value-label">Na koniec</span>
+              <strong class="value-amount">${formatCurrency(result.nominalEnd)}</strong>
+            </div>
+            <div class="value-row">
+              <span class="value-label">Zysk nominalny</span>
+              <strong class="value-amount">${formatSignedCurrency(result.nominalProfit)}</strong>
+            </div>
+            <div class="value-row">
+              <span class="value-label">W cenach dzisiejszych</span>
+              <strong class="value-amount">${formatCurrency(result.realEnd)}</strong>
+            </div>
+          </div>
+          <p class="interpretation">${buildInterpretation(result, state.years)}</p>
+          ${note ? `<span class="micro-note" style="color: ${meta.color};">${note}</span>` : ""}
+        `;
+
+        summaryCards.appendChild(card);
+      });
+    }
+
+    function renderChart(series, years) {
+      const width = 860;
+      const height = 420;
+      const margin = { top: 22, right: 26, bottom: 56, left: 86 };
+      const chartWidth = width - margin.left - margin.right;
+      const chartHeight = height - margin.top - margin.bottom;
+
+      const allSeries = [series.threshold, series.account, series.tos, series.edo];
+      const maxValue = Math.max(...allSeries.flatMap((set) => set.map((point) => point.value)));
+      const chartMax = maxValue * 1.08;
+
+      const x = (year) => margin.left + (year / years) * chartWidth;
+      const y = (value) => margin.top + chartHeight - ((value / chartMax) * chartHeight);
+
+      chartEl.innerHTML = `
+        <title id="chart-title">Porównanie wartości oszczędności w czasie</title>
+        <desc id="chart-desc"></desc>
+      `;
+
+      const yTicks = 5;
+      for (let index = 0; index <= yTicks; index += 1) {
+        const value = (chartMax / yTicks) * index;
+        const position = y(chartMax - value);
+        const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        gridLine.setAttribute("x1", margin.left);
+        gridLine.setAttribute("x2", width - margin.right);
+        gridLine.setAttribute("y1", position);
+        gridLine.setAttribute("y2", position);
+        gridLine.setAttribute("class", "chart-grid");
+        chartEl.appendChild(gridLine);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", margin.left - 14);
+        label.setAttribute("y", position + 5);
+        label.setAttribute("text-anchor", "end");
+        label.setAttribute("class", "chart-text");
+        label.textContent = formatAxisValue(chartMax - value);
+        chartEl.appendChild(label);
+      }
+
+      for (let year = 0; year <= years; year += 1) {
+        const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        tick.setAttribute("x1", x(year));
+        tick.setAttribute("x2", x(year));
+        tick.setAttribute("y1", height - margin.bottom);
+        tick.setAttribute("y2", height - margin.bottom + 8);
+        tick.setAttribute("class", "chart-domain");
+        chartEl.appendChild(tick);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x(year));
+        label.setAttribute("y", height - margin.bottom + 28);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("class", "chart-text axis-label");
+        label.textContent = year === 0 ? "dziś" : `${year}`;
+        chartEl.appendChild(label);
+      }
+
+      const xLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      xLabel.setAttribute("x", width / 2);
+      xLabel.setAttribute("y", height - 12);
+      xLabel.setAttribute("text-anchor", "middle");
+      xLabel.setAttribute("class", "chart-text axis-label");
+      xLabel.textContent = "Lata oszczędzania";
+      chartEl.appendChild(xLabel);
+
+      const yLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      yLabel.setAttribute("x", 26);
+      yLabel.setAttribute("y", margin.top + chartHeight / 2);
+      yLabel.setAttribute("text-anchor", "middle");
+      yLabel.setAttribute("transform", `rotate(-90 26 ${margin.top + chartHeight / 2})`);
+      yLabel.setAttribute("class", "chart-text axis-label");
+      yLabel.textContent = "Wartość oszczędności";
+      chartEl.appendChild(yLabel);
+
+      const domainX = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      domainX.setAttribute("x1", margin.left);
+      domainX.setAttribute("x2", width - margin.right);
+      domainX.setAttribute("y1", height - margin.bottom);
+      domainX.setAttribute("y2", height - margin.bottom);
+      domainX.setAttribute("class", "chart-domain");
+      chartEl.appendChild(domainX);
+
+      const domainY = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      domainY.setAttribute("x1", margin.left);
+      domainY.setAttribute("x2", margin.left);
+      domainY.setAttribute("y1", margin.top);
+      domainY.setAttribute("y2", height - margin.bottom);
+      domainY.setAttribute("class", "chart-domain");
+      chartEl.appendChild(domainY);
+
+      const seriesConfig = [
+        {
+          key: "threshold",
+          color: "#b58a45",
+          dasharray: "11 9",
+        },
+        {
+          key: "account",
+          color: "#255b63",
+        },
+        {
+          key: "tos",
+          color: "#5f7d50",
+        },
+        {
+          key: "edo",
+          color: "#bf6f48",
+        },
+      ];
+
+      seriesConfig.forEach((config) => {
+        const points = series[config.key];
+        const pathData = points
+          .map((point, index) => `${index === 0 ? "M" : "L"} ${x(point.year).toFixed(2)} ${y(point.value).toFixed(2)}`)
+          .join(" ");
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        path.setAttribute("class", "chart-line");
+        path.setAttribute("stroke", config.color);
+        if (config.dasharray) {
+          path.setAttribute("stroke-dasharray", config.dasharray);
+        }
+        chartEl.appendChild(path);
+
+        const finalPoint = points[points.length - 1];
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x(finalPoint.year));
+        circle.setAttribute("cy", y(finalPoint.value));
+        circle.setAttribute("r", config.key === "threshold" ? "5" : "6");
+        circle.setAttribute("fill", config.color);
+        circle.setAttribute("class", "chart-point");
+        chartEl.appendChild(circle);
+      });
+
+      const descText = [
+        `Wykres od dziś do ${yearsLabel(years)} pokazuje konto oszczędnościowe, 3-latki, 10-latki i próg utrzymania siły nabywczej.`,
+        "Im wyżej seria kończy względem linii przerywanej, tym większy zapas ponad inflację.",
+      ].join(" ");
+
+      chartEl.querySelector("#chart-desc").textContent = descText;
+    }
+
+    function render() {
+      const inflationScenario = inflationScenarios[state.inflationKey];
+      const inflationRate = inflationScenario.rate;
+      const threshold = computeInflationThreshold(state.amount, state.years, inflationRate);
+      const results = [
+        computeAccount(state.amount, state.years, inflationRate),
+        computeTos(state.amount, state.years, inflationRate),
+        computeEdo(state.amount, state.years, inflationRate),
+      ];
+
+      const series = buildSeries(state.amount, state.years, inflationRate);
+      const takeaway = buildTakeaway(results, state.years, inflationScenario);
+      const orderedByGap = [...results].sort((left, right) => right.inflationGap - left.inflationGap);
+      const gapLeader = orderedByGap[0];
+
+      yearsOutput.textContent = yearsLabel(state.years);
+      bondCount.textContent = `${(state.amount / 100).toLocaleString("pl-PL")} szt. po 100 zł`;
+      thresholdValue.textContent = formatCurrency(threshold);
+
+      if (gapLeader.inflationGap >= 0) {
+        gapLabel.textContent = "Największy zapas ponad inflację";
+        gapValue.textContent = `${productMeta[gapLeader.id].shortName}: ${formatCurrency(gapLeader.inflationGap)}`;
+      } else {
+        gapLabel.textContent = "Najmniejszy niedobór do linii siły nabywczej";
+        gapValue.textContent = `${productMeta[gapLeader.id].shortName}: ${formatCurrency(Math.abs(gapLeader.inflationGap))}`;
+      }
+
+      takeawayHeading.textContent = takeaway.title;
+      takeawayText.textContent = takeaway.text;
+      renderChart(series, state.years);
+      renderCards(results);
+
+      inflationButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.key === state.inflationKey);
+      });
+    }
+
+    amountInput.addEventListener("input", () => {
+      const rawValue = Number(amountInput.value);
+
+      if (!Number.isFinite(rawValue) || rawValue < 100 || rawValue % 100 !== 0) {
+        amountError.textContent = "Wpisz co najmniej 100 zł i trzymaj się pełnych setek.";
+        return;
+      }
+
+      amountError.textContent = "";
+      state.amount = rawValue;
+      render();
+    });
+
+    amountInput.addEventListener("blur", () => {
+      const rawValue = Number(amountInput.value);
+
+      if (!Number.isFinite(rawValue) || rawValue < 100 || rawValue % 100 !== 0) {
+        amountInput.value = String(state.amount);
+        amountError.textContent = "";
+      }
+    });
+
+    yearsInput.addEventListener("input", () => {
+      state.years = Number(yearsInput.value);
+      render();
+    });
+
+    inflationButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.inflationKey = button.dataset.key;
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -22,6 +22,8 @@ PoC nie ma zastąpić rozbudowanego Excela Marcina 1:1. Ma pokazać prostsze web
 
 - Design direction: FBO-adjacent, ale bez kopiowania wizualnego 1:1.
 - Stack policy: core stack z ogłoszenia jako domyślność (`Next.js`, `TypeScript`, `Tailwind`, `Recharts`, `Vercel`), z dopuszczalnymi wyjątkami, jeśli poprawiają jakość PoC.
+- Final recruitment delivery mode: kalkulator ma docelowo działać jako trasa `/kalkulator` osadzana w `iframe` wewnątrz portfolio na tym samym originie.
+- Recruitment UX policy: kalkulator ma wzmacniać flow przeglądania portfolio i załączników; nie projektujemy głównej ścieżki w oparciu o otwieranie zewnętrznych kart.
 - Data policy: parametry obligacji aktualizowane ręcznie, z datą aktualizacji i jawnym wskazaniem źródeł.
 - Tone of voice: edukacyjny, uczciwy, bez tonu sprzedażowego i bez FOMO.
 
@@ -33,6 +35,7 @@ PoC nie ma zastąpić rozbudowanego Excela Marcina 1:1. Ma pokazać prostsze web
 - `docs/product/prd.md` — co ma robić produkt.
 - `docs/product/calculation-spec.md` — jak liczymy.
 - `docs/product/source-of-truth.md` — skąd bierzemy dane i jak je odświeżamy.
+- `docs/process/portfolio-integration.md` — kontrakt integracyjny dla wersji osadzanej w portfolio.
 - `docs/product/prototype-brief.md` — jak zlecać rapid prototyping.
 - `docs/product/prototype-review-rubric.md` — jak oceniać wygenerowane kierunki.
 

@@ -16,6 +16,7 @@ To nie jest jeszcze finalna aplikacja. Na tym etapie repo ma przede wszystkim po
 - `docs/product/prd.md` — zachowanie produktu i struktura ekranu.
 - `docs/product/calculation-spec.md` — logika obliczeń i uproszczenia PoC.
 - `docs/product/source-of-truth.md` — źródła danych, polityka aktualizacji i walidacji.
+- `docs/process/portfolio-integration.md` — kontrakt integracyjny dla wersji osadzanej w portfolio przez `iframe`.
 - `docs/product/prototype-brief.md` — jedyny właściwy input do szybkiego prototypowania.
 - `docs/product/prototype-review-rubric.md` — rubryka oceny wygenerowanych kierunków.
 
