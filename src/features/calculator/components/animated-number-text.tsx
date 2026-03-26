@@ -13,17 +13,21 @@ type AnimatedNumberTextProps = HTMLAttributes<HTMLElement> & {
   tag?: AnimatedTag;
   value: number;
   format: (value: number) => string;
+  animateOnMount?: boolean;
 };
 
 export function AnimatedNumberText({
   tag = "p",
   value,
   format,
+  animateOnMount = false,
   ...elementProps
 }: AnimatedNumberTextProps) {
-  const [displayValue, setDisplayValue] = useState(value);
+  const [displayValue, setDisplayValue] = useState(() =>
+    animateOnMount ? 0 : value,
+  );
   const hasAnimatedRef = useRef(false);
-  const displayValueRef = useRef(value);
+  const displayValueRef = useRef(animateOnMount ? 0 : value);
   const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -33,8 +37,11 @@ export function AnimatedNumberText({
 
     if (!hasAnimatedRef.current) {
       hasAnimatedRef.current = true;
-      displayValueRef.current = value;
-      return undefined;
+
+      if (!animateOnMount) {
+        displayValueRef.current = value;
+        return undefined;
+      }
     }
 
     const startValue = displayValueRef.current;
@@ -92,7 +99,7 @@ export function AnimatedNumberText({
         window.cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [value]);
+  }, [animateOnMount, value]);
 
   const content = format(displayValue);
 

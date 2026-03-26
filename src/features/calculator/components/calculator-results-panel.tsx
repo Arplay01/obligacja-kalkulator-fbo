@@ -99,6 +99,7 @@ export function CalculatorResultsPanel({
           tag="p"
           className={`hero-metric__value ${bondResult.netProfit >= 0 ? "hero-metric__value--positive" : "hero-metric__value--negative"}`}
           value={bondResult.netProfit}
+          animateOnMount
           data-value="netProfit"
           format={(value) => formatMoney(value, { signed: true })}
         />
@@ -108,6 +109,7 @@ export function CalculatorResultsPanel({
             <AnimatedNumberText
               tag="strong"
               value={bondResult.netReturn}
+              animateOnMount
               data-value="netReturn"
               format={(value) => formatMoney(value)}
             />
@@ -117,6 +119,7 @@ export function CalculatorResultsPanel({
             <AnimatedNumberText
               tag="strong"
               value={bondResult.netProfit / bondResult.termYears}
+              animateOnMount
               data-value="avgProfitPerYear"
               format={(value) => `${formatMoney(value)} / rok`}
             />
