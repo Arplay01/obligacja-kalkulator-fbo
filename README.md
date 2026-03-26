@@ -1,6 +1,6 @@
 # Kalkulator obligacji skarbowych dla FBO
 
-To repo zawiera produkcyjną aplikację `Next.js + TypeScript` dla kalkulatora obligacji skarbowych Finanse Bardzo Osobiste oraz dokumentację procesu, który doprowadził do obecnego rozwiązania.
+To repo zawiera produkcyjną aplikację `Next.js + TypeScript` dla kalkulatora obligacji skarbowych w ramach rekrutacji na Product Managera w Finanse Bardzo Osobiste. Dodatkowo repo zawiera aktualną dokumentację procesu, który doprowadził do obecnego rozwiązania.
 
 Aktualna implementacja jest wiernym rewrite'em 1:1 prototypu referencyjnego. Repo pokazuje dziś gotowy ekran, finalne decyzje produktowe i wybrany ślad procesu, bez warsztatowego szumu z wcześniejszych iteracji.
 
