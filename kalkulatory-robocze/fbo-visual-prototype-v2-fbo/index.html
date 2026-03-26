@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Kalkulator obligacji skarbowych — Finanse Bardzo Osobiste</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="intro" aria-label="Wprowadzenie">
+        <h1 class="intro__title">
+          Sprawdź, ile mogą dać
+          <span class="gradient-text">obligacje skarbowe</span>
+        </h1>
+        <p class="intro__note">
+          I porównaj wynik z lokatą albo kontem oszczędnościowym.
+        </p>
+      </header>
+
+      <section class="workspace" aria-label="Kalkulator obligacji">
+        <aside class="workspace__inputs card" aria-label="Parametry symulacji">
+          <section
+            class="panel-block panel-block--selector"
+            aria-label="Wybierz rodzaj obligacji"
+          >
+            <h2 class="section-title section-title--compact">
+              Wybierz obligację
+            </h2>
+
+            <div
+              class="bond-grid"
+              role="tablist"
+              aria-label="Rodzaje obligacji"
+            >
+              <button
+                class="bond-chip"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-bond="OTS"
+              >
+                <span class="bond-chip__ticker">OTS</span>
+                <span class="bond-chip__rate">2,50%</span>
+                <span class="bond-chip__badge bond-chip__badge--fixed">
+                  <span class="bond-chip__badge-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect
+                        x="6"
+                        y="11"
+                        width="12"
+                        height="9"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M9 11V8.5a3 3 0 1 1 6 0V11"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Stałe</span>
+                </span>
+                <span class="bond-chip__period">3 mies.</span>
+              </button>
+
+              <button
+                class="bond-chip"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-bond="ROR"
+              >
+                <span class="bond-chip__ticker">ROR</span>
+                <span class="bond-chip__rate">4,25%</span>
+                <span class="bond-chip__badge bond-chip__badge--variable">
+                  <span class="bond-chip__badge-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4.5 16.5 10 11l3 3L19.5 7.5"
+                        stroke="currentColor"
+                        stroke-width="1.9"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M15.5 7.5h4v4"
+                        stroke="currentColor"
+                        stroke-width="1.9"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Zmienne</span>
+                </span>
+                <span class="bond-chip__period">1 rok</span>
+              </button>
+
+              <button
+                class="bond-chip"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-bond="DOR"
+              >
+                <span class="bond-chip__ticker">DOR</span>
+                <span class="bond-chip__rate">4,40%</span>
+                <span class="bond-chip__badge bond-chip__badge--variable">
+                  <span class="bond-chip__badge-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4.5 16.5 10 11l3 3L19.5 7.5"
+                        stroke="currentColor"
+                        stroke-width="1.9"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M15.5 7.5h4v4"
+                        stroke="currentColor"
+                        stroke-width="1.9"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Zmienne</span>
+                </span>
+                <span class="bond-chip__period">2 lata</span>
+              </button>
+
+              <button
+                class="bond-chip"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-bond="TOS"
+              >
+                <span class="bond-chip__ticker">TOS</span>
+                <span class="bond-chip__rate">4,65%</span>
+                <span class="bond-chip__badge bond-chip__badge--fixed">
+                  <span class="bond-chip__badge-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect
+                        x="6"
+                        y="11"
+                        width="12"
+                        height="9"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M9 11V8.5a3 3 0 1 1 6 0V11"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Stałe</span>
+                </span>
+                <span class="bond-chip__period">3 lata</span>
+              </button>
+
+              <button
+                class="bond-chip bond-chip--active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                data-bond="COI"
+              >
+                <span class="bond-chip__check" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="M5.5 10.5 8.4 13.4 14.8 7"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="bond-chip__ticker">COI</span>
+                <span class="bond-chip__rate">5,00%</span>
+                <span class="bond-chip__badge bond-chip__badge--inflation">
+                  <span class="bond-chip__badge-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 3.5 6.75 5.75v5.15c0 3.34 2.09 6.35 5.25 7.6 3.16-1.25 5.25-4.26 5.25-7.6V5.75L12 3.5Z"
+                        stroke="currentColor"
+                        stroke-width="1.85"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9.5 12.5 11 11l1.5 1.5L15 10"
+                        stroke="currentColor"
+                        stroke-width="1.85"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Inflacja</span>
+                </span>
+                <span class="bond-chip__period">4 lata</span>
+              </button>
+
+              <button
+                class="bond-chip"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-bond="EDO"
+              >
+                <span class="bond-chip__ticker">EDO</span>
+                <span class="bond-chip__rate">5,60%</span>
+                <span class="bond-chip__badge bond-chip__badge--inflation">
+                  <span class="bond-chip__badge-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 3.5 6.75 5.75v5.15c0 3.34 2.09 6.35 5.25 7.6 3.16-1.25 5.25-4.26 5.25-7.6V5.75L12 3.5Z"
+                        stroke="currentColor"
+                        stroke-width="1.85"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9.5 12.5 11 11l1.5 1.5L15 10"
+                        stroke="currentColor"
+                        stroke-width="1.85"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Inflacja</span>
+                </span>
+                <span class="bond-chip__period">10 lat</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="panel-block" aria-label="Kwota inwestycji">
+            <div class="input-heading">
+              <h2 class="input-title">Ile chcesz ulokować?</h2>
+              <p class="input-inline-note" data-bond-count>
+                100 obligacji po 100 zł
+              </p>
+            </div>
+
+            <div class="amount-stack">
+              <div class="amount-display" aria-live="polite">
+                <label class="amount-display__field" for="amount-input">
+                  <span class="sr-only">Kwota inwestycji</span>
+                  <input
+                    id="amount-input"
+                    class="amount-display__input"
+                    type="text"
+                    inputmode="numeric"
+                    value="10 000"
+                    data-amount-display
+                    aria-label="Kwota inwestycji"
+                  />
+                </label>
+                <span class="amount-display__suffix">zł</span>
+              </div>
+
+              <div
+                class="amount-slider-wrap"
+                data-amount-slider-wrap
+                style="--slider-fill: 5.9%"
+              >
+                <label class="sr-only" for="amount-slider"
+                  >Kwota inwestycji</label
+                >
+                <input
+                  id="amount-slider"
+                  class="amount-slider"
+                  type="range"
+                  min="0"
+                  max="1000"
+                  step="1"
+                  value="59"
+                />
+                <div class="amount-slider__limits" aria-hidden="true">
+                  <span>100 zł</span>
+                  <span>precyzyjnie do 100 tys.</span>
+                  <span>500 tys. zł</span>
+                </div>
+              </div>
+
+              <div
+                class="chip-row chip-row--amount"
+                aria-label="Szybki wybór kwoty"
+              >
+                <button
+                  class="chip"
+                  type="button"
+                  aria-pressed="false"
+                  data-amount="3000"
+                >
+                  3 000
+                </button>
+                <button
+                  class="chip"
+                  type="button"
+                  aria-pressed="false"
+                  data-amount="5000"
+                >
+                  5 000
+                </button>
+                <button
+                  class="chip"
+                  type="button"
+                  aria-pressed="true"
+                  data-amount="10000"
+                >
+                  10 000
+                </button>
+                <button
+                  class="chip"
+                  type="button"
+                  aria-pressed="false"
+                  data-amount="20000"
+                >
+                  20 000
+                </button>
+                <button
+                  class="chip"
+                  type="button"
+                  aria-pressed="false"
+                  data-amount="50000"
+                >
+                  50 000
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section
+            class="panel-block state-panel"
+            aria-label="Założenie inflacji"
+            data-panel="inflation"
+          >
+            <div class="state-panel__inner">
+              <div class="input-heading">
+                <h2 class="input-title">Jaki poziom inflacji założyć?</h2>
+                <p class="input-inline-note" data-inflation-mode>
+                  Wpływa od 2. roku
+                </p>
+              </div>
+
+              <div
+                class="chip-row chip-row--compact chip-row--trio"
+                role="radiogroup"
+                aria-label="Scenariusze inflacji"
+              >
+                <button
+                  class="chip"
+                  type="button"
+                  role="radio"
+                  aria-checked="false"
+                  data-inflation="2"
+                >
+                  Niska 2,0%
+                </button>
+                <button
+                  class="chip chip--active"
+                  type="button"
+                  role="radio"
+                  aria-checked="true"
+                  data-inflation="3.5"
+                >
+                  Umiark. 3,5%
+                </button>
+                <button
+                  class="chip"
+                  type="button"
+                  role="radio"
+                  aria-checked="false"
+                  data-inflation="5"
+                >
+                  Wysoka 5,0%
+                </button>
+              </div>
+
+              <p class="helper-text" data-inflation-helper>
+                Dla COI i EDO ta wartość zmienia oprocentowanie od 2. roku.
+              </p>
+            </div>
+          </section>
+
+          <details class="advanced-options">
+            <summary class="advanced-options__trigger">
+              <svg
+                class="advanced-options__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+              Więcej opcji
+            </summary>
+
+            <div class="advanced-options__body">
+              <div class="option-row">
+                <div class="option-row__label">
+                  <strong>Konto IKE</strong>
+                  <span class="helper-text"
+                    >Wyłącza podatek Belki dla obligacji</span
+                  >
+                </div>
+                <button
+                  class="toggle"
+                  id="ike-toggle"
+                  type="button"
+                  role="switch"
+                  aria-checked="false"
+                  aria-label="Konto IKE"
+                >
+                  <span class="toggle__track"
+                    ><span class="toggle__thumb"></span
+                  ></span>
+                </button>
+              </div>
+
+              <div class="option-row">
+                <div class="option-row__label">
+                  <strong>Oprocentowanie lokaty</strong>
+                  <span class="helper-text">Ręczny benchmark porównawczy</span>
+                </div>
+                <label class="inline-input" for="deposit-rate">
+                  <input
+                    id="deposit-rate"
+                    type="text"
+                    value="4,5"
+                    inputmode="decimal"
+                    aria-label="Oprocentowanie lokaty"
+                  />
+                  <span>%</span>
+                </label>
+              </div>
+
+              <div class="option-row">
+                <div class="option-row__label">
+                  <strong>Oprocentowanie konta oszczędnościowego</strong>
+                  <span class="helper-text">Ręczny benchmark porównawczy</span>
+                </div>
+                <label class="inline-input" for="savings-rate">
+                  <input
+                    id="savings-rate"
+                    type="text"
+                    value="3,5"
+                    inputmode="decimal"
+                    aria-label="Oprocentowanie konta oszczędnościowego"
+                  />
+                  <span>%</span>
+                </label>
+              </div>
+
+              <div class="option-row" data-row="nbp">
+                <div class="option-row__label">
+                  <strong>Stopa referencyjna NBP</strong>
+                  <span class="helper-text"
+                    >Aktualna: 3,75%. Dotyczy ROR i DOR.</span
+                  >
+                </div>
+                <label class="inline-input" for="nbp-rate">
+                  <input
+                    id="nbp-rate"
+                    type="text"
+                    value="3,75"
+                    inputmode="decimal"
+                    aria-label="Stopa referencyjna NBP"
+                  />
+                  <span>%</span>
+                </label>
+              </div>
+
+              <div class="option-row">
+                <div class="option-row__label">
+                  <strong>Własna inflacja</strong>
+                  <span class="helper-text"
+                    >Jeśli zmienisz tę wartość, nadpisze preset</span
+                  >
+                </div>
+                <label class="inline-input" for="custom-inflation">
+                  <input
+                    id="custom-inflation"
+                    type="text"
+                    value="3,5"
+                    inputmode="decimal"
+                    aria-label="Własna inflacja"
+                  />
+                  <span>%</span>
+                </label>
+              </div>
+            </div>
+          </details>
+        </aside>
+
+        <section
+          class="workspace__results card result-shell"
+          aria-label="Wyniki symulacji"
+          aria-live="polite"
+        >
+          <div class="results__header">
+            <div class="results__headline">
+              <h2 class="results__bond-name" data-bond-name>COI — 4-letnie</h2>
+              <p class="results__description" data-bond-description>
+                Pierwszy rok: stałe 5,00%. Od 2. roku: inflacja + 1,50 p.p.
+                Odsetki wypłacane co roku na konto.
+              </p>
+            </div>
+
+            <span
+              class="results__badge results__badge--inflation"
+              data-bond-badge
+            >
+              <span class="results__badge-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 3.5 6.75 5.75v5.15c0 3.34 2.09 6.35 5.25 7.6 3.16-1.25 5.25-4.26 5.25-7.6V5.75L12 3.5Z"
+                    stroke="currentColor"
+                    stroke-width="1.85"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M9.5 12.5 11 11l1.5 1.5L15 10"
+                    stroke="currentColor"
+                    stroke-width="1.85"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span>Indeksowane inflacją</span>
+            </span>
+          </div>
+
+          <div class="hero-metric">
+            <p class="micro-label">Szacunkowy zysk netto</p>
+            <p
+              class="hero-metric__value hero-metric__value--positive"
+              data-value="netProfit"
+            >
+              +1 620,00 zł
+            </p>
+            <p class="hero-metric__total">
+              Łącznie: <strong data-value="netReturn">11 620,00 zł</strong>
+            </p>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <p class="micro-label">Wpłacasz</p>
+              <p class="metric-box__value" data-value="invested">10 000 zł</p>
+            </div>
+            <div class="metric-box">
+              <div class="micro-label label-with-help">
+                <span>Odsetki brutto</span>
+                <button
+                  class="term-help"
+                  type="button"
+                  aria-label="Wyjaśnienie: odsetki brutto"
+                >
+                  <span aria-hidden="true">i</span>
+                  <span class="term-help__tooltip" role="tooltip">
+                    Zysk przed podatkiem. To jeszcze nie jest kwota, która
+                    zostaje Ci na rękę.
+                  </span>
+                </button>
+              </div>
+              <p class="metric-box__value" data-value="grossInterest">
+                2 000,00 zł
+              </p>
+            </div>
+            <div class="metric-box">
+              <div class="micro-label label-with-help">
+                <span>Podatek Belki</span>
+                <button
+                  class="term-help"
+                  type="button"
+                  aria-label="Wyjaśnienie: podatek Belki"
+                >
+                  <span aria-hidden="true">i</span>
+                  <span class="term-help__tooltip" role="tooltip">
+                    19% podatku od wypracowanego zysku. Dlatego wynik netto jest
+                    niższy niż brutto.
+                  </span>
+                </button>
+              </div>
+              <p
+                class="metric-box__value metric-box__value--danger"
+                data-value="tax"
+              >
+                -380,00 zł
+              </p>
+            </div>
+            <div class="metric-box">
+              <div class="micro-label label-with-help">
+                <span>Efektywnie rocznie</span>
+                <button
+                  class="term-help"
+                  type="button"
+                  aria-label="Wyjaśnienie: efektywnie rocznie"
+                >
+                  <span aria-hidden="true">i</span>
+                  <span class="term-help__tooltip" role="tooltip">
+                    Uśredniony roczny wynik po podatku. Pomaga porównać serie o
+                    różnej długości.
+                  </span>
+                </button>
+              </div>
+              <p class="metric-box__value" data-value="effectiveAnnualRate">
+                3,82% netto
+              </p>
+            </div>
+          </div>
+
+          <div class="inaction-box">
+            <div class="inaction-box__head">
+              <h3 class="inaction-box__title">
+                Co się stanie, jeśli nic nie zrobisz?
+              </h3>
+            </div>
+            <p data-inaction-text>
+              Przy inflacji 3,5% rocznie Twoje 10 000 zł za 4 lata będzie mieć
+              siłę nabywczą ok. <strong>8 714,42 zł</strong>. To realny spadek
+              wartości o <strong>1 285,58 zł</strong>, nawet jeśli w portfelu
+              nadal widzisz 10 000 zł.
+            </p>
+          </div>
+
+          <div class="insight-banner">
+            <svg
+              class="insight-banner__icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M9.5 18h5m-4.25 2.5h3.5M12 4.5a5.5 5.5 0 0 0-3.55 9.7c.58.5.98 1.18 1.14 1.93h4.82c.16-.75.56-1.43 1.14-1.93A5.5 5.5 0 0 0 12 4.5Z"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <div class="insight-banner__copy">
+              <p class="insight-banner__title" data-insight-title>
+                Wyższa inflacja tu pomaga
+              </p>
+              <p data-insight-text>
+                Dla COI oprocentowanie od 2. roku rośnie razem z inflacją. Im
+                wyżej ustawisz ceny, tym mocniej ta seria pracuje.
+              </p>
+            </div>
+          </div>
+
+          <section class="compare-section compare-section--static">
+            <h3 class="compare-section__title">Porównaj z lokatą i kontem</h3>
+            <div class="compare-section__body">
+              <div class="compare-grid">
+                <div class="compare-card">
+                  <p class="micro-label" data-deposit-title>Lokata (4,5%)</p>
+                  <p class="compare-card__profit" data-value="depositProfit">
+                    +1 559,40 zł netto
+                  </p>
+                  <p class="compare-card__total" data-value="depositTotal">
+                    Łącznie: 11 559,40 zł
+                  </p>
+                  <p
+                    class="compare-card__vs compare-card__vs--positive"
+                    data-deposit-vs
+                  >
+                    COI daje <strong>61 zł więcej</strong> niż lokata w tym
+                    scenariuszu
+                  </p>
+                </div>
+
+                <div class="compare-card">
+                  <p class="micro-label" data-savings-title>
+                    Konto oszczędnościowe (3,5%)
+                  </p>
+                  <p class="compare-card__profit" data-value="savingsProfit">
+                    +1 194,94 zł netto
+                  </p>
+                  <p class="compare-card__total" data-value="savingsTotal">
+                    Łącznie: 11 194,94 zł
+                  </p>
+                  <p
+                    class="compare-card__vs compare-card__vs--positive"
+                    data-savings-vs
+                  >
+                    COI daje <strong>425 zł więcej</strong> niż konto
+                  </p>
+                </div>
+              </div>
+
+              <p class="helper-text" data-compare-helper>
+                Obie opcje liczę dla tego samego horyzontu co wybrana obligacja.
+              </p>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <section class="deep-dive" aria-label="Szczegóły i edukacja">
+        <h2 class="section-title">Jeśli chcesz wejść głębiej</h2>
+
+        <details class="card disclosure">
+          <summary class="disclosure__trigger" data-how-summary>
+            Jak działa COI?
+          </summary>
+          <div class="disclosure__body">
+            <p data-how-description>
+              W pierwszym roku COI ma stałe 5,00%. Od drugiego roku
+              oprocentowanie liczy się jako inflacja + 1,50 p.p., a odsetki
+              trafiają na konto raz w roku.
+            </p>
+
+            <div class="pros-cons">
+              <div class="pros-cons__col pros-cons__col--pro">
+                <p class="pros-cons__title">Dlaczego ktoś ją wybiera</p>
+                <ul data-pros-list>
+                  <li>Ochrona przed wyższą inflacją</li>
+                  <li>Coroczna wypłata odsetek na konto</li>
+                  <li>Stała marża od 2. roku</li>
+                </ul>
+              </div>
+
+              <div class="pros-cons__col pros-cons__col--con">
+                <p class="pros-cons__title">Na co uważać</p>
+                <ul data-cons-list>
+                  <li>4 lata oszczędzania</li>
+                  <li>Przy niskiej inflacji lokata może wypaść lepiej</li>
+                  <li>Przedterminowy wykup kosztuje 2,00 zł za sztukę</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="card disclosure">
+          <summary class="disclosure__trigger">
+            Wykres i tabela rok po roku
+          </summary>
+          <div class="disclosure__body">
+            <div
+              class="chart-placeholder"
+              aria-label="Miejsce na wykres wzrostu"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M5 18.5h14M6.5 15.5l3.75-4 3.25 2.75L18 8"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M14.5 8H18v3.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <p data-chart-copy>Symulacja dla 4 lat przy inflacji 3,5%</p>
+            </div>
+
+            <div class="table-wrap">
+              <table class="year-table">
+                <thead>
+                  <tr>
+                    <th>Okres</th>
+                    <th>Oprocentowanie</th>
+                    <th>Odsetki brutto</th>
+                    <th>Łącznie netto</th>
+                    <th>Wartość realna</th>
+                  </tr>
+                </thead>
+                <tbody data-year-table-body>
+                  <tr>
+                    <td>1</td>
+                    <td>5,00%</td>
+                    <td>500,00 zł</td>
+                    <td>10 405,00 zł</td>
+                    <td class="value--positive">10 053,14 zł</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>5,00%</td>
+                    <td>500,00 zł</td>
+                    <td>10 810,00 zł</td>
+                    <td class="value--positive">10 091,25 zł</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>5,00%</td>
+                    <td>500,00 zł</td>
+                    <td>11 215,00 zł</td>
+                    <td class="value--positive">10 115,29 zł</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>5,00%</td>
+                    <td>500,00 zł</td>
+                    <td>11 620,00 zł</td>
+                    <td class="value--positive">10 126,16 zł</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="helper-text" data-table-helper>
+              Wartość realna pokazuje, ile ten wynik jest wart po uwzględnieniu
+              inflacji 3,5%.
+            </p>
+          </div>
+        </details>
+
+        <details class="card disclosure">
+          <summary class="disclosure__trigger">
+            Kiedy obligacje, a kiedy lokata?
+          </summary>
+          <div class="disclosure__body">
+            <div class="edu-grid">
+              <div class="edu-card">
+                <p class="edu-card__title">Podatek Belki (19%)</p>
+                <p>
+                  Od zysków z obligacji, lokat i kont oszczędnościowych
+                  pobierany jest 19% podatku. Wyjątek w tym prototypie to
+                  przełącznik IKE dla obligacji.
+                </p>
+              </div>
+
+              <div class="edu-card">
+                <p class="edu-card__title">BFG vs Skarb Państwa</p>
+                <p>
+                  Lokaty chroni BFG do 100 000 EUR. Obligacje detaliczne
+                  gwarantuje Skarb Państwa. To różne mechanizmy bezpieczeństwa,
+                  ale oba należą do najspokojniejszych opcji.
+                </p>
+              </div>
+
+              <div class="edu-card">
+                <p class="edu-card__title">Inflacja nadal ma znaczenie</p>
+                <p>
+                  Nawet jeśli nie zmienia kuponu danej serii, wpływa na realną
+                  wartość wyniku. Dlatego pokazuję też „co zostaje po inflacji”,
+                  nie tylko nominalny zysk.
+                </p>
+              </div>
+
+              <div class="edu-card">
+                <p class="edu-card__title">Przedterminowy wykup</p>
+                <p>
+                  Detaliczne obligacje możesz wykupić wcześniej, ale zwykle z
+                  opłatą za każdą sztukę. Lokata zerwana przed terminem
+                  najczęściej traci odsetki.
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="next-steps" aria-label="Następne kroki">
+        <h2 class="section-title">Co dalej</h2>
+
+        <div class="next-steps__grid">
+          <a
+            class="next-card"
+            href="https://marciniwuc.com/wyzwanie-pierwsza-obligacja/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 2v10m0 0 4-4m-4 4-4-4M2 17l.62 2.48A2 2 0 0 0 4.56 21h14.88a2 2 0 0 0 1.94-1.52L22 17"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <p class="next-card__title">Jak kupić pierwsze obligacje</p>
+            <p class="next-card__text">
+              Krótki materiał krok po kroku, bez finansowego żargonu.
+            </p>
+          </a>
+
+          <a
+            class="next-card"
+            href="https://marciniwuc.com/obligacje-indeksowane-inflacja-kalkulator/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <p class="next-card__title">Dowiedz się więcej o obligacjach</p>
+            <p class="next-card__text">
+              Szczegółowy artykuł i szerszy kontekst dla bardziej dociekliwych.
+            </p>
+          </a>
+
+          <a
+            class="next-card"
+            href="https://arek-portfolio-fbo.vercel.app/"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="m12 19-7-7 7-7M19 12H5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <p class="next-card__title">Wróć do portfolio</p>
+            <p class="next-card__text">
+              Zobacz case study i decyzje produktowe stojące za tym PoC.
+            </p>
+          </a>
+        </div>
+      </section>
+
+      <footer
+        class="trust-footer"
+        aria-label="Informacje prawne i uproszczenia"
+      >
+        <div class="trust-footer__top">
+          <svg
+            class="trust-footer__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 3.5 6.75 5.75v5.15c0 3.34 2.09 6.35 5.25 7.6 3.16-1.25 5.25-4.26 5.25-7.6V5.75L12 3.5Z"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <div class="trust-footer__copy">
+            <p class="trust-footer__disclaimer">
+              To narzędzie ma charakter edukacyjny i nie stanowi porady
+              inwestycyjnej. Wynik zależy od przyjętej inflacji, aktualnych
+              parametrów emisji i uproszczeń modelu.
+            </p>
+            <p class="trust-footer__source">
+              Stawki w prototypie: oferta detalicznych obligacji Skarbu Państwa
+              na <strong>marzec 2026</strong> oraz stopa referencyjna NBP
+              <strong>3,75%</strong>.
+            </p>
+          </div>
+        </div>
+
+        <details class="trust-footer__simplifications">
+          <summary>Uproszczenia tej symulacji</summary>
+          <ul>
+            <li>
+              Inflacja jest stała przez cały okres i działa jako scenariusz
+              użytkownika
+            </li>
+            <li>
+              Lokata i konto są ręcznymi benchmarkami porównawczymi, nie
+              najlepszą ofertą rynku
+            </li>
+            <li>
+              COI i ROR/DOR pokazuję bez reinwestowania wypłacanych odsetek
+            </li>
+            <li>
+              Kwota inwestycji jest zaokrąglana do pełnych obligacji po 100 zł
+            </li>
+            <li>
+              Nie modeluję ceny zamiany 99,90 zł ani przedterminowego wykupu w
+              głównym wyniku
+            </li>
+          </ul>
+        </details>
+      </footer>
+    </main>
+  </body>
+</html>

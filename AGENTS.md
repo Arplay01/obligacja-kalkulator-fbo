@@ -69,3 +69,5 @@ This repository is prepared for Codex-native collaboration with repo-local skill
 - Preserve user changes and work with the current tree as-is.
 - When a workflow or rule becomes repetitive, encode it as a repo-local skill instead of repeating it in chat.
 - Do not treat `docs/product/prd.md` as a prompt for prototype generation; use `docs/product/prototype-brief.md` instead.
+- For bug fixes explicitly reported by the user during vibe coding, add a short inline code comment after the fix is working that records what was broken and how it was fixed.
+- Do not add this bugfix comment trail for the agent's own silent or automatic fixes unless a comment is independently useful for readability or maintenance.

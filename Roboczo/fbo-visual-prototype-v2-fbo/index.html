@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Kalkulator obligacji skarbowych - wariant FBO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="prototype-shell">
+      <header class="intro-block" aria-label="Wprowadzenie do kalkulatora">
+        <p class="intro-block__eyebrow">Finanse Bardzo Osobiste</p>
+        <div class="intro-block__content">
+          <div class="intro-block__copy">
+            <h1 class="intro-block__title">Sprawdz, ile moga dac obligacje skarbowe</h1>
+            <p class="intro-block__lead">
+              To spokojna, orientacyjna symulacja. Wpisujesz kwote, ustawiasz jedno
+              zalozenie i od razu widzisz, co ten scenariusz moze oznaczac dla Twoich
+              pieniedzy.
+            </p>
+          </div>
+          <p class="intro-block__trust">
+            Wynik zalezy od inflacji i warunkow obligacji, wiec traktuj go jak szacunek,
+            a nie obietnice zysku.
+          </p>
+        </div>
+      </header>
+
+      <section class="top-zone" aria-label="Wybierz rodzaj obligacji">
+        <div class="bond-selector-wrap">
+          <div class="bond-selector" role="tablist" aria-label="Rodzaje obligacji">
+            <button class="bond-card" type="button" role="tab" aria-selected="false">
+              <span class="bond-card__indicator" aria-hidden="true"></span>
+              <span class="bond-card__ticker">OTS <strong>2,50%</strong></span>
+              <span class="bond-card__subtitle">Obligacje 3-miesieczne</span>
+              <span class="bond-card__type bond-card__type--fixed">Stale</span>
+            </button>
+
+            <button class="bond-card" type="button" role="tab" aria-selected="false">
+              <span class="bond-card__indicator" aria-hidden="true"></span>
+              <span class="bond-card__ticker">ROR <strong>4,25%</strong></span>
+              <span class="bond-card__subtitle">Obligacje roczne</span>
+              <span class="bond-card__type bond-card__type--variable">Zmienne</span>
+            </button>
+
+            <button class="bond-card" type="button" role="tab" aria-selected="false">
+              <span class="bond-card__indicator" aria-hidden="true"></span>
+              <span class="bond-card__ticker">DOR <strong>4,40%</strong></span>
+              <span class="bond-card__subtitle">Obligacje 2-letnie</span>
+              <span class="bond-card__type bond-card__type--variable">Zmienne</span>
+            </button>
+
+            <button class="bond-card" type="button" role="tab" aria-selected="false">
+              <span class="bond-card__indicator" aria-hidden="true"></span>
+              <span class="bond-card__ticker">TOS <strong>4,65%</strong></span>
+              <span class="bond-card__subtitle">Obligacje 3-letnie</span>
+              <span class="bond-card__type bond-card__type--fixed">Stale</span>
+            </button>
+
+            <button
+              class="bond-card bond-card--active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+            >
+              <span class="bond-card__indicator" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M5.5 10.5 8.4 13.4 14.8 7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="bond-card__ticker">COI <strong>5,00%</strong></span>
+              <span class="bond-card__subtitle">Obligacje 4-letnie</span>
+              <span class="bond-card__type bond-card__type--inflation">Indeksowane inflacja</span>
+            </button>
+
+            <button class="bond-card" type="button" role="tab" aria-selected="false">
+              <span class="bond-card__indicator" aria-hidden="true"></span>
+              <span class="bond-card__ticker">EDO <strong>5,60%</strong></span>
+              <span class="bond-card__subtitle">Obligacje 10-letnie</span>
+              <span class="bond-card__type bond-card__type--inflation">Indeksowane inflacja</span>
+            </button>
+          </div>
+        </div>
+
+        <article class="bond-strip">
+          <div class="bond-strip__main">
+            <p class="micro-label">Wybrana seria</p>
+            <h2 class="bond-strip__title">COI - obligacje 4-letnie</h2>
+            <p class="bond-strip__description">
+              1. rok: stale oprocentowanie. Potem: inflacja plus marza.
+            </p>
+            <span class="status-chip">Indeksowane inflacja</span>
+          </div>
+
+          <div class="metric-cell">
+            <p class="micro-label">Startowe oprocentowanie</p>
+            <p class="metric-cell__value">5,00%</p>
+          </div>
+
+          <div class="metric-cell">
+            <p class="micro-label">Jak dlugo</p>
+            <p class="metric-cell__value">4 lata</p>
+          </div>
+
+          <div class="metric-cell">
+            <p class="micro-label">Wyplata odsetek</p>
+            <p class="metric-cell__value">Raz w roku</p>
+          </div>
+
+          <div class="metric-cell">
+            <p class="micro-label">Kapitalizacja</p>
+            <p class="metric-cell__value">Brak</p>
+          </div>
+
+          <div class="metric-cell">
+            <p class="micro-label">Okres odsetkowy</p>
+            <p class="metric-cell__value">12 mies.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-zone-shell">
+        <div class="content-zone">
+          <article class="panel simulation-panel" aria-labelledby="panel-form-title">
+            <header class="panel-header">
+              <div class="panel-header__lead">
+                <span class="panel-header__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 18.5h14M7.5 15.5V10m4 5.5V7m4 8.5v-3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div>
+                  <h2 id="panel-form-title">Twoja symulacja</h2>
+                  <p class="panel-header__description">
+                    Najpierw kwota, potem jedno zalozenie. Reszte pokazemy prostym jezykiem.
+                  </p>
+                </div>
+              </div>
+              <p class="panel-header__meta panel-header__badge">COI / 4 lata</p>
+            </header>
+
+            <div class="panel__body">
+              <section class="amount-hero" aria-labelledby="amount-title">
+                <p class="micro-label">Start od kwoty</p>
+                <h3 class="amount-hero__title" id="amount-title">Ile chcesz ulokowac?</h3>
+
+                <div class="field field--amount">
+                  <label class="sr-only" for="amount">Kwota inwestycji</label>
+                  <div class="field__control">
+                    <input id="amount" name="amount" type="text" value="10 000" />
+                    <span class="field__suffix">zl</span>
+                  </div>
+                </div>
+
+                <p class="amount-hero__derived">To 100 obligacji po 100 zl kazda.</p>
+
+                <div class="amount-presets" aria-label="Szybki wybor kwoty">
+                  <button class="amount-presets__chip" type="button">5 000 zl</button>
+                  <button class="amount-presets__chip amount-presets__chip--active" type="button">
+                    10 000 zl
+                  </button>
+                  <button class="amount-presets__chip" type="button">20 000 zl</button>
+                  <button class="amount-presets__chip" type="button">50 000 zl</button>
+                  <button class="amount-presets__chip" type="button">100 000 zl</button>
+                </div>
+
+                <aside class="info-note" aria-label="Wazna informacja o kwocie">
+                  <span class="info-note__icon" aria-hidden="true">i</span>
+                  <p>
+                    Obligacje kupujesz w sztukach po <strong>100 zl</strong>. Jesli wpiszesz
+                    kwote pomiedzy progami, symulacja i tak zaokragli zakup do pelnych
+                    obligacji.
+                  </p>
+                </aside>
+              </section>
+
+              <section class="assumptions-panel" aria-label="Scenariusz inflacji">
+                <div class="assumptions-panel__header">
+                  <div>
+                    <p class="micro-label">Scenariusz inflacji</p>
+                    <h3 class="scenario-intro__title">Jaki scenariusz inflacyjny zakladasz?</h3>
+                  </div>
+                  <span class="assumptions-panel__value">Bazowy</span>
+                </div>
+
+                <p class="scenario-intro__text">
+                  Wybierz wariant, ktory brzmi najblizej temu, czego sie spodziewasz.
+                </p>
+
+                <div class="scenario-grid" role="radiogroup" aria-label="Scenariusze inflacji">
+                  <button class="scenario-card" type="button" role="radio" aria-checked="false">
+                    <span class="scenario-card__indicator" aria-hidden="true"></span>
+                    <span class="scenario-card__title">Spokojniejsza inflacja (ok. 1,5% rocznie)</span>
+                    <span class="scenario-card__text">
+                      Ceny rosna wolniej i bardziej przewidywalnie.
+                    </span>
+                  </button>
+
+                  <button
+                    class="scenario-card scenario-card--active"
+                    type="button"
+                    role="radio"
+                    aria-checked="true"
+                  >
+                    <span class="scenario-card__indicator" aria-hidden="true">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path
+                          d="M5.5 10.5 8.4 13.4 14.8 7"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    <span class="scenario-card__title">Bazowy scenariusz (ok. 2,1% rocznie)</span>
+                    <span class="scenario-card__text">
+                      Inflacja jest odczuwalna, ale nie wraca do najtrudniejszych poziomow.
+                    </span>
+                  </button>
+
+                  <button class="scenario-card" type="button" role="radio" aria-checked="false">
+                    <span class="scenario-card__indicator" aria-hidden="true"></span>
+                    <span class="scenario-card__title">Wyzsza inflacja (ok. 5,0% rocznie)</span>
+                    <span class="scenario-card__text">
+                      Pieniadz szybciej traci wartosc i mocniej czuc to w wydatkach.
+                    </span>
+                  </button>
+                </div>
+
+                <p class="helper-text">
+                  COI i EDO reaguja na inflacje, wiec ten wybor realnie zmienia wynik symulacji.
+                </p>
+              </section>
+
+              <button class="primary-button" type="button">
+                <span>Pokaz szacunkowy wynik</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M5 12h14M13 6l6 6-6 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </article>
+
+          <article class="panel panel--result" aria-labelledby="panel-result-title">
+            <header class="panel-header">
+              <div class="panel-header__lead">
+                <span class="panel-header__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 18.5h14M6.5 15.5l3.75-4 3.25 2.75L18 8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M14.5 8H18v3.5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div>
+                  <h2 id="panel-result-title">Co to znaczy dla Ciebie</h2>
+                  <p class="panel-header__description">
+                    Najpierw wniosek, dopiero potem liczby i mechanika produktu.
+                  </p>
+                </div>
+              </div>
+            </header>
+
+            <div class="panel__body panel__body--spacious">
+              <section class="result-summary" aria-label="Podsumowanie wyniku">
+                <div class="result-stat">
+                  <p class="micro-label">Przewidywany zysk netto</p>
+                  <p class="result-stat__value">1 279,80 zl</p>
+                </div>
+
+                <div class="result-stat result-stat--accent">
+                  <p class="micro-label">Lacznie na koniec</p>
+                  <p class="result-stat__value">11 279,80 zl</p>
+                </div>
+              </section>
+
+              <!--
+                Secondary comparison metric:
+                this exists because bonds have different maturities, so the total payout alone
+                is hard to compare across products. We normalize the current scenario to an
+                annualized net return ("sredniorocznie"), not to a literal PLN earned every year.
+                In other words: this is a comparison helper, not the main user-facing outcome.
+              -->
+              <section class="annualized-compare" aria-label="Pomocnicza metryka porownawcza">
+                <div class="annualized-compare__row">
+                  <span class="annualized-compare__label">Sredniorocznie</span>
+                  <strong class="annualized-compare__value">3,06% netto / rok</strong>
+                </div>
+                <p class="annualized-compare__text">
+                  To uproszczone przeliczenie calego scenariusza na 1 rok, zeby latwiej
+                  porownac obligacje o roznych horyzontach.
+                </p>
+              </section>
+
+              <section class="result-takeaway" aria-label="Interpretacja wyniku">
+                <p>
+                  Przy tych zalozeniach po 4 latach mozesz miec ok.
+                  <strong>1 279,80 zl zysku netto</strong>. To scenariusz dla COI przy
+                  sredniej inflacji na poziomie <strong>2,1%</strong>.
+                </p>
+                <div class="inaction-inline">
+                  <h3 class="inaction-inline__title">Co sie stanie, jesli nic nie zrobisz?</h3>
+                  <p class="inaction-inline__text">
+                  Przy sredniej inflacji <strong>2,1% rocznie</strong> Twoje
+                  <strong>10 000 zl</strong> za 4 lata bedzie mialo sile nabywcza ok.
+                  <span class="inaction-inline__value">9 202,31 zl</span>.
+                  To realna utrata wartosci o
+                  <span class="inaction-inline__loss">797,69 zl</span>, nawet jesli nominalnie
+                  nadal widzisz te same 10 000 zl.
+                  </p>
+                </div>
+              </section>
+
+              <section class="result-list" aria-label="Szczegoly wyniku">
+                <div class="result-row">
+                  <span>Wplacasz na start</span>
+                  <strong>10 000 zl</strong>
+                </div>
+
+                <div class="result-row">
+                  <span>Odsetki brutto</span>
+                  <strong>1 580,00 zl</strong>
+                </div>
+
+                <div class="result-row">
+                  <span>Podatek Belki</span>
+                  <strong>300,20 zl</strong>
+                </div>
+
+                <div class="result-row">
+                  <span>Do wyplaty na koniec</span>
+                  <strong>11 279,80 zl</strong>
+                </div>
+              </section>
+
+              <details class="bond-details-disclosure">
+                <summary>Jak to dziala?</summary>
+
+                <div class="bond-details-disclosure__body">
+                  <div class="bond-details-disclosure__intro">
+                    W pierwszym roku oprocentowanie COI jest stale. Potem kolejne okresy
+                    zalezne sa od inflacji, wiec przy wyzszej inflacji odsetki moga byc
+                    wyzsze, ale nic nie jest gwarantowane z wyprzedzeniem.
+                  </div>
+
+                  <div class="pros-cons-grid">
+                    <section class="pros-cons-card pros-cons-card--pro" aria-label="Zalety">
+                      <p class="pros-cons-card__title">Zalety</p>
+                      <ul>
+                        <li>latwiej ochronisz oszczednosci, gdy inflacja nie chce odpuscic</li>
+                        <li>odsetki sa wyplacane co roku</li>
+                        <li>to prosty produkt do dluzszego parkowania gotowki</li>
+                      </ul>
+                    </section>
+
+                    <section
+                      class="pros-cons-card pros-cons-card--careful"
+                      aria-label="Na co uwazac"
+                    >
+                      <p class="pros-cons-card__title">Na co uwazac</p>
+                      <ul>
+                        <li>to nadal zamrozenie pieniedzy na 4 lata</li>
+                        <li>przy niskiej inflacji wynik moze byc mniej atrakcyjny</li>
+                        <li>wczesniejszy wykup oznacza dodatkowa oplata</li>
+                      </ul>
+                    </section>
+                  </div>
+
+                  <p class="detail-note">
+                    Jesli wyjdziesz przed terminem, zaplacisz oplate za wczesniejszy wykup.
+                    Dlatego ten wariant najlepiej czytac jako spokojna czesc oszczednosci,
+                    a nie pieniadze na juz.
+                  </p>
+                </div>
+              </details>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
