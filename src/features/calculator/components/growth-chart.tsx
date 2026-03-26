@@ -100,6 +100,11 @@ export function GrowthChart({
   const points = getChartPoints(invested, breakdown);
   const hasEnoughPointsForChart = points.length >= 3;
   const finalPoint = points.at(-1);
+  const fallbackPoint = finalPoint ?? {
+    label: "Start",
+    netBalance: invested,
+    realValue: invested,
+  };
 
   if (!hasEnoughPointsForChart || !finalPoint) {
     return (
@@ -121,17 +126,18 @@ export function GrowthChart({
           </div>
           <div className="chart-stat">
             <span className="chart-stat__label">Na koniec</span>
-            <strong>{formatMoneyRounded(finalPoint.netBalance)}</strong>
+            <strong>{formatMoneyRounded(fallbackPoint.netBalance)}</strong>
           </div>
           <div className="chart-stat">
             <span className="chart-stat__label">Po inflacji</span>
-            <strong>{formatMoneyRounded(finalPoint.realValue)}</strong>
+            <strong>{formatMoneyRounded(fallbackPoint.realValue)}</strong>
           </div>
         </div>
       </div>
     );
   }
 
+  const chartFinalPoint = finalPoint;
   const maxValue = Math.max(...points.map((point) => point.netBalance), invested) * 1.08;
   const nominalPoints = getPolylinePoints(points, maxValue, "netBalance");
   const realPoints = getPolylinePoints(points, maxValue, "realValue");
@@ -235,11 +241,11 @@ export function GrowthChart({
         </div>
         <div className="chart-stat">
           <span className="chart-stat__label">Na koniec netto</span>
-          <strong>{formatMoneyRounded(finalPoint.netBalance)}</strong>
+          <strong>{formatMoneyRounded(chartFinalPoint.netBalance)}</strong>
         </div>
         <div className="chart-stat">
           <span className="chart-stat__label">Po inflacji</span>
-          <strong>{formatMoneyRounded(finalPoint.realValue)}</strong>
+          <strong>{formatMoneyRounded(chartFinalPoint.realValue)}</strong>
         </div>
       </div>
     </figure>

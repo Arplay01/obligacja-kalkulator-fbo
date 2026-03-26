@@ -280,7 +280,7 @@ export function CalculatorInputPanel({
             />
             <div className="amount-slider__limits" aria-hidden="true">
               <span>100 zł</span>
-              <span>precyzyjnie do 100 tys.</span>
+              <span>100 tyś.</span>
               <span>500 tys. zł</span>
             </div>
           </div>
