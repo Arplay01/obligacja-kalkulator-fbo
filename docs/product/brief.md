@@ -15,6 +15,15 @@ Początkujący użytkownik:
 - nie chce finansowego interfejsu eksperckiego,
 - potrzebuje prostoty, zrozumienia i intencji działania.
 
+W praktyce to często nie jest problem wiedzy o samych obligacjach, tylko lęku przed ruszeniem oszczędności.
+
+Można to opisać tak:
+
+- użytkowniczka ma pieniądze na koncie lub lokacie,
+- nie inwestuje, bo boi się popełnić błąd,
+- słyszała o obligacjach skarbowych, ale nie wie, czy to w ogóle jest dla niej,
+- nie potrzebuje od razu szerokiego porównania produktów, tylko spokojnej odpowiedzi, od czego zacząć.
+
 To nie jest problem "jak porównać wszystkie serie obligacji". To jest problem "co mogę zrobić z pieniędzmi i jak ruszyć z miejsca".
 
 ## Dla kogo jest ten PoC
@@ -68,6 +77,12 @@ W praktyce okazało się, że dla laika to nie jest najkrótsza droga do decyzji
 Produkt skupia się na jednym ekranie i jednym głównym zadaniu:
 
 pokazać, co dzieje się z pieniędzmi użytkownika przy wybranej obligacji, jak to wypada wobec lokaty i konta oraz co zrobić dalej.
+
+To jest krok 0, nie porównywarka.
+
+Najpierw ma paść odpowiedź na pytanie:
+
+czy obligacje skarbowe w ogóle mają sens przy moich konkretnych oszczędnościach, zanim użytkownik zacznie zastanawiać się, która seria jest najlepsza.
 
 W scope są:
 
