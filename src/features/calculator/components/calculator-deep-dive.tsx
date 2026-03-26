@@ -3,7 +3,7 @@ import type {
   BondCopyContext,
   BondDefinition,
 } from "@/features/calculator/domain/types";
-import { ChartPlaceholderIcon } from "@/features/calculator/components/icons";
+import { GrowthChart } from "@/features/calculator/components/growth-chart";
 import { formatMoney, formatPercent } from "@/features/calculator/lib/formatters";
 import type { SyntheticEvent } from "react";
 
@@ -80,13 +80,12 @@ export function CalculatorDeepDive({
       >
         <summary className="disclosure__trigger">Wykres i tabela rok po roku</summary>
         <div className="disclosure__body">
-          <div className="chart-placeholder" aria-label="Miejsce na wykres wzrostu">
-            <ChartPlaceholderIcon />
-            <p data-chart-copy>
-              Symulacja dla {bond.termLabel.toLowerCase()} przy inflacji{" "}
-              {formatPercent(effectiveInflation)}
-            </p>
-          </div>
+          <GrowthChart
+            invested={bondResult.invested}
+            breakdown={bondResult.breakdown}
+            effectiveInflation={effectiveInflation}
+            termLabel={bond.termLabel}
+          />
 
           <div className="table-wrap">
             <table className="year-table">
@@ -173,4 +172,3 @@ export function CalculatorDeepDive({
     </section>
   );
 }
-

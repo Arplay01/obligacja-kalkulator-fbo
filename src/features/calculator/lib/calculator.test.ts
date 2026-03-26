@@ -15,7 +15,13 @@ import {
   parseLocaleNumber,
   sliderValueToAmount,
 } from "@/features/calculator/lib/calculator";
-import { formatGroupedInteger } from "@/features/calculator/lib/formatters";
+import {
+  formatGroupedInteger,
+  formatInputNumber,
+  formatInteger,
+  formatMoney,
+  formatMoneyRounded,
+} from "@/features/calculator/lib/formatters";
 
 describe("calculator logic", () => {
   it("normalises amount to full bonds and minimum 100 zł", () => {
@@ -65,9 +71,19 @@ describe("calculator logic", () => {
   });
 
   it("forces grouped thousands in amount presets", () => {
-    expect(formatGroupedInteger(3000)).toBe("3 000");
-    expect(formatGroupedInteger(5000)).toBe("5 000");
-    expect(formatGroupedInteger(50_000)).toBe("50 000");
+    expect(formatGroupedInteger(3000)).toBe("3\u00A0000");
+    expect(formatGroupedInteger(5000)).toBe("5\u00A0000");
+    expect(formatGroupedInteger(50_000)).toBe("50\u00A0000");
+  });
+
+  it("keeps non-breaking thousand separators across money formatting", () => {
+    expect(formatInteger(1_234_567)).toBe("1\u00A0234\u00A0567");
+    expect(formatMoney(10_126.16)).toBe("10\u00A0126,16 zł");
+    expect(formatMoney(1_000_000, { signed: true })).toBe(
+      "+1\u00A0000\u00A0000,00 zł",
+    );
+    expect(formatMoneyRounded(1_000_000)).toBe("1\u00A0000\u00A0000 zł");
+    expect(formatInputNumber(12_345.6)).toBe("12\u00A0345,6");
   });
 
   it("matches prototype math for default COI scenario", () => {

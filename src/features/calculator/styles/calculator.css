@@ -420,6 +420,12 @@
   color: var(--color-gold-deep);
 }
 
+.calculator-route .intro__trust-copy {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--text-40);
+}
+
 .calculator-route .gradient-text {
   background: linear-gradient(
     135deg,
@@ -684,15 +690,17 @@
 }
 
 .calculator-route .amount-display__field {
+  flex: 1 1 auto;
   min-width: 0;
 }
 
 .calculator-route .amount-display__input {
-  width: min(100%, 12rem);
+  width: 100%;
+  max-width: 100%;
   padding: 0;
   border: 0;
   background: transparent;
-  font-size: clamp(2rem, 4vw, 2.65rem);
+  font-size: var(--amount-input-font-size, clamp(2rem, 4vw, 2.65rem));
   line-height: 1;
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -701,6 +709,7 @@
     "tnum" 1,
     "lnum" 1;
   font-variant-numeric: tabular-nums lining-nums;
+  transition: font-size 120ms ease;
 }
 
 .calculator-route .amount-display__input::placeholder {
@@ -1712,28 +1721,208 @@
   opacity: 0.35;
 }
 
-.calculator-route .chart-placeholder {
+.calculator-route .growth-chart,
+.calculator-route .chart-empty-state {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  min-height: 10rem;
+  flex-direction: column;
+  gap: 1rem;
   padding: 1rem;
   border-radius: var(--radius-panel);
-  border: 1px dashed rgba(41, 39, 35, 0.15);
-  background: linear-gradient(
-    135deg,
-    rgba(232, 168, 56, 0.04),
-    rgba(92, 141, 103, 0.04)
-  );
+  border: 1px solid rgba(41, 39, 35, 0.08);
+  background:
+    radial-gradient(circle at top left, rgba(232, 168, 56, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 245, 239, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.calculator-route .growth-chart__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.calculator-route .growth-chart__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold-dark);
+}
+
+.calculator-route .growth-chart__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-80);
+}
+
+.calculator-route .growth-chart__legend {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.calculator-route .growth-chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(41, 39, 35, 0.07);
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--text-60);
+}
+
+.calculator-route .growth-chart__swatch {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.calculator-route .growth-chart__swatch--nominal {
+  background: linear-gradient(135deg, #e8a838, #c98720);
+}
+
+.calculator-route .growth-chart__swatch--real {
+  background: linear-gradient(135deg, #5c8d67, #3f6f4a);
+}
+
+.calculator-route .growth-chart__shell {
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.calculator-route .growth-chart__svg {
+  display: block;
+  width: 100%;
+  min-width: 38rem;
+  height: auto;
+}
+
+.calculator-route .growth-chart__grid-line {
+  stroke: rgba(41, 39, 35, 0.08);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+}
+
+.calculator-route .growth-chart__axis-label {
+  fill: var(--text-40);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calculator-route .growth-chart__axis-label--y {
+  font-size: 11px;
+}
+
+.calculator-route .growth-chart__area {
+  fill: rgba(232, 168, 56, 0.12);
+}
+
+.calculator-route .growth-chart__line {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.calculator-route .growth-chart__line--nominal {
+  stroke: #d5942b;
+}
+
+.calculator-route .growth-chart__line--real {
+  stroke: #5c8d67;
+}
+
+.calculator-route .growth-chart__point {
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 2.5;
+}
+
+.calculator-route .growth-chart__point--nominal {
+  fill: #d5942b;
+}
+
+.calculator-route .growth-chart__point--real {
+  fill: #5c8d67;
+}
+
+.calculator-route .growth-chart__footer,
+.calculator-route .chart-empty-state__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.calculator-route .chart-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(41, 39, 35, 0.06);
+}
+
+.calculator-route .chart-stat__label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-40);
+}
+
+.calculator-route .chart-stat strong {
+  font-size: 1.02rem;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.calculator-route .chart-empty-state {
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
   text-align: center;
 }
 
-.calculator-route .chart-placeholder svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--color-gold);
+.calculator-route .chart-empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 999px;
+  background: rgba(232, 168, 56, 0.12);
+  color: var(--color-gold-dark);
+}
+
+.calculator-route .chart-empty-state__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.calculator-route .chart-empty-state__copy {
+  max-width: 32rem;
+}
+
+.calculator-route .chart-empty-state__title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.calculator-route .chart-empty-state__copy p {
+  margin: 0;
+  color: var(--text-60);
 }
 
 .calculator-route .table-wrap {
@@ -2054,6 +2243,11 @@
 
   .calculator-route .next-card:last-child {
     grid-column: auto;
+  }
+
+  .calculator-route .growth-chart__footer,
+  .calculator-route .chart-empty-state__stats {
+    grid-template-columns: 1fr;
   }
 
   .calculator-route .chip-row--amount {

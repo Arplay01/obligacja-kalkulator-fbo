@@ -44,6 +44,28 @@ test.describe("kalkulator", () => {
     );
   });
 
+  test("keeps manual amount input formatted and synced after slider changes", async ({
+    page,
+  }) => {
+    await gotoCalculator(page);
+
+    await page.locator("#amount-slider").evaluate((element: HTMLInputElement) => {
+      element.value = "850";
+      element.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    const amountInput = page.locator("#amount-input");
+    const sliderDrivenValue = await amountInput.inputValue();
+    await amountInput.click();
+    await expect(amountInput).toHaveValue(sliderDrivenValue);
+
+    await amountInput.fill("100000000");
+    await expect(amountInput).toHaveValue("100 000 000");
+    await expect(page.locator("[data-bond-count]")).toHaveText(
+      "1 000 000 obligacji po 100 zł",
+    );
+  });
+
   test("switches to custom inflation live", async ({ page }) => {
     await gotoCalculator(page);
 
@@ -57,6 +79,22 @@ test.describe("kalkulator", () => {
     await page.getByRole("tab", { name: /TOS/i }).click();
     await expect(page.locator("[data-inflation-mode]")).toHaveText(
       "Aktywna własna inflacja: 4,20%",
+    );
+  });
+
+  test("renders a chart for long series and an elegant empty state for short ones", async ({
+    page,
+  }) => {
+    await gotoCalculator(page);
+
+    await page.getByText("Wykres i tabela rok po roku").click();
+    await expect(page.locator("[data-growth-chart]")).toBeVisible();
+    await expect(page.locator("[data-chart-empty]")).toHaveCount(0);
+
+    await page.getByRole("tab", { name: /OTS/i }).click();
+    await expect(page.locator("[data-chart-empty]")).toBeVisible();
+    await expect(page.locator("[data-chart-empty]")).toContainText(
+      "Za krótka symulacja na wykres liniowy",
     );
   });
 

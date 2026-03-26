@@ -3,6 +3,7 @@ import type {
   BondId,
   CalculatorState,
 } from "@/features/calculator/domain/types";
+import { AmountInput } from "@/features/calculator/components/amount-input";
 import { BondBadge } from "@/features/calculator/components/bond-badge";
 import { CheckIcon, SettingsIcon } from "@/features/calculator/components/icons";
 import { FormattedNumberInput } from "@/features/calculator/components/formatted-number-input";
@@ -12,7 +13,7 @@ import {
   amountToSliderValue,
   formatBondCount,
   getEffectiveInflation,
-  parseAmountInput,
+  normaliseAmount,
   parseLocaleNumber,
 } from "@/features/calculator/lib/calculator";
 import {
@@ -174,7 +175,7 @@ export function CalculatorInputPanel({
   onCustomInflationChange,
   onStep,
 }: CalculatorInputPanelProps) {
-  const bondCountText = formatBondCount(state.amount / 100);
+  const bondCountText = formatBondCount(normaliseAmount(state.amount) / 100);
   const sliderValue = amountToSliderValue(state.amount);
   const sliderStyle = {
     "--slider-fill": `${sliderFill.toFixed(2)}%`,
@@ -244,15 +245,13 @@ export function CalculatorInputPanel({
           <div className="amount-display" aria-live="polite">
             <label className="amount-display__field" htmlFor="amount-input">
               <span className="sr-only">Kwota inwestycji</span>
-              <FormattedNumberInput
+              <AmountInput
                 id="amount-input"
                 className="amount-display__input"
                 inputMode="numeric"
                 value={state.amount}
                 data-amount-display
                 aria-label="Kwota inwestycji"
-                format={(value) => new Intl.NumberFormat("pl-PL").format(value)}
-                parse={parseAmountInput}
                 onValueChange={onAmountChange}
               />
             </label>
