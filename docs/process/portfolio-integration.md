@@ -2,63 +2,72 @@
 
 ## Po co istnieje ten plik
 
-Ten dokument zapisuje wymagania integracyjne dla finalnej wersji rekrutacyjnego PoC. Repo pozostaje kanonicznym źródłem produktu i logiki, ale docelowy kalkulator ma być osadzony wewnątrz strony portfolio.
+Ten dokument zapisuje docelowy kontrakt integracyjny dla wersji osadzanej w portfolio. Repo pozostaje źródłem produktu i logiki, ale finalny kalkulator ma działać wewnątrz doświadczenia portfolio, a nie obok niego.
 
 ## Docelowy model osadzenia
 
 - kalkulator działa w tym samym projekcie `Next.js` co portfolio,
 - ścieżka docelowa: `app/kalkulator/page.tsx`,
-- kalkulator jest otwierany w modalnym oknie `shadcn Dialog`,
-- portfolio osadza kalkulator jako `iframe` z `src="/kalkulator"`,
-- modal ma rozmiar `95vw` szerokości i `85vh` wysokości.
+- portfolio otwiera kalkulator w modalnym layerze,
+- zawartość jest renderowana wewnątrz `iframe` z `src="/kalkulator"`,
+- modal ma rozmiar około `95vw` x `85vh`.
 
-To oznacza, że ekran kalkulatora nie powinien zakładać, że jest pełną stroną serwisu otwieraną w osobnej karcie na desktopie.
+To oznacza, że ekran kalkulatora nie może zakładać pełnoekranowego kontekstu desktopowego ani osobnej aplikacji otwieranej w nowej karcie.
 
-## Priorytet doświadczenia rekrutacyjnego
+## Priorytet doświadczenia
 
-Ten PoC istnieje na potrzeby rekrutacji i ma wzmacniać odbiór portfolio, a nie działać jak osobny produkt akwizycji.
+Priorytetem jest utrzymanie użytkownika w tym samym flow case study i materiałów portfolio.
 
-- priorytetem jest maksymalnie dobry UX i UI w kontekście przeglądania portfolio,
-- kalkulator ma utrzymywać użytkownika w tym samym flow eksploracji case study i załączników,
-- nie otwieramy zewnętrznych kart przeglądarki jako części głównej ścieżki doświadczenia,
-- jeśli użytkownik przechodzi do kolejnych materiałów, powinno to dziać się w tym samym kontekście produktu portfolio, nie przez wybijanie go poza doświadczenie.
+- kalkulator ma działać jak część historii produktu,
+- główna ścieżka nie powinna wyrywać użytkownika poza portfolio,
+- interakcje nawigacyjne powinny wspierać model `zostań na miejscu`,
+- jeśli pojawia się wyjście na zewnątrz, musi być to świadoma ścieżka do materiału edukacyjnego albo narzędzia pomocniczego.
 
 ## Wymagania implementacyjne
 
 ### Zgodność z `iframe`
 
-- strona `/kalkulator` musi działać poprawnie wewnątrz `iframe`,
-- nie wolno dodawać przekierowań, które wyrywają użytkownika z tej ścieżki,
-- nie wolno zwracać nagłówka `X-Frame-Options: DENY` dla tej trasy,
-- jeśli aplikacja używa polityk nagłówków globalnych, `/kalkulator` musi pozostać osadzalne w tym samym originie,
-- kalkulator nie komunikuje się z rodzicem i nie używa `window.top` ani `window.parent`.
+- trasa `/kalkulator` musi działać poprawnie wewnątrz `iframe`,
+- nie wolno dodawać przekierowań, które rozwalają ten flow,
+- nie wolno blokować osadzania nagłówkami typu `X-Frame-Options: DENY`,
+- jeśli aplikacja ma globalne polityki nagłówków, `/kalkulator` musi pozostać osadzalne w tym samym originie.
+
+### Komunikacja z layerem portfolio
+
+Kalkulator nie powinien wymagać komunikacji z rodzicem do samego działania i liczenia wyników.
+
+Jedyny wyjątek dotyczy CTA `Wróć do portfolio`:
+
+- w wersji osadzonej CTA powinno najpierw próbować zamknąć bieżący layer,
+- implementacja może użyć lokalnego close handlera albo `postMessage` do rodzica,
+- jeśli żaden mechanizm zamknięcia nie jest dostępny, dozwolony jest fallback do sekcji kalkulatora w portfolio.
+
+To jest świadoma decyzja produktowa. Użytkownik ma wrócić do kontekstu case study, a nie czuć, że "przeszedł na inną stronę".
 
 ### Layout i przewijanie
 
-- layout musi wypełniać dostępną przestrzeń kontenera: `100%` szerokości i `100%` wysokości,
-- nie zakładamy stałych wymiarów viewportu ani pełnoekranowego okna przeglądarki,
-- strona musi być responsywna w ograniczonej przestrzeni modala,
-- własny scroll kalkulatora jest dozwolony; `iframe` obsłuży przewijanie.
+- layout musi wypełniać dostępny kontener, a nie zakładać pełny viewport,
+- strona musi być responsywna w przestrzeni modala,
+- własny scroll kalkulatora jest dozwolony,
+- nie opieramy krytycznych decyzji layoutowych na sztywnych wymiarach okna przeglądarki.
 
-### Architektura wdrożeniowa
+### Linki i wyjścia z doświadczenia
 
-- kalkulator nie jest osobnym serwerem ani osobną aplikacją,
-- wdrożenie ma korzystać z App Routera w tym samym repozytorium portfolio,
-- jeśli pojawi się osobny layout dla `/kalkulator`, powinien być lekki i podporządkowany osadzeniu w modalu.
-- decyzje nawigacyjne i CTA powinny wspierać model "zostań na miejscu" zamiast odsyłania do nowych kart.
+- rdzeń kalkulatora ma utrzymywać użytkownika w portfolio,
+- zewnętrzne linki edukacyjne są dozwolone jako świadome, pomocnicze wyjścia,
+- nie należy budować głównej ścieżki działania w oparciu o serię nowych kart.
 
-## Wskazówki dla implementacji Next.js
+## Wskazówki dla rewrite do Next.js
 
-- traktuj `/kalkulator` jak niezależny ekran osadzany, a nie fragment zależny od strony głównej portfolio,
-- unikaj elementów layoutu, które wymagają wysokości typu "pełny ekran przeglądarki" bez fallbacku na wysokość kontenera,
-- jeśli w projekcie pojawi się globalna konfiguracja `headers`, sprawdź ją także pod kątem tej konkretnej trasy,
-- nie buduj zależności od API rodzica, `postMessage` ani synchronizacji stanu z modalem.
+- traktuj `/kalkulator` jak niezależny ekran osadzany, ale nie osobny produkt,
+- zachowaj obecną hierarchię i flow 1:1 względem referencyjnego prototypu,
+- logikę zamknięcia layera potraktuj jako kontrakt integracyjny, nie jako detal UI,
+- jeśli pojawi się osobny layout dla `/kalkulator`, ma być lekki i podporządkowany osadzeniu.
 
 ## Kryteria akceptacji
 
 - otwarcie modala z `iframe src="/kalkulator"` renderuje działający ekran bez błędów osadzenia,
-- zawartość dopasowuje się do `95vw` x `85vh` bez ucinania kluczowego układu przez sztywne wymiary,
-- użytkownik może przewijać treść kalkulatora, jeśli wysokość wyniku przekracza przestrzeń modala,
-- trasa `/kalkulator` nie wymaga komunikacji z rodzicem do działania,
-- wdrożenie pozostaje w jednym projekcie `Next.js`,
-- główna ścieżka kalkulatora i powiązanych materiałów nie otwiera zewnętrznych kart.
+- układ mieści się w `95vw` x `85vh` bez utraty kluczowej hierarchii,
+- kalkulator działa samodzielnie także bez rodzica,
+- CTA `Wróć do portfolio` potrafi zamknąć layer albo bezpiecznie wrócić do portfolio,
+- główna ścieżka produktu pozostaje częścią doświadczenia portfolio, a nie osobną aplikacją.

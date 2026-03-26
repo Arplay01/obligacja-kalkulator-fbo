@@ -13,7 +13,7 @@ const BONDS = {
     rate: 0.025,
     description: "Najkrótsza obligacja. Stałe, niskie oprocentowanie. Pieniądze wracają szybko.",
     howItWorks: "Pożyczasz państwu pieniądze na 3 miesiące. Z góry wiesz ile zarobisz. Po 3 miesiącach dostajesz pieniądze z odsetkami.",
-    pros: ["Najkrótszy czas — pieniądze szybko wracają", "Zero niespodzianek — stawka znana z góry"],
+    pros: ["Najkrótszy czas - pieniądze szybko wracają", "Zero niespodzianek - stawka znana z góry"],
     cons: ["Bardzo niskie oprocentowanie (2,5%)", "Często gorsze niż konto oszczędnościowe"],
     earlyFee: 0,
     color: "#94a3b8",
@@ -28,8 +28,8 @@ const BONDS = {
     margin: 0.0,
     description: "Odsetki co miesiąc na konto. Oprocentowanie podąża za stopami NBP.",
     howItWorks: "Pierwszy miesiąc: stałe 4,25%. Potem co miesiąc oprocentowanie zmienia się ze stopą NBP. Odsetki wpływają co miesiąc na Twoje konto.",
-    pros: ["Odsetki co miesiąc — widzisz jak pieniądze pracują", "Gdy stopy NBP rosną — zarabiasz więcej"],
-    cons: ["Gdy stopy NBP spadają — zarabiasz mniej", "Brak ochrony przed inflacją"],
+    pros: ["Odsetki co miesiąc - widzisz jak pieniądze pracują", "Gdy stopy NBP rosną - zarabiasz więcej"],
+    cons: ["Gdy stopy NBP spadają - zarabiasz mniej", "Brak ochrony przed inflacją"],
     earlyFee: 0.5,
     color: "#60a5fa",
   },
@@ -56,9 +56,9 @@ const BONDS = {
     type: "fixed",
     rate: 0.0465,
     description: "Stałe oprocentowanie przez 3 lata. Najpopularniejsza obligacja w Polsce.",
-    howItWorks: "Przez 3 lata dostajesz stałe 4,65% rocznie. Zero niespodzianek — z góry wiesz ile zarobisz. Odsetki wypłacane przy wykupie.",
-    pros: ["Najpopularniejsza — Polacy kupują ich najwięcej", "Stałe oprocentowanie — pełna przewidywalność", "Wyższe niż typowa lokata bez warunków"],
-    cons: ["Pieniądze związane na 3 lata", "Nie chroni przed inflacją — jeśli ceny wzrosną, realna wartość spada", "Wcześniejszy wykup kosztuje 1 zł/szt."],
+    howItWorks: "Przez 3 lata dostajesz stałe 4,65% rocznie. Zero niespodzianek - z góry wiesz ile zarobisz. Odsetki wypłacane przy wykupie.",
+    pros: ["Najpopularniejsza - Polacy kupują ich najwięcej", "Stałe oprocentowanie - pełna przewidywalność", "Wyższe niż typowa lokata bez warunków"],
+    cons: ["Pieniądze związane na 3 lata", "Nie chroni przed inflacją - jeśli ceny wzrosną, realna wartość spada", "Wcześniejszy wykup kosztuje 1 zł/szt."],
     earlyFee: 1.0,
     color: "#a78bfa",
   },
@@ -71,9 +71,9 @@ const BONDS = {
     firstRate: 0.05,
     margin: 0.015,
     description: "Od 2. roku chroni przed inflacją. Oprocentowanie = inflacja + 1,5%.",
-    howItWorks: "Pierwszy rok: stałe 5%. Od 2. roku: ile wynosi inflacja + 1,5% marży. Jeśli inflacja rośnie — Twoje odsetki też rosną. Odsetki wypłacane co rok.",
+    howItWorks: "Pierwszy rok: stałe 5%. Od 2. roku: ile wynosi inflacja + 1,5% marży. Jeśli inflacja rośnie - Twoje odsetki też rosną. Odsetki wypłacane co rok.",
     pros: ["Ochrona przed inflacją od 2. roku", "Odsetki wypłacane co rok", "Bezpieczna przystań na dłużej"],
-    cons: ["Pieniądze związane na 4 lata", "Przy niskiej inflacji — oprocentowanie też niskie", "Wcześniejszy wykup: 2 zł/szt."],
+    cons: ["Pieniądze związane na 4 lata", "Przy niskiej inflacji - oprocentowanie też niskie", "Wcześniejszy wykup: 2 zł/szt."],
     earlyFee: 2.0,
     color: "#f59e0b",
   },
@@ -86,8 +86,8 @@ const BONDS = {
     firstRate: 0.056,
     margin: 0.02,
     description: "Najwyższa marża + procent składany. Twoje odsetki zarabiają kolejne odsetki.",
-    howItWorks: "Pierwszy rok: 5,6%. Od 2. roku: inflacja + 2% marży. Kluczowa różnica: odsetki nie trafiają na konto, tylko są dopisywane do kapitału (kapitalizacja). Dzięki temu w kolejnym roku zarabiasz odsetki od odsetek. To tzw. procent składany — potężna siła na przestrzeni 10 lat.",
-    pros: ["Najwyższa marża nad inflacją (+2%)", "Procent składany — odsetki od odsetek", "Najlepsza długoterminowa ochrona wartości pieniędzy"],
+    howItWorks: "Pierwszy rok: 5,6%. Od 2. roku: inflacja + 2% marży. Kluczowa różnica: odsetki nie trafiają na konto, tylko są dopisywane do kapitału (kapitalizacja). Dzięki temu w kolejnym roku zarabiasz odsetki od odsetek. To tzw. procent składany - potężna siła na przestrzeni 10 lat.",
+    pros: ["Najwyższa marża nad inflacją (+2%)", "Procent składany - odsetki od odsetek", "Najlepsza długoterminowa ochrona wartości pieniędzy"],
     cons: ["Pieniądze związane na 10 lat", "Wcześniejszy wykup kosztuje 2 zł/szt.", "Podatek Belki płacony od skumulowanych odsetek na końcu"],
     earlyFee: 2.0,
     color: "#10b981",
@@ -734,7 +734,7 @@ export default function App() {
               fontSize: 26, fontWeight: 700, color: "#1e3a5f", margin: "0 0 6px",
               fontFamily: "'Playfair Display', Georgia, serif",
             }}>
-              Twoje opcje — uczciwe porównanie
+              Twoje opcje - uczciwe porównanie
             </h2>
             <p style={{ fontSize: 14, color: "#7a8fa3", margin: "0 0 20px", lineHeight: 1.5 }}>
               Wszystkie kwoty po potrąceniu 19% podatku Belki. Inflacja w projekcji: {(inflAssumption * 100).toFixed(1)}%.
@@ -784,7 +784,7 @@ export default function App() {
               boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
             }}>
               <div style={{ fontSize: 14, fontWeight: 600, color: "#1e3a5f", marginBottom: 18, fontFamily: "'DM Sans', sans-serif" }}>
-                Ile zarobisz netto — porównanie wizualne
+                Ile zarobisz netto - porównanie wizualne
               </div>
               
               {/* Current option bar */}
@@ -886,22 +886,22 @@ export default function App() {
                   {
                     icon: "🔒",
                     title: "Obligacje są bezpieczne, ale nie płynne",
-                    text: "Gwarantem jest Skarb Państwa — to silniejsza gwarancja niż BFG dla lokat. Ale wcześniejszy wykup kosztuje. Nie lokuj tu pieniędzy, które możesz potrzebować nagle.",
+                    text: "Gwarantem jest Skarb Państwa - to silniejsza gwarancja niż BFG dla lokat. Ale wcześniejszy wykup kosztuje. Nie lokuj tu pieniędzy, które możesz potrzebować nagle.",
                   },
                   {
                     icon: "📊",
                     title: "To projekcja, nie gwarancja",
-                    text: "Oprocentowanie obligacji zmiennych (ROR, DOR, COI, EDO) zależy od przyszłej inflacji i stóp NBP. Nikt nie zna przyszłości — dlatego pokazujemy założenia, które możesz zmienić.",
+                    text: "Oprocentowanie obligacji zmiennych (ROR, DOR, COI, EDO) zależy od przyszłej inflacji i stóp NBP. Nikt nie zna przyszłości - dlatego pokazujemy założenia, które możesz zmienić.",
                   },
                   {
                     icon: "💰",
                     title: "Podatek Belki zjada część zysków",
-                    text: "Od każdej złotówki odsetek, 19 groszy zabiera fiskus. Wyjątek: konto IKE-Obligacje — tam po 60. roku życia podatku nie ma. Limit wpłat IKE w 2026: 28 260 zł.",
+                    text: "Od każdej złotówki odsetek, 19 groszy zabiera fiskus. Wyjątek: konto IKE-Obligacje - tam po 60. roku życia podatku nie ma. Limit wpłat IKE w 2026: 28 260 zł.",
                   },
                   {
                     icon: "🧩",
                     title: "Nie musisz wybierać jednej opcji",
-                    text: "Możesz podzielić pieniądze — część na koncie (szybki dostęp), część w obligacjach 3-letnich (stały zysk), część w 10-letnich (ochrona przed inflacją). To często najmądrzejsze podejście.",
+                    text: "Możesz podzielić pieniądze - część na koncie (szybki dostęp), część w obligacjach 3-letnich (stały zysk), część w 10-letnich (ochrona przed inflacją). To często najmądrzejsze podejście.",
                   },
                 ].map((item, i) => (
                   <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>

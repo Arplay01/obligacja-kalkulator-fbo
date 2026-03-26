@@ -1,5 +1,5 @@
 /**
- * AmountStep — "Ile masz do ulokowania?"
+ * AmountStep - "Ile masz do ulokowania?"
  * Design: Single question, big slider, immediate feedback.
  * Plain language, no financial jargon.
  */
@@ -70,7 +70,7 @@ export default function AmountStep({ amount, onAmountChange, onNext, onBack }: A
             Ile chcesz ulokować?
           </h2>
           <p className="text-base sm:text-lg text-[#1A1F36]/50 mb-10">
-            Kwota, którą chcesz porównać. Nie musisz być precyzyjny — to orientacyjne porównanie.
+            Kwota, którą chcesz porównać. Nie musisz być precyzyjny - to orientacyjne porównanie.
           </p>
 
           {/* Amount display */}

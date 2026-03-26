@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>Kalkulator obligacji skarbowych — Finanse Bardzo Osobiste</title>
+    <title>Kalkulator obligacji skarbowych - Finanse Bardzo Osobiste</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,12 +19,18 @@
   <body>
     <main class="page">
       <header class="intro" aria-label="Wprowadzenie">
-        <h1 class="intro__title">
-          Sprawdź, ile mogą dać
-          <span class="gradient-text">obligacje skarbowe</span>
-        </h1>
-        <p class="intro__note">
-          I porównaj wynik z lokatą albo kontem oszczędnościowym.
+        <div class="intro__main">
+          <h1 class="intro__title">
+            Sprawdź, ile mogą dać
+            <span class="gradient-text">obligacje skarbowe</span>
+          </h1>
+          <p class="intro__note">
+            I porównaj wynik z lokatą albo kontem oszczędnościowym.
+          </p>
+        </div>
+        <p class="intro__trust">
+          <strong>Spokojny pierwszy krok.</strong> Obligacje skarbowe są
+          gwarantowane przez Skarb Państwa.
         </p>
       </header>
 
@@ -51,6 +57,7 @@
                 data-bond="OTS"
               >
                 <span class="bond-chip__ticker">OTS</span>
+                <span class="bond-chip__label">3-miesięczne</span>
                 <span class="bond-chip__rate">2,50%</span>
                 <span class="bond-chip__badge bond-chip__badge--fixed">
                   <span class="bond-chip__badge-icon" aria-hidden="true">
@@ -74,7 +81,6 @@
                   </span>
                   <span>Stałe</span>
                 </span>
-                <span class="bond-chip__period">3 mies.</span>
               </button>
 
               <button
@@ -85,6 +91,7 @@
                 data-bond="ROR"
               >
                 <span class="bond-chip__ticker">ROR</span>
+                <span class="bond-chip__label">roczne</span>
                 <span class="bond-chip__rate">4,25%</span>
                 <span class="bond-chip__badge bond-chip__badge--variable">
                   <span class="bond-chip__badge-icon" aria-hidden="true">
@@ -107,7 +114,6 @@
                   </span>
                   <span>Zmienne</span>
                 </span>
-                <span class="bond-chip__period">1 rok</span>
               </button>
 
               <button
@@ -118,6 +124,7 @@
                 data-bond="DOR"
               >
                 <span class="bond-chip__ticker">DOR</span>
+                <span class="bond-chip__label">2-latki</span>
                 <span class="bond-chip__rate">4,40%</span>
                 <span class="bond-chip__badge bond-chip__badge--variable">
                   <span class="bond-chip__badge-icon" aria-hidden="true">
@@ -140,7 +147,6 @@
                   </span>
                   <span>Zmienne</span>
                 </span>
-                <span class="bond-chip__period">2 lata</span>
               </button>
 
               <button
@@ -151,6 +157,7 @@
                 data-bond="TOS"
               >
                 <span class="bond-chip__ticker">TOS</span>
+                <span class="bond-chip__label">3-latki</span>
                 <span class="bond-chip__rate">4,65%</span>
                 <span class="bond-chip__badge bond-chip__badge--fixed">
                   <span class="bond-chip__badge-icon" aria-hidden="true">
@@ -174,7 +181,6 @@
                   </span>
                   <span>Stałe</span>
                 </span>
-                <span class="bond-chip__period">3 lata</span>
               </button>
 
               <button
@@ -196,6 +202,7 @@
                   </svg>
                 </span>
                 <span class="bond-chip__ticker">COI</span>
+                <span class="bond-chip__label">4-latki</span>
                 <span class="bond-chip__rate">5,00%</span>
                 <span class="bond-chip__badge bond-chip__badge--inflation">
                   <span class="bond-chip__badge-icon" aria-hidden="true">
@@ -217,7 +224,6 @@
                   </span>
                   <span>Inflacja</span>
                 </span>
-                <span class="bond-chip__period">4 lata</span>
               </button>
 
               <button
@@ -228,6 +234,7 @@
                 data-bond="EDO"
               >
                 <span class="bond-chip__ticker">EDO</span>
+                <span class="bond-chip__label">10-latki</span>
                 <span class="bond-chip__rate">5,60%</span>
                 <span class="bond-chip__badge bond-chip__badge--inflation">
                   <span class="bond-chip__badge-icon" aria-hidden="true">
@@ -249,7 +256,6 @@
                   </span>
                   <span>Inflacja</span>
                 </span>
-                <span class="bond-chip__period">10 lat</span>
               </button>
             </div>
           </section>
@@ -360,7 +366,8 @@
               <div class="input-heading">
                 <h2 class="input-title">Jaki poziom inflacji założyć?</h2>
                 <p class="input-inline-note" data-inflation-mode>
-                  Wpływa od 2. roku
+                  Pierwszy rok: stałe 5,00%. Potem: oprocentowanie podąża za
+                  inflacją.
                 </p>
               </div>
 
@@ -431,9 +438,23 @@
             <div class="advanced-options__body">
               <div class="option-row">
                 <div class="option-row__label">
-                  <strong>Konto IKE</strong>
-                  <span class="helper-text"
-                    >Wyłącza podatek Belki dla obligacji</span
+                  <div class="label-with-help">
+                    <strong>Konto IKE</strong>
+                    <button
+                      class="term-help"
+                      type="button"
+                      aria-label="Wyjaśnienie: konto IKE"
+                    >
+                      <span aria-hidden="true">i</span>
+                      <span class="term-help__tooltip" role="tooltip">
+                        IKE to konto, które pozwala oszczędzać bez 19% podatku
+                        od zysków. W tym kalkulatorze pokazuję ten efekt dla
+                        obligacji.
+                      </span>
+                    </button>
+                  </div>
+                  <span class="helper-text" data-ike-helper
+                    >Bez podatku od zysków. Tutaj oszczędzasz ok. 380 zł.</span
                   >
                 </div>
                 <button
@@ -453,34 +474,70 @@
               <div class="option-row">
                 <div class="option-row__label">
                   <strong>Oprocentowanie lokaty</strong>
-                  <span class="helper-text">Ręczny benchmark porównawczy</span>
+                  <span class="helper-text">Ręcznie ustawiane porównanie</span>
                 </div>
                 <label class="inline-input" for="deposit-rate">
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="deposit-rate"
+                    data-step="-0.1"
+                    aria-label="Zmniejsz oprocentowanie lokaty"
+                  >
+                    -
+                  </button>
                   <input
                     id="deposit-rate"
                     type="text"
-                    value="4,5"
+                    value="4,0"
                     inputmode="decimal"
                     aria-label="Oprocentowanie lokaty"
                   />
                   <span>%</span>
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="deposit-rate"
+                    data-step="0.1"
+                    aria-label="Zwiększ oprocentowanie lokaty"
+                  >
+                    +
+                  </button>
                 </label>
               </div>
 
               <div class="option-row">
                 <div class="option-row__label">
                   <strong>Oprocentowanie konta oszczędnościowego</strong>
-                  <span class="helper-text">Ręczny benchmark porównawczy</span>
+                  <span class="helper-text">Ręcznie ustawiane porównanie</span>
                 </div>
                 <label class="inline-input" for="savings-rate">
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="savings-rate"
+                    data-step="-0.1"
+                    aria-label="Zmniejsz oprocentowanie konta oszczędnościowego"
+                  >
+                    -
+                  </button>
                   <input
                     id="savings-rate"
                     type="text"
-                    value="3,5"
+                    value="4,5"
                     inputmode="decimal"
                     aria-label="Oprocentowanie konta oszczędnościowego"
                   />
                   <span>%</span>
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="savings-rate"
+                    data-step="0.1"
+                    aria-label="Zwiększ oprocentowanie konta oszczędnościowego"
+                  >
+                    +
+                  </button>
                 </label>
               </div>
 
@@ -492,6 +549,15 @@
                   >
                 </div>
                 <label class="inline-input" for="nbp-rate">
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="nbp-rate"
+                    data-step="-0.1"
+                    aria-label="Zmniejsz stopę referencyjną NBP"
+                  >
+                    -
+                  </button>
                   <input
                     id="nbp-rate"
                     type="text"
@@ -500,6 +566,15 @@
                     aria-label="Stopa referencyjna NBP"
                   />
                   <span>%</span>
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="nbp-rate"
+                    data-step="0.1"
+                    aria-label="Zwiększ stopę referencyjną NBP"
+                  >
+                    +
+                  </button>
                 </label>
               </div>
 
@@ -511,6 +586,15 @@
                   >
                 </div>
                 <label class="inline-input" for="custom-inflation">
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="custom-inflation"
+                    data-step="-0.1"
+                    aria-label="Zmniejsz własną inflację"
+                  >
+                    -
+                  </button>
                   <input
                     id="custom-inflation"
                     type="text"
@@ -519,6 +603,15 @@
                     aria-label="Własna inflacja"
                   />
                   <span>%</span>
+                  <button
+                    class="inline-input__step"
+                    type="button"
+                    data-step-target="custom-inflation"
+                    data-step="0.1"
+                    aria-label="Zwiększ własną inflację"
+                  >
+                    +
+                  </button>
                 </label>
               </div>
             </div>
@@ -532,7 +625,7 @@
         >
           <div class="results__header">
             <div class="results__headline">
-              <h2 class="results__bond-name" data-bond-name>COI — 4-letnie</h2>
+              <h2 class="results__bond-name" data-bond-name>COI - 4-letnie</h2>
               <p class="results__description" data-bond-description>
                 Pierwszy rok: stałe 5,00%. Od 2. roku: inflacja + 1,50 p.p.
                 Odsetki wypłacane co roku na konto.
@@ -565,7 +658,24 @@
           </div>
 
           <div class="hero-metric">
-            <p class="micro-label">Szacunkowy zysk netto</p>
+            <div class="micro-label label-with-help">
+              <span>Twój zysk netto</span>
+              <button
+                class="term-help"
+                type="button"
+                aria-label="Wyjaśnienie: twój zysk netto"
+              >
+                <span aria-hidden="true">i</span>
+                <span
+                  class="term-help__tooltip"
+                  role="tooltip"
+                  data-hero-tooltip
+                >
+                  Szacunkowy wynik po podatku Belki (19%), przy założonej
+                  inflacji 3,50%. Rzeczywisty zysk zależy od przyszłej inflacji.
+                </span>
+              </button>
+            </div>
             <p
               class="hero-metric__value hero-metric__value--positive"
               data-value="netProfit"
@@ -573,75 +683,17 @@
               +1 620,00 zł
             </p>
             <p class="hero-metric__total">
-              Łącznie: <strong data-value="netReturn">11 620,00 zł</strong>
-            </p>
-          </div>
-
-          <div class="metrics-grid">
-            <div class="metric-box">
-              <p class="micro-label">Wpłacasz</p>
-              <p class="metric-box__value" data-value="invested">10 000 zł</p>
-            </div>
-            <div class="metric-box">
-              <div class="micro-label label-with-help">
-                <span>Odsetki brutto</span>
-                <button
-                  class="term-help"
-                  type="button"
-                  aria-label="Wyjaśnienie: odsetki brutto"
-                >
-                  <span aria-hidden="true">i</span>
-                  <span class="term-help__tooltip" role="tooltip">
-                    Zysk przed podatkiem. To jeszcze nie jest kwota, która
-                    zostaje Ci na rękę.
-                  </span>
-                </button>
-              </div>
-              <p class="metric-box__value" data-value="grossInterest">
-                2 000,00 zł
-              </p>
-            </div>
-            <div class="metric-box">
-              <div class="micro-label label-with-help">
-                <span>Podatek Belki</span>
-                <button
-                  class="term-help"
-                  type="button"
-                  aria-label="Wyjaśnienie: podatek Belki"
-                >
-                  <span aria-hidden="true">i</span>
-                  <span class="term-help__tooltip" role="tooltip">
-                    19% podatku od wypracowanego zysku. Dlatego wynik netto jest
-                    niższy niż brutto.
-                  </span>
-                </button>
-              </div>
-              <p
-                class="metric-box__value metric-box__value--danger"
-                data-value="tax"
+              <span class="hero-metric__meta-group"
+                >Łącznie:
+                <strong data-value="netReturn">11 620,00 zł</strong></span
               >
-                -380,00 zł
-              </p>
-            </div>
-            <div class="metric-box">
-              <div class="micro-label label-with-help">
-                <span>Efektywnie rocznie</span>
-                <button
-                  class="term-help"
-                  type="button"
-                  aria-label="Wyjaśnienie: efektywnie rocznie"
-                >
-                  <span aria-hidden="true">i</span>
-                  <span class="term-help__tooltip" role="tooltip">
-                    Uśredniony roczny wynik po podatku. Pomaga porównać serie o
-                    różnej długości.
-                  </span>
-                </button>
-              </div>
-              <p class="metric-box__value" data-value="effectiveAnnualRate">
-                3,82% netto
-              </p>
-            </div>
+              <span class="hero-metric__meta-group hero-metric__yearly"
+                >Średnio:
+                <strong data-value="avgProfitPerYear"
+                  >405,00 zł / rok</strong
+                ></span
+              >
+            </p>
           </div>
 
           <div class="inaction-box">
@@ -658,7 +710,7 @@
             </p>
           </div>
 
-          <div class="insight-banner">
+          <div class="insight-banner" hidden>
             <svg
               class="insight-banner__icon"
               viewBox="0 0 24 24"
@@ -684,12 +736,94 @@
             </div>
           </div>
 
-          <section class="compare-section compare-section--static">
-            <h3 class="compare-section__title">Porównaj z lokatą i kontem</h3>
+          <details class="disclosure results-disclosure">
+            <summary class="disclosure__trigger">
+              Pokaż szczegóły kalkulacji
+            </summary>
+            <div class="disclosure__body">
+              <p class="results-disclosure__note">
+                Tu widać, z czego bierze się wynik netto i jak wygląda
+                kalkulacja po podatku.
+              </p>
+              <div class="metrics-grid">
+                <div class="metric-box">
+                  <p class="micro-label">Wpłacasz</p>
+                  <p class="metric-box__value" data-value="invested">
+                    10 000 zł
+                  </p>
+                </div>
+                <div class="metric-box">
+                  <div class="micro-label label-with-help">
+                    <span>Odsetki brutto</span>
+                    <button
+                      class="term-help"
+                      type="button"
+                      aria-label="Wyjaśnienie: odsetki brutto"
+                    >
+                      <span aria-hidden="true">i</span>
+                      <span class="term-help__tooltip" role="tooltip">
+                        Zysk przed podatkiem. To jeszcze nie jest kwota, która
+                        zostaje Ci na rękę.
+                      </span>
+                    </button>
+                  </div>
+                  <p class="metric-box__value" data-value="grossInterest">
+                    2 000,00 zł
+                  </p>
+                </div>
+                <div class="metric-box">
+                  <div class="micro-label label-with-help">
+                    <span>Podatek Belki</span>
+                    <button
+                      class="term-help"
+                      type="button"
+                      aria-label="Wyjaśnienie: podatek Belki"
+                    >
+                      <span aria-hidden="true">i</span>
+                      <span class="term-help__tooltip" role="tooltip">
+                        19% podatku od wypracowanego zysku. Dlatego wynik netto
+                        jest niższy niż brutto.
+                      </span>
+                    </button>
+                  </div>
+                  <p
+                    class="metric-box__value metric-box__value--danger"
+                    data-value="tax"
+                  >
+                    -380,00 zł
+                  </p>
+                </div>
+                <div class="metric-box">
+                  <div class="micro-label label-with-help">
+                    <span>Efektywnie rocznie</span>
+                    <button
+                      class="term-help"
+                      type="button"
+                      aria-label="Wyjaśnienie: efektywnie rocznie"
+                    >
+                      <span aria-hidden="true">i</span>
+                      <span class="term-help__tooltip" role="tooltip">
+                        Uśredniony roczny wynik po podatku. Pomaga porównać
+                        serie o różnej długości.
+                      </span>
+                    </button>
+                  </div>
+                  <p class="metric-box__value" data-value="effectiveAnnualRate">
+                    3,82% netto
+                  </p>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="compare-section" open>
+            <summary class="compare-section__trigger">
+              Porównaj z lokatą i kontem
+            </summary>
             <div class="compare-section__body">
               <div class="compare-grid">
                 <div class="compare-card">
-                  <p class="micro-label" data-deposit-title>Lokata (4,5%)</p>
+                  <p class="micro-label" data-deposit-title>Lokata (4,0%)</p>
                   <p class="compare-card__profit" data-value="depositProfit">
                     +1 559,40 zł netto
                   </p>
@@ -703,11 +837,19 @@
                     COI daje <strong>61 zł więcej</strong> niż lokata w tym
                     scenariuszu
                   </p>
+                  <a
+                    class="compare-card__link"
+                    href="https://marciniwuc.com/ranking-lokat-sprawdz-najlepsze-lokaty-bankowe/"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    Ranking marzec 2026
+                  </a>
                 </div>
 
                 <div class="compare-card">
                   <p class="micro-label" data-savings-title>
-                    Konto oszczędnościowe (3,5%)
+                    Konto oszczędnościowe (4,5%)
                   </p>
                   <p class="compare-card__profit" data-value="savingsProfit">
                     +1 194,94 zł netto
@@ -721,13 +863,38 @@
                   >
                     COI daje <strong>425 zł więcej</strong> niż konto
                   </p>
+                  <a
+                    class="compare-card__link"
+                    href="https://marciniwuc.com/ranking-kont-oszczednosciowych/"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    Ranking marzec 2026
+                  </a>
                 </div>
               </div>
 
               <p class="helper-text" data-compare-helper>
-                Obie opcje liczę dla tego samego horyzontu co wybrana obligacja.
+                Obie opcje są liczone dla tego samego horyzontu co wybrana
+                obligacja.
               </p>
             </div>
+          </details>
+
+          <section class="action-cta" aria-label="Następny krok">
+            <h3 class="action-cta__title">Jak kupić?</h3>
+            <p class="action-cta__text">
+              7-dniowe wyzwanie mailowe od Marcina, Kasi i Maćka. Codziennie
+              konkretna instrukcja - na końcu masz swoją pierwszą obligację.
+            </p>
+            <a
+              class="action-cta__button"
+              href="https://marciniwuc.com/wyzwanie-pierwsza-obligacja/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Dołącz do wyzwania
+            </a>
           </section>
         </section>
       </section>
@@ -735,9 +902,9 @@
       <section class="deep-dive" aria-label="Szczegóły i edukacja">
         <h2 class="section-title">Jeśli chcesz wejść głębiej</h2>
 
-        <details class="card disclosure">
+        <details class="disclosure deep-dive-disclosure">
           <summary class="disclosure__trigger" data-how-summary>
-            Jak działa COI?
+            Jak działa COI - 4-latki?
           </summary>
           <div class="disclosure__body">
             <p data-how-description>
@@ -768,7 +935,7 @@
           </div>
         </details>
 
-        <details class="card disclosure">
+        <details class="disclosure deep-dive-disclosure">
           <summary class="disclosure__trigger">
             Wykres i tabela rok po roku
           </summary>
@@ -847,7 +1014,7 @@
           </div>
         </details>
 
-        <details class="card disclosure">
+        <details class="disclosure deep-dive-disclosure">
           <summary class="disclosure__trigger">
             Kiedy obligacje, a kiedy lokata?
           </summary>
@@ -874,9 +1041,9 @@
               <div class="edu-card">
                 <p class="edu-card__title">Inflacja nadal ma znaczenie</p>
                 <p>
-                  Nawet jeśli nie zmienia kuponu danej serii, wpływa na realną
-                  wartość wyniku. Dlatego pokazuję też „co zostaje po inflacji”,
-                  nie tylko nominalny zysk.
+                  Nawet jeśli nie zmienia oprocentowania danej serii, wpływa na
+                  realną wartość wyniku. Dlatego pokazuję też „co zostaje po
+                  inflacji”, nie tylko nominalny zysk.
                 </p>
               </div>
 
@@ -894,30 +1061,9 @@
       </section>
 
       <section class="next-steps" aria-label="Następne kroki">
-        <h2 class="section-title">Co dalej</h2>
+        <h2 class="section-title">Więcej materiałów</h2>
 
         <div class="next-steps__grid">
-          <a
-            class="next-card"
-            href="https://marciniwuc.com/wyzwanie-pierwsza-obligacja/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M12 2v10m0 0 4-4m-4 4-4-4M2 17l.62 2.48A2 2 0 0 0 4.56 21h14.88a2 2 0 0 0 1.94-1.52L22 17"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <p class="next-card__title">Jak kupić pierwsze obligacje</p>
-            <p class="next-card__text">
-              Krótki materiał krok po kroku, bez finansowego żargonu.
-            </p>
-          </a>
-
           <a
             class="next-card"
             href="https://marciniwuc.com/obligacje-indeksowane-inflacja-kalkulator/"
@@ -941,23 +1087,49 @@
 
           <a
             class="next-card"
-            href="https://arek-portfolio-fbo.vercel.app/"
+            href="https://marciniwuc.com/wp-content/uploads/2026/02/Kalkulator-obligacji-marzec-2026-Finanse-Bardzo-Osobiste.xlsx"
+            target="_blank"
             rel="noopener noreferrer"
           >
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
-                d="m12 19-7-7 7-7M19 12H5"
+                d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Zm0 0v5h5"
                 stroke="currentColor"
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
+              <path
+                d="M9 14h6M9 17h6M9 11h2.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
             </svg>
-            <p class="next-card__title">Wróć do portfolio</p>
+            <p class="next-card__title">Dla zaawansowanych</p>
             <p class="next-card__text">
-              Zobacz case study i decyzje produktowe stojące za tym PoC.
+              Kalkulator obligacji w Excelu - więcej parametrów i dokładniejsze
+              wyliczenia.
             </p>
           </a>
+
+          <!-- Intentional visual exception: this card deliberately mirrors the portfolio CTA more literally, so future polish/Next.js migration should preserve that identity unless we explicitly change the decision. In the Next.js rewrite this CTA should close the calculator layer first, and only fall back to the portfolio calculator section when no layer controller handles the intent. -->
+          <button
+            type="button"
+            class="next-card next-card--portfolio"
+            data-close-portfolio-layer
+            data-portfolio-fallback-url="https://arek-portfolio-fbo.vercel.app/#kalkulator"
+          >
+            <span class="next-card__content">
+              <span class="next-card__title">Wróć do portfolio</span>
+              <span class="next-card__text">
+                Case study i decyzje produktowe stojące za tym narzędziem.
+              </span>
+            </span>
+            <span class="next-card__cta" aria-hidden="true"
+              >Zobacz szczegóły</span
+            >
+          </button>
         </div>
       </section>
 
@@ -1002,8 +1174,8 @@
               użytkownika
             </li>
             <li>
-              Lokata i konto są ręcznymi benchmarkami porównawczymi, nie
-              najlepszą ofertą rynku
+              Lokata i konto to ręcznie ustawiane punkty odniesienia, nie
+              najlepsza oferta rynku
             </li>
             <li>
               COI i ROR/DOR pokazuję bez reinwestowania wypłacanych odsetek

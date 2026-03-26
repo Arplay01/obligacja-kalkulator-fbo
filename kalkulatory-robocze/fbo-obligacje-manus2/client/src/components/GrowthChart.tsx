@@ -1,5 +1,5 @@
 /**
- * GrowthChart — Visual comparison of money growth over time
+ * GrowthChart - Visual comparison of money growth over time
  * Uses Recharts for clean, readable line chart.
  * Shows net value (after tax) for each product over the investment period.
  */

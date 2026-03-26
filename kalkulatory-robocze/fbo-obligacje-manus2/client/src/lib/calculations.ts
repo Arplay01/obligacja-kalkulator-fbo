@@ -2,7 +2,7 @@
  * Bond calculation engine for Polish Treasury Bonds
  * Data source: obligacjeskarbowe.pl, gov.pl - March 2026 offer
  * 
- * Design: "Ścieżka Decyzji" — all calculations are transparent and honest.
+ * Design: "Ścieżka Decyzji" - all calculations are transparent and honest.
  * If a deposit beats bonds in a given scenario, we show it clearly.
  */
 
@@ -606,7 +606,7 @@ export function generateInsight(
   if (nothingBeatsInflation) {
     return {
       headline: 'Przy tych założeniach żadna opcja nie pokrywa inflacji',
-      detail: `Przy inflacji ${expectedInflation}% żadna z dostępnych opcji nie ochroni w pełni Twoich pieniędzy. To nie znaczy, że nie warto oszczędzać — każda opcja jest lepsza niż trzymanie gotówki.`,
+      detail: `Przy inflacji ${expectedInflation}% żadna z dostępnych opcji nie ochroni w pełni Twoich pieniędzy. To nie znaczy, że nie warto oszczędzać - każda opcja jest lepsza niż trzymanie gotówki.`,
       tone: 'warning',
     };
   }

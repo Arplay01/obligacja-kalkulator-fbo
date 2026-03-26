@@ -1,5 +1,5 @@
 /**
- * WelcomeStep — "Ścieżka Decyzji" landing
+ * WelcomeStep - "Ścieżka Decyzji" landing
  * Design: Warm, inviting, no jargon. Hero with generated illustration.
  * Sets the tone: "We're here to help you understand, not sell you anything."
  */
@@ -53,7 +53,7 @@ export default function WelcomeStep({ onStart }: WelcomeStepProps) {
               </h1>
 
               <p className="text-lg text-[#1A1F36]/60 leading-relaxed mb-8 max-w-lg">
-                Lokata, konto oszczędnościowe, obligacje skarbowe — co lepiej ochroni Twoje pieniądze? 
+                Lokata, konto oszczędnościowe, obligacje skarbowe - co lepiej ochroni Twoje pieniądze? 
                 Odpowiedz na <strong className="text-[#1A1F36]/80">3 proste pytania</strong> i porównaj opcje.
               </p>
 
@@ -108,7 +108,7 @@ export default function WelcomeStep({ onStart }: WelcomeStepProps) {
                 icon={<Scale className="w-4.5 h-4.5 text-[#2D6A4F]" />}
                 iconBg="bg-[#D4E8E0]/50"
                 title="Uczciwe porównanie"
-                description="Jeśli lokata wygrywa — pokażemy to"
+                description="Jeśli lokata wygrywa - pokażemy to"
               />
               <TrustSignal
                 icon={<Eye className="w-4.5 h-4.5 text-[#B07D1A]" />}

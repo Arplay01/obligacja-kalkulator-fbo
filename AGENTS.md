@@ -18,10 +18,11 @@ This repository is prepared for Codex-native collaboration with repo-local skill
 - `docs/project-context.md` is the thin canonical context for future sessions.
 - `docs/product/brief.md` explains why the calculator exists and for whom.
 - `docs/product/prd.md` is the source of truth for product behavior.
-- `docs/product/calculation-spec.md` is the source of truth for core PoC math.
-- `docs/product/source-of-truth.md` defines which data sources are canonical.
-- `docs/product/prototype-brief.md` is the only document meant to drive rapid prototyping.
-- `docs/product/prototype-review-rubric.md` is the default evaluation grid for generated concepts.
+- `docs/process/decision-log.md` records the key product and UX/UI decisions in order.
+- `docs/process/pivot.md` explains the shift from the first concept to the current product.
+- `docs/process/prototyping-notes.md` is the visual history of iterations and checkpoints.
+- `docs/process/process-patterns.md` captures the working patterns behind the iterations.
+- `@archiwum/` contains historical documents and older assumptions. Treat it as non-canonical unless the task is explicitly about history or comparison.
 - `kalkulatory-robocze/` contains historical prototype artifacts and is non-canonical by default.
 
 ## Local Skills Convention
@@ -68,6 +69,7 @@ This repository is prepared for Codex-native collaboration with repo-local skill
 - Do not perform broad rewrites without explicit scope.
 - Preserve user changes and work with the current tree as-is.
 - When a workflow or rule becomes repetitive, encode it as a repo-local skill instead of repeating it in chat.
-- Do not treat `docs/product/prd.md` as a prompt for prototype generation; use `docs/product/prototype-brief.md` instead.
+- Do not treat archived prototype prompts or older specs from `@archiwum/` as current product context unless the task is explicitly historical.
 - For bug fixes explicitly reported by the user during vibe coding, add a short inline code comment after the fix is working that records what was broken and how it was fixed.
 - Do not add this bugfix comment trail for the agent's own silent or automatic fixes unless a comment is independently useful for readability or maintenance.
+- In user-facing copy, documentation, and UI text, never use the em dash character `U+2014`; use the plain hyphen `-` instead.

@@ -1,5 +1,5 @@
 /**
- * PriorityStep — "Co jest dla Ciebie ważniejsze?"
+ * PriorityStep - "Co jest dla Ciebie ważniejsze?"
  * Design: Two clear choices + advanced settings.
  * This step also lets users tweak deposit rate and inflation assumptions.
  */
@@ -37,7 +37,7 @@ export default function PriorityStep({ state, onUpdate, onNext, onBack }: Priori
             Co jest ważniejsze?
           </h2>
           <p className="text-base sm:text-lg text-[#1A1F36]/50 mb-8">
-            Nie ma jednej dobrej odpowiedzi — zależy od Twojej sytuacji. To pomoże nam lepiej dobrać porównanie.
+            Nie ma jednej dobrej odpowiedzi - zależy od Twojej sytuacji. To pomoże nam lepiej dobrać porównanie.
           </p>
 
           {/* Priority cards */}

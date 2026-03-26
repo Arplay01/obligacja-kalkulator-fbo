@@ -1,31 +1,57 @@
-# Prototyping Notes
+# Proces iteracji i screeny
 
-## Po co istnieje ten plik
+To jest krótki zapis najważniejszych checkpointów w pracy nad kalkulatorem. Nie chodzi tu o pełną kronikę każdego ruchu, tylko o pokazanie, jak zmieniał się sposób myślenia o produkcie.
 
-To jest krótki zapis wniosków z wcześniejszego rapid prototypowania. Nie jest source-of-truth dla produktu.
+## 1. Wczesny kalkulator
 
-## Wniosek główny
+![Wczesny kalkulator](../assets/process/01-early-calculator.png)
 
-Pełne `PRD` nie nadaje się jako prompt do generowania prototypów. Gdy dokument miesza discovery, scope, narrację, logikę finansową i UX intent, modele produkują kilka podobnych, zbyt sztywnych i generycznych wariantów.
+Start był dość klasyczny: dużo parametrów, osobny przycisk oblicz i wynik pokazany bardziej jak narzędzie finansowe niż ekran dla początkującej osoby.
 
-## Co działa lepiej
+To był dobry punkt wyjścia do zrozumienia problemu, ale jeszcze nie odpowiedź na niego.
 
-- krótki `prototype-brief`,
-- jedna wyraźna teza na jeden prototyp,
-- trzy różne architektury doświadczenia zamiast trzech wariacji tej samej koncepcji,
-- ocena prototypów przez wspólną rubrykę, nie „na vibe”.
+## 2. Compare-heavy direction
 
-## Reguły pracy
+![Porównanie wielu opcji](../assets/process/02-visual-comparison.png)
 
-- `brief` odpowiada na pytanie `dlaczego`.
-- `PRD` odpowiada na pytanie `co`.
-- `calculation-spec` odpowiada na pytanie `jak liczymy`.
-- `prototype-brief` odpowiada na pytanie `co model ma zaprojektować teraz`.
-- `prototype-review-rubric` odpowiada na pytanie `jak wybieramy kierunek`.
+Kolejny etap poszedł mocniej w szerokie porównanie: wiele produktów na jednym ekranie, wizualne zestawienie wyników, więcej analityki.
 
-## Czego nie robić
+To dało dobry obraz rynku, ale podnosiło próg wejścia. Narzędzie robiło się mądrzejsze, ale niekoniecznie prostsze.
 
-- nie wrzucać pełnego discovery logu do promptu prototypującego,
-- nie wpisywać gotowych rozwiązań interakcyjnych jako jedynej poprawnej ścieżki,
-- nie prosić modelu o „zaskocz mnie”, jednocześnie zamykając go w zbyt wielu instrukcjach,
-- nie traktować `kalkulatory-robocze/` jako kanonicznego inputu do nowej rundy pracy.
+## 3. Guided flow
+
+![Guided flow](../assets/process/03-guided-flow.png)
+
+Pojawiła się też próba lekkiego poprowadzenia użytkownika krok po kroku. Ten kierunek pomógł uprościć decyzje i zobaczyć, jak dużo daje praca na jednym pytaniu naraz.
+
+Jednocześnie zaczął ujawniać koszt zbyt długiego flow. Gdy wynik pojawia się za późno, spada tempo i energia doświadczenia.
+
+## 4. Portfolio-led shell
+
+![Portfolio-led shell](../assets/process/04-portfolio-shell.png)
+
+Na tym etapie zaczęło się dopracowywanie shellu i hierarchii. Wersja portfolio-led była spokojna, czytelna i bliska estetyce całego case study.
+
+Dała dobry fundament layoutu, ale nie była jeszcze wystarczająco osadzona w języku i charakterze FBO.
+
+## 5. FBO-led shell
+
+![FBO-led shell](../assets/process/05-fbo-shell.png)
+
+Następny pivot przesunął interfejs wyraźniej w stronę FBO. Nadal ważna była prostota, ale pojawił się bardziej redakcyjny rytm, mocniejsze rozumienie tego, co ma być hero, a co tylko wspierać decyzję.
+
+Tutaj zaczął się już klarować finalny produkt: mniej wykresu i tabeli jako centrum, więcej odpowiedzi i interpretacji.
+
+## 6. Final answer-first prototype
+
+![Final answer-first prototype](../assets/process/06-final-answer-first.png)
+
+Finalny kierunek nie jest "najbardziej rozbudowany". Jest najbardziej czytelny.
+
+Najpierw wynik. Potem koszt bezruchu. Potem porównanie z lokatą i kontem. Potem szczegóły, jeśli użytkownik ich chce. I dopiero na końcu materiały i kolejny krok.
+
+## Co z tego wynikło
+
+- Najlepiej działał nie ekran z największą liczbą informacji, tylko ekran z najlepszą kolejnością informacji.
+- Najmocniejszy pivot nie był wizualny. Był produktowy: od porównywania do aktywacji.
+- Iteracje najwięcej dawały wtedy, gdy pracowaliśmy na artefakcie, patrzyliśmy, co naprawdę przeszkadza w odbiorze i upraszczaliśmy bez sentymentu.

@@ -1,4 +1,6 @@
-# Calculation Spec — Kalkulator Obligacji Skarbowych PoC
+# Calculation Spec - Kalkulator Obligacji Skarbowych PoC
+
+> Status note: ten dokument opisuje wcześniejszą warstwę logiki i nie jest już samodzielnym source of truth dla obecnego produktu. Dla aktualnego UI, UX, copy i zachowania wygrywają `docs/product/brief.md`, `docs/product/prd.md` oraz `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`. Przy rewrite do Next.js warstwę finansową trzeba zweryfikować z aktualnym prototypem i bieżącymi parametrami.
 
 ## Cel dokumentu
 
@@ -20,10 +22,10 @@ Ten dokument opisuje logikę obliczeń i uproszczenia PoC. Parametry czasowo wra
 
 ### Definicje
 
-- `A` — kwota wejściowa.
-- `H` — horyzont w latach.
-- `i` — wybrana inflacja.
-- `t` — podatek Belki (`0,19`).
+- `A` - kwota wejściowa.
+- `H` - horyzont w latach.
+- `i` - wybrana inflacja.
+- `t` - podatek Belki (`0,19`).
 
 ### Linie referencyjne
 
@@ -51,7 +53,7 @@ Ten dokument opisuje logikę obliczeń i uproszczenia PoC. Parametry czasowo wra
 - IKE nie dotyczy benchmarku konta oszczędnościowego,
 - wynik realny liczymy przez podzielenie wyniku nominalnego przez `(1 + i)^H`.
 
-## TOS — obligacje 3-letnie stałoprocentowe
+## TOS - obligacje 3-letnie stałoprocentowe
 
 ### Parametr PoC
 
@@ -88,7 +90,7 @@ Ten dokument opisuje logikę obliczeń i uproszczenia PoC. Parametry czasowo wra
 - dla pełnych bloków trzyletnich reinwestujemy środki po opodatkowaniu (`standard`) lub brutto (`IKE`),
 - jeśli ostatni blok kończy się przed terminem wykupu, stosujemy wzór niepełnego bloku.
 
-## COI — obligacje 4-letnie indeksowane inflacją
+## COI - obligacje 4-letnie indeksowane inflacją
 
 ### Parametry PoC
 
@@ -127,7 +129,7 @@ Ten dokument opisuje logikę obliczeń i uproszczenia PoC. Parametry czasowo wra
 - `standard_end = returned_principal + suma_rocznych_standard_interest`
 - `ike_end = returned_principal + suma_rocznych_ike_interest`
 
-## EDO — obligacje 10-letnie indeksowane inflacją
+## EDO - obligacje 10-letnie indeksowane inflacją
 
 ### Parametry PoC
 

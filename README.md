@@ -1,40 +1,97 @@
-# Kalkulator obligacji skarbowych — PoC dla FBO
+# Kalkulator obligacji skarbowych dla FBO
 
-Repo zawiera proof of concept kalkulatora obligacji skarbowych przygotowywanego jako artefakt rekrutacyjny pod rolę Product Managera w Finanse Bardzo Osobiste.
+To repo zawiera produkcyjne środowisko `Next.js + TypeScript` dla kalkulatora obligacji skarbowych Finanse Bardzo Osobiste oraz dokumentację procesu, który doprowadził do obecnego rozwiązania.
 
-To nie jest jeszcze finalna aplikacja. Na tym etapie repo ma przede wszystkim pokazać:
+Aktualna implementacja aplikacji jest rewrite'em 1:1 obecnego prototypu referencyjnego. Repo nadal przechowuje też artefakty procesu, decyzje produktowe i wcześniejsze kierunki robocze.
 
-- sposób myślenia produktowego,
-- pracę z AI i agentami,
-- rozdzielenie source-of-truth od promptów do prototypowania,
-- podejście do UX dla osoby początkującej.
+## Jaki problem rozwiązujemy
 
-## Co jest najważniejsze
+Punkt wyjścia nie brzmiał: "jak porównać wszystkie obligacje".
 
-- `docs/project-context.md` — krótki kontekst projektu i decyzje bazowe.
-- `docs/product/brief.md` — problem, segment, hipotezy i zakres PoC.
-- `docs/product/prd.md` — zachowanie produktu i struktura ekranu.
-- `docs/product/calculation-spec.md` — logika obliczeń i uproszczenia PoC.
-- `docs/product/source-of-truth.md` — źródła danych, polityka aktualizacji i walidacji.
-- `docs/process/portfolio-integration.md` — kontrakt integracyjny dla wersji osadzanej w portfolio przez `iframe`.
-- `docs/product/prototype-brief.md` — jedyny właściwy input do szybkiego prototypowania.
-- `docs/product/prototype-review-rubric.md` — rubryka oceny wygenerowanych kierunków.
+Punkt wyjścia był prostszy i bardziej ludzki:
 
-## Ważne zasady
+- pieniądze tracą wartość,
+- konto albo lokata są dla wielu osób domyślnym wyborem,
+- obligacje brzmią sensownie, ale pierwszy krok budzi niepewność,
+- użytkownik potrzebuje prostoty, zrozumienia i intencji działania, a nie eksperckiego narzędzia finansowego.
 
-- `PRD` nie jest promptem do generowania prototypów.
-- Do eksploracji UI używamy `prototype-brief.md`, nie pełnej dokumentacji produktu.
-- Dane obligacji w PoC aktualizujemy ręcznie, z datą aktualizacji i jawnie wskazanym źródłem.
-- Excel Marcina pozostaje artefaktem referencyjnym i walidacyjnym dla bardziej zaawansowanej logiki.
+## Dla kogo jest ten produkt
 
-## Co nie jest kanoniczne
+Docelowym odbiorcą PoC jest początkująca osoba z ekosystemu FBO, która:
 
-- `kalkulatory-robocze/` — wcześniejsze szybkie prototypy i szkice. Mogą inspirować, ale nie są source-of-truth dla produktu ani implementacji.
-- długie promptowe artefakty robocze — traktujemy je jako materiał procesu, nie jako dokumentację produktu.
+- nie zna mechaniki poszczególnych serii obligacji,
+- nie chce finansowego żargonu,
+- chce szybko zobaczyć sensowny scenariusz dla swoich pieniędzy,
+- potrzebuje spokojnego wejścia, a nie rankingu zwycięzców.
 
-## Aktualny kierunek projektu
+## Do jakiego rozwiązania doszliśmy
 
-- segment docelowy PoC: początkujący użytkownik FBO,
-- teza produktowa: prosty webowy kalkulator dla Segmentu A + Excel jako narzędzie dla zaawansowanych,
-- kierunek wizualny: FBO-adjacent, ale nie kopia 1:1,
-- stack domyślny: Next.js, TypeScript, Tailwind, Recharts, Vercel, z możliwością świadomych wyjątków.
+Finalny kierunek to answer-first calculator:
+
+- wybierasz serię obligacji,
+- wpisujesz kwotę,
+- od razu widzisz szacunkowy wynik netto,
+- zaraz pod nim dostajesz koszt bezruchu,
+- potem porównanie z lokatą i kontem,
+- a na końcu prosty kolejny krok: jak kupić pierwszą obligację.
+
+Kluczowy pivot polegał na przejściu z szerokiego porównywacza i bardziej analitycznego flow do prostszego narzędzia aktywacyjnego. Sednem produktu przestało być porównywanie obligacji samo w sobie. Zaczęło nim być uruchomienie decyzji.
+
+## Co warto przeczytać
+
+- [Project context](docs/project-context.md) - krótki kontekst projektu i obecny source of truth.
+- [Brief](docs/product/brief.md) - finalne założenia produktu i dlaczego ten format wygrał.
+- [PRD](docs/product/prd.md) - aktualny opis produktu zgodny z obecnym prototypem.
+- [Decision log](docs/process/decision-log.md) - najważniejsze decyzje w kolejności.
+- [Pivot](docs/process/pivot.md) - skąd startowaliśmy i gdzie jesteśmy teraz.
+- [Proces iteracji i screeny](docs/process/prototyping-notes.md) - najważniejsze etapy pracy na artefaktach.
+- [Patterny pracy](docs/process/process-patterns.md) - jak wyglądał proces iteracyjny od strony produktu, UX i UI.
+- [Kontrakt integracyjny](docs/process/portfolio-integration.md) - jak ten ekran ma działać po osadzeniu w portfolio.
+
+## Aktualny source of truth
+
+Najważniejszym źródłem prawdy dla obecnego UI, UX, copy i zachowania jest:
+
+- `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`
+
+Ten folder zostaje w repo jako referencja 1:1 przed rewrite do `Next.js`.
+
+## Aktualny stan techniczny
+
+- root repo jest aplikacją `Next.js + TypeScript`,
+- docelowy ekran działa pod `/kalkulator`,
+- `/` przekierowuje do `/kalkulator`,
+- styling kalkulatora został przeniesiony z prototypu i ograniczony do subtree kalkulatora,
+- logika kalkulacji jest wydzielona od warstwy UI i pokryta testami,
+- folder `kalkulatory-robocze/` zostaje w repo jako referencja procesu i porównań.
+
+## Struktura repo
+
+- `app/` - routing i layout produkcyjnej aplikacji Next.js.
+- `src/features/calculator/` - domena, logika, komponenty i style kalkulatora.
+- `docs/` - aktualny kontekst produktu, PRD i zapis decyzji.
+- `kalkulatory-robocze/` - prototypy i starsze artefakty robocze, bez roli aktywnego kodu produkcyjnego.
+
+## Uruchomienie
+
+```bash
+npm install
+npm run dev
+```
+
+Najważniejsze komendy:
+
+- `npm run dev` - lokalny development.
+- `npm run build` - build produkcyjny.
+- `npm run test` - testy jednostkowe i Playwright.
+- `npm run test:visual:update` - aktualizacja snapshotów visual regression.
+
+Starsze dokumenty domenowe i prototypowe zostały przeniesione do `@archiwum/`, żeby nie mieszały bieżącego kontekstu. Jeśli kiedyś będą jeszcze potrzebne, traktujemy je jako historyczny ślad procesu, a nie aktywny source of truth.
+
+## AI-assisted workflow
+
+Kod i duża część procesu powstały z pomocą Codex, Cursor, Claude.ai i Claude Code. AI było tutaj realnym narzędziem pracy: przyspieszało prototypowanie, iterację i porządkowanie kodu. Kierunek produktu, selekcja rozwiązań i korekta UX/UI pozostawały jednak świadomie prowadzone.
+
+## Co dalej
+
+Najbliższy krok po akceptacji tego rewrite'u to uporządkowanie repo i przygotowanie go jako finalnej wersji do publikacji, bez naruszania obecnej zgodności 1:1 z prototypem referencyjnym.

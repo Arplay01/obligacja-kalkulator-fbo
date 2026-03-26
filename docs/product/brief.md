@@ -1,81 +1,102 @@
-# Brief — Kalkulator Obligacji Skarbowych PoC
+# Brief - finalny kierunek kalkulatora obligacji dla FBO
 
-## Cel dokumentu
+## Po co istnieje ten produkt
 
-Ten brief opisuje problem, segment, hipotezy i zakres PoC. Nie opisuje jeszcze szczegółowej logiki obliczeń ani nie służy jako prompt do generowania prototypów.
+To PoC prostego kalkulatora obligacji skarbowych dla początkującej osoby z ekosystemu FBO.
 
-## Kontekst
-
-Finanse Bardzo Osobiste mają rozbudowany arkusz Excel do symulacji obligacji skarbowych. To narzędzie jest mocne i eksperckie, ale wymaga od użytkownika wiedzy, której osoba początkująca często jeszcze nie ma.
-
-Teza tego PoC jest prosta: nie próbujemy budować webowego odpowiednika Excela 1:1. Budujemy prostsze narzędzie dla osoby, która chce szybko zrozumieć, co stanie się z jej pieniędzmi i czym różnią się główne opcje.
+Nie próbujemy budować webowego odpowiednika Excela 1:1. Chodzi o narzędzie, które szybko pokaże, co można zrobić z pieniędzmi poza biernym trzymaniem ich na lokacie albo koncie i jak zrobić pierwszy krok bez przeciążenia.
 
 ## Problem użytkownika
 
-Osoba początkująca:
+Początkujący użytkownik:
 
-- widzi, że pieniądze na koncie tracą wartość,
-- słyszała o obligacjach skarbowych, ale nie rozumie ich mechaniki,
-- nie wie, jak porównać obligacje z kontem lub lokatą,
-- czuje lęk przed złą decyzją i nie chce żargonu ani eksperckiego interfejsu.
+- widzi, że pieniądze tracą wartość,
+- zna nazwę "obligacje", ale nie wie, czy to rozwiązanie dla niego,
+- nie chce finansowego interfejsu eksperckiego,
+- potrzebuje prostoty, zrozumienia i intencji działania.
 
-## Segmentacja
+To nie jest problem "jak porównać wszystkie serie obligacji". To jest problem "co mogę zrobić z pieniędzmi i jak ruszyć z miejsca".
 
-### Segment A — użytkownik początkujący
+## Dla kogo jest ten PoC
 
-To segment docelowy PoC. Szuka jasności, spokoju i odpowiedzi na pytanie: „co stanie się z moimi pieniędzmi?”.
+### Główny odbiorca
 
-### Segment B — użytkownik zaawansowany
+Początkująca osoba FBO, która:
 
-Zna typy obligacji, porównuje scenariusze i chce większej kontroli nad parametrami. Ten segment dalej obsługuje istniejący Excel.
+- chce zachować wartość oszczędności,
+- nie zna mechaniki poszczególnych produktów,
+- potrzebuje spokojnego, czytelnego wejścia w temat.
 
-## JTBD
+### Poza głównym zakresem
 
-„Kiedy orientuję się, że moje oszczędności na koncie tracą siłę nabywczą, chcę w prosty sposób zobaczyć, co stanie się z moimi pieniędzmi w kolejnych latach, żebym mógł podjąć spokojną i świadomą decyzję. Chcę czuć się bezpiecznie i pewnie przelewając moje pieniądze z mojego konta.”
+Osoba zaawansowana, która chce więcej parametrów, scenariuszy i kontroli. Dla niej nadal lepszym narzędziem pozostaje arkusz Excel Marcina.
+
+## Główna wartość produktu
+
+Produkt ma dać użytkownikowi cztery rzeczy:
+
+- natychmiastowy szacunkowy wynik,
+- prosty obraz kosztu bezruchu,
+- porównanie z czymś znajomym, czyli lokatą albo kontem,
+- jasny następny krok, jeśli chce kupić pierwszą obligację.
 
 ## Teza produktowa
 
-PoC powinien pomagać w zrozumieniu i porównaniu opcji, a nie w „optymalizacji pod zysk”. To narzędzie edukacyjne, uczciwe i niesprzedażowe.
+Najlepszy kierunek dla tego PoC to answer-first calculator:
 
-## Hipotezy
+- odpowiedź jest na górze,
+- szczegóły są na żądanie,
+- copy tłumaczy trudne pojęcia lokalnie,
+- doświadczenie prowadzi od zrozumienia do aktywacji.
 
-- Porównanie jest cenniejsze dla Segmentu A niż sama kalkulacja jednego instrumentu.
-- Wykres i czytelne podsumowanie budują lepszy „aha moment” niż tabela pełna parametrów.
-- Framing „co stanie się z moimi pieniędzmi” działa lepiej niż framing „ile zarobię”.
-- Prosty start z głębszymi szczegółami na żądanie jest lepszy niż pokazywanie wszystkich opcji od razu.
-- Sekcja „co dalej” jest częścią wartości produktu; bez niej kalkulator kończy się zbyt wcześnie.
-- Dwa narzędzia dla dwóch segmentów są lepsze niż jeden kompromisowy produkt.
+To narzędzie ma być edukacyjne, uczciwe i spokojne. Nie ma działać jak ranking zwycięzców ani jak narzędzie do finansowej optymalizacji.
+
+## Dlaczego ten format wygrał
+
+Pierwsze podejścia były szersze, bardziej analityczne i zostawiały więcej miejsca na wykresy, porównania i parametry.
+
+W praktyce okazało się, że dla laika to nie jest najkrótsza droga do decyzji. Lepszy efekt dał format, który:
+
+- pokazuje wartość od razu,
+- redukuje lęk,
+- upraszcza wybory,
+- tłumaczy tylko to, co potrzebne w danym momencie,
+- daje kolejny krok w tym samym ekranie.
+
+## Zakres obecnego PoC
+
+Produkt skupia się na jednym ekranie i jednym głównym zadaniu:
+
+pokazać, co dzieje się z pieniędzmi użytkownika przy wybranej obligacji, jak to wypada wobec lokaty i konta oraz co zrobić dalej.
+
+W scope są:
+
+- wybór serii obligacji detalicznych,
+- kwota inwestycji,
+- prosty scenariusz inflacji,
+- opcje zaawansowane na żądanie,
+- wynik netto,
+- koszt nicnierobienia,
+- porównanie do znanych alternatyw,
+- materiały edukacyjne i zakupowe.
 
 ## Non-goals
 
-PoC nie ma:
+Ten PoC nie ma:
 
-- przekonywać, że obligacje są zawsze lepsze od lokat,
-- zastąpić eksperckiego Excela Marcina,
-- porównywać obligacji z ETF-ami lub akcjami,
-- rozwiązywać regularnego inwestowania, dokupowania czy budowy portfela,
-- modelować wszystkich edge case'ów zaawansowanego użytkownika.
+- być eksperckim porównywaczem wszystkich scenariuszy,
+- zastępować Excela 1:1,
+- projektować doświadczenia wokół wykresów jako głównej warstwy,
+- rozwiązywać całego świata oszczędzania i inwestowania,
+- porównywać obligacji z ETF-ami, akcjami czy portfelami,
+- budować skomplikowanego flow wieloetapowego.
 
-## Zakres PoC
+Zrezygnowaliśmy też z wykresów jako głównej warstwy produktu. Wymagają większej wiedzy domenowej i większego scope'u pracy, żeby były naprawdę czytelne dla laika.
 
-PoC skupia się na jednym ekranie i jednym głównym pytaniu: „co stanie się z moimi pieniędzmi przy różnych bezpiecznych opcjach oszczędzania?”.
+## Co będzie oznaczało sukces tego PoC
 
-Rdzeń rozwiązania:
-
-- minimalna liczba inputów,
-- porównanie konto oszczędnościowe vs TOS vs EDO,
-- COI jako głębsza warstwa szczegółów,
-- jawne pokazanie wpływu inflacji i podatku Belki,
-- uczciwy disclaimer i sekcja kolejnego kroku.
-
-## Otwarta walidacja
-
-To repo przyjmuje decyzję „Segment A only” jako założenie robocze PoC, ale szersza strategia FBO nadal wymaga rozmowy i walidacji.
-
-## Najważniejsze pytania discovery
-
-- Jak FBO definiuje sukces kalkulatora?
-- Czy prosty kalkulator + Excel to pożądana architektura, czy tylko hipoteza?
-- Jakie są docelowe linki i treści dla sekcji „co dalej”?
-- Kto i jak będzie aktualizował parametry obligacji?
-- Jak bardzo produkt ma żyć wewnątrz ekosystemu FBO, a jak bardzo być osobną stroną narzędziową?
+- użytkownik szybko rozumie sens wyniku,
+- widzi koszt bezruchu,
+- nie gubi się w pojęciach,
+- dostaje prosty kolejny krok,
+- interfejs zachowuje spokój mimo finansowego tematu.

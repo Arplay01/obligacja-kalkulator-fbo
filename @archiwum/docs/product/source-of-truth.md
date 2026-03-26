@@ -1,4 +1,6 @@
-# Source of Truth — Dane i walidacja
+# Source of Truth - Dane i walidacja
+
+> Status note: ten dokument pozostaje pomocniczy dla danych i walidacji, ale nie opisuje w pełni obecnego produktu. Jeśli pojawia się konflikt z aktualnym flow, copy albo interakcjami, wygrywa `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` oraz aktualne `brief` i `PRD`.
 
 ## Cel dokumentu
 
@@ -77,9 +79,9 @@ Status:
 
 Parametry przyjęte dla marcowej emisji 2026:
 
-- `TOS0329` — `4,65%` stałe,
-- `COI0330` — `5,00%` w pierwszym roku, potem `inflacja + 1,50 p.p.`,
-- `EDO0336` — `5,60%` w pierwszym roku, potem `inflacja + 2,00 p.p.`.
+- `TOS0329` - `4,65%` stałe,
+- `COI0330` - `5,00%` w pierwszym roku, potem `inflacja + 1,50 p.p.`,
+- `EDO0336` - `5,60%` w pierwszym roku, potem `inflacja + 2,00 p.p.`.
 
 Punkty startowe do ręcznej weryfikacji:
 

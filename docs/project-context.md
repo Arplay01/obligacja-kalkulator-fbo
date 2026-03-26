@@ -1,44 +1,59 @@
 # Project Context
 
-To repo służy do zbudowania i udokumentowania proof of concept kalkulatora obligacji skarbowych dla Finanse Bardzo Osobiste.
+To repo dokumentuje proof of concept kalkulatora obligacji skarbowych dla Finanse Bardzo Osobiste i proces dojścia do jego obecnej formy.
 
-## Po co istnieje to repo
+## Obecny stan projektu
 
-- zbudować działający PoC kalkulatora jako artefakt portfolio,
-- pokazać sposób pracy PM-a: od problem framingu, przez specyfikację, po prototyp,
-- pracować AI-first, ale z jasnym rozdziałem między dokumentacją produktu a promptami do prototypowania.
+- aktualnym source of truth dla UI, UX, copy i zachowania jest `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`,
+- obecne `brief` i `PRD` opisują już ten finalny kierunek, a nie pierwotny plan,
+- kolejnym krokiem ma być rewrite 1:1 do `Next.js + TypeScript`,
+- obecny prototyp zostaje w repo jako referencja przed implementacją produkcyjną.
 
 ## Jaki problem rozwiązujemy
 
-PoC nie ma zastąpić rozbudowanego Excela Marcina 1:1. Ma pokazać prostsze webowe narzędzie dla osoby początkującej, która chce zrozumieć, co stanie się z jej pieniędzmi w czasie i jakie opcje ma do wyboru.
+To nie jest projekt o porównywaniu obligacji dla samego porównywania.
 
-## Segment i decyzja scope'owa
+Sedno problemu jest takie:
 
-- Segment docelowy PoC: początkujący użytkownik FBO, który nie zna typów obligacji i szuka spokoju, jasności i poczucia kontroli.
+- pieniądze trzymane bez ruchu tracą wartość,
+- początkujący użytkownik nie wie, co może z nimi zrobić poza lokatą lub kontem,
+- obligacje brzmią sensownie, ale wejście w temat jest trudne,
+- potrzeba prostoty, spokoju i aktywacji, a nie ciężkiego narzędzia eksperckiego.
+
+## Dla kogo budowany jest ten PoC
+
+- Segment docelowy: początkujący użytkownik FBO, który chce zrozumieć podstawowe opcje i zrobić pierwszy krok.
 - Segment zaawansowany: dalej obsługiwany przez istniejący arkusz Excel.
-- Założenie robocze repo: prosty kalkulator webowy + Excel dla zaawansowanych to lepszy kierunek niż jeden kompromisowy produkt.
 
-## Decyzje bazowe
+## Najważniejsze decyzje bazowe
 
-- Design direction: FBO-adjacent, ale bez kopiowania wizualnego 1:1.
-- Stack policy: core stack z ogłoszenia jako domyślność (`Next.js`, `TypeScript`, `Tailwind`, `Recharts`, `Vercel`), z dopuszczalnymi wyjątkami, jeśli poprawiają jakość PoC.
-- Final recruitment delivery mode: kalkulator ma docelowo działać jako trasa `/kalkulator` osadzana w `iframe` wewnątrz portfolio na tym samym originie.
-- Recruitment UX policy: kalkulator ma wzmacniać flow przeglądania portfolio i załączników; nie projektujemy głównej ścieżki w oparciu o otwieranie zewnętrznych kart.
-- Data policy: parametry obligacji aktualizowane ręcznie, z datą aktualizacji i jawnym wskazaniem źródeł.
-- Tone of voice: edukacyjny, uczciwy, bez tonu sprzedażowego i bez FOMO.
+- Kierunek produktu: answer-first, prosty wynik najpierw, szczegóły później.
+- Kierunek wizualny: FBO-adjacent, ale nie kopia 1:1.
+- Główny nośnik wartości: prostota, koszt bezruchu, porównanie do znanych punktów odniesienia i czytelny next step.
+- Finalny model osadzenia: `/kalkulator` wewnątrz portfolio, w `iframe`, na tym samym originie.
+- Tone of voice: edukacyjny, uczciwy, bez tonu sprzedażowego.
+
+## Hierarchia source of truth
+
+1. `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` - UI, UX, copy i zachowanie.
+2. `docs/product/brief.md` - finalne założenia produktu.
+3. `docs/product/prd.md` - finalny opis flow i interakcji.
+4. `docs/process/portfolio-integration.md` - kontrakt osadzenia w portfolio.
+5. `@archiwum/` - historyczne dokumenty i starsze założenia, które mogą być przydatne tylko jako materiał procesu.
+
+Jeśli historyczny dokument rozjeżdża się z obecnym prototypem w obszarze UI, UX, copy albo kolejności doświadczenia, wygrywa aktualny prototyp.
 
 ## Routing dokumentów
 
-- `README.md` — wejście dla człowieka.
-- `docs/project-context.md` — cienki, kanoniczny kontekst dla kolejnych sesji.
-- `docs/product/brief.md` — dlaczego budujemy ten produkt i dla kogo.
-- `docs/product/prd.md` — co ma robić produkt.
-- `docs/product/calculation-spec.md` — jak liczymy.
-- `docs/product/source-of-truth.md` — skąd bierzemy dane i jak je odświeżamy.
-- `docs/process/portfolio-integration.md` — kontrakt integracyjny dla wersji osadzanej w portfolio.
-- `docs/product/prototype-brief.md` — jak zlecać rapid prototyping.
-- `docs/product/prototype-review-rubric.md` — jak oceniać wygenerowane kierunki.
+- `README.md` - wejście do całego case study.
+- `docs/product/brief.md` - problem, odbiorca i finalna teza produktu.
+- `docs/product/prd.md` - aktualny produkt krok po kroku.
+- `docs/process/decision-log.md` - najważniejsze decyzje w kolejności.
+- `docs/process/pivot.md` - zmiana kierunku od pierwszego pomysłu do obecnego rozwiązania.
+- `docs/process/prototyping-notes.md` - screeny i przebieg iteracji.
+- `docs/process/process-patterns.md` - patterny pracy i iteracji.
+- `docs/process/portfolio-integration.md` - docelowy model osadzenia.
 
 ## Zasada operacyjna
 
-`PRD` jest source-of-truth dla zachowania produktu, ale nie jest promptem do generowania PoC. Do prototypowania używamy osobnego `prototype-brief.md`.
+Najpierw aktualizujemy dokumentację, potem zlecamy rewrite do `Next.js`. Dzięki temu kolejny agent dostaje jeden, czysty kontekst zamiast mieszanki starego planu i nowego prototypu.

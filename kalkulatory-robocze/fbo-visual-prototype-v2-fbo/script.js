@@ -24,7 +24,9 @@ const BONDS = {
   OTS: {
     id: "OTS",
     name: "OTS",
-    title: "OTS — 3-miesięczne",
+    title: "OTS - 3-miesięczne",
+    pickerLabel: "3-miesięczne",
+    summaryLabel: "3-miesięczne",
     termMonths: 3,
     termLabel: "3 miesiące",
     badgeKind: "fixed",
@@ -52,7 +54,9 @@ const BONDS = {
   ROR: {
     id: "ROR",
     name: "ROR",
-    title: "ROR — roczne",
+    title: "ROR - roczne",
+    pickerLabel: "roczne",
+    summaryLabel: "roczne",
     termMonths: 12,
     termLabel: "1 rok",
     badgeKind: "variable",
@@ -86,7 +90,9 @@ const BONDS = {
   DOR: {
     id: "DOR",
     name: "DOR",
-    title: "DOR — 2-letnie",
+    title: "DOR - 2-letnie",
+    pickerLabel: "2-latki",
+    summaryLabel: "2-latki",
     termMonths: 24,
     termLabel: "2 lata",
     badgeKind: "variable",
@@ -118,7 +124,9 @@ const BONDS = {
   TOS: {
     id: "TOS",
     name: "TOS",
-    title: "TOS — 3-letnie",
+    title: "TOS - 3-letnie",
+    pickerLabel: "3-latki",
+    summaryLabel: "3-latki",
     termMonths: 36,
     termLabel: "3 lata",
     badgeKind: "fixed",
@@ -146,7 +154,9 @@ const BONDS = {
   COI: {
     id: "COI",
     name: "COI",
-    title: "COI — 4-letnie",
+    title: "COI - 4-letnie",
+    pickerLabel: "4-latki",
+    summaryLabel: "4-latki",
     termMonths: 48,
     termLabel: "4 lata",
     badgeKind: "inflation",
@@ -182,7 +192,9 @@ const BONDS = {
   EDO: {
     id: "EDO",
     name: "EDO",
-    title: "EDO — 10-letnie",
+    title: "EDO - 10-letnie",
+    pickerLabel: "10-latki",
+    summaryLabel: "10-latki",
     termMonths: 120,
     termLabel: "10 lat",
     badgeKind: "inflation",
@@ -221,8 +233,8 @@ const state = {
   inflationMode: "preset",
   inflationPreset: 3.5,
   customInflation: 3.5,
-  depositRate: 4.5,
-  savingsRate: 3.5,
+  depositRate: 4.0,
+  savingsRate: 4.5,
   nbpRate: DEFAULT_NBP_RATE,
   ike: false,
 };
@@ -232,6 +244,7 @@ const dom = {
   bondButtons: [...document.querySelectorAll("[data-bond]")],
   amountPresets: [...document.querySelectorAll("[data-amount]")],
   inflationButtons: [...document.querySelectorAll("[data-inflation]")],
+  stepButtons: [...document.querySelectorAll("[data-step-target]")],
   amountSlider: document.getElementById("amount-slider"),
   amountSliderWrap: document.querySelector("[data-amount-slider-wrap]"),
   amountDisplay: document.querySelector("[data-amount-display]"),
@@ -240,6 +253,8 @@ const dom = {
   inflationMode: document.querySelector("[data-inflation-mode]"),
   inflationHelper: document.querySelector("[data-inflation-helper]"),
   ikeToggle: document.getElementById("ike-toggle"),
+  ikeHelper: document.querySelector("[data-ike-helper]"),
+  portfolioReturnButton: document.querySelector("[data-close-portfolio-layer]"),
   depositRate: document.getElementById("deposit-rate"),
   savingsRate: document.getElementById("savings-rate"),
   nbpRate: document.getElementById("nbp-rate"),
@@ -248,7 +263,9 @@ const dom = {
   bondName: document.querySelector("[data-bond-name]"),
   bondDescription: document.querySelector("[data-bond-description]"),
   bondBadge: document.querySelector("[data-bond-badge]"),
+  heroTooltip: document.querySelector("[data-hero-tooltip]"),
   inactionText: document.querySelector("[data-inaction-text]"),
+  insightBanner: document.querySelector(".insight-banner"),
   insightTitle: document.querySelector("[data-insight-title]"),
   insightText: document.querySelector("[data-insight-text]"),
   depositTitle: document.querySelector("[data-deposit-title]"),
@@ -266,6 +283,7 @@ const dom = {
   numeric: {
     netProfit: document.querySelector('[data-value="netProfit"]'),
     netReturn: document.querySelector('[data-value="netReturn"]'),
+    avgProfitPerYear: document.querySelector('[data-value="avgProfitPerYear"]'),
     invested: document.querySelector('[data-value="invested"]'),
     grossInterest: document.querySelector('[data-value="grossInterest"]'),
     tax: document.querySelector('[data-value="tax"]'),
@@ -325,6 +343,10 @@ function formatMoneyRounded(value, options = {}) {
 
 function formatPercent(value) {
   return `${percentFormatter.format(value)}%`;
+}
+
+function steppedValue(value, delta, min = 0) {
+  return Math.max(min, Math.round((value + delta) * 10) / 10);
 }
 
 function normaliseAmount(value) {
@@ -761,13 +783,13 @@ function buildInsight(bond, bondResult, depositResult, inflation, nbpRate) {
   };
 }
 
-function renderCompareDelta(element, label, delta) {
+function renderCompareDelta(element, label, compareTo, delta) {
   const bondWins = delta >= 0;
   element.classList.toggle("compare-card__vs--positive", bondWins);
   element.classList.toggle("compare-card__vs--negative", !bondWins);
   element.innerHTML = bondWins
-    ? `${label} daje <strong>${formatMoneyRounded(delta)}</strong> więcej niż benchmark`
-    : `Benchmark daje <strong>${formatMoneyRounded(Math.abs(delta))}</strong> więcej niż ${label}`;
+    ? `${label} daje <strong>${formatMoneyRounded(delta)}</strong> więcej niż ${compareTo}`
+    : `${compareTo} daje <strong>${formatMoneyRounded(Math.abs(delta))}</strong> więcej niż ${label}`;
 }
 
 function render() {
@@ -809,14 +831,14 @@ function render() {
   dom.bondButtons.forEach((button) => {
     const currentBond = BONDS[button.dataset.bond];
     const rateNode = button.querySelector(".bond-chip__rate");
-    const periodNode = button.querySelector(".bond-chip__period");
+    const labelNode = button.querySelector(".bond-chip__label");
 
     if (rateNode) {
       rateNode.textContent = formatPercent(currentBond.firstRate);
     }
 
-    if (periodNode) {
-      periodNode.textContent = currentBond.termLabel;
+    if (labelNode) {
+      labelNode.textContent = currentBond.pickerLabel;
     }
   });
 
@@ -853,6 +875,9 @@ function render() {
   dom.nbpRow.classList.toggle("is-hidden", !showNbpRow);
 
   dom.ikeToggle.setAttribute("aria-checked", String(state.ike));
+  dom.ikeHelper.textContent = `Bez podatku od zysków. Tutaj oszczędzasz ok. ${formatMoneyRounded(
+    bondResult.totalInterest * BELKA_TAX_RATE,
+  )}.`;
   dom.depositRate.value = formatInputNumber(state.depositRate);
   dom.savingsRate.value = formatInputNumber(state.savingsRate);
   dom.nbpRate.value = formatInputNumber(state.nbpRate);
@@ -861,10 +886,10 @@ function render() {
   }
 
   dom.inflationMode.textContent =
-    state.inflationMode === "custom"
-      ? `Aktywna własna inflacja: ${formatPercent(effectiveInflation)}`
-      : bond.badgeKind === "inflation"
-        ? "Wpływa od 2. roku"
+    bond.badgeKind === "inflation"
+      ? `Pierwszy rok: stałe ${formatPercent(bond.firstRate)}. Potem: oprocentowanie podąża za inflacją.`
+      : state.inflationMode === "custom"
+        ? `Aktywna własna inflacja: ${formatPercent(effectiveInflation)}`
         : "Zmienia tylko wynik realny";
 
   dom.inflationHelper.textContent =
@@ -876,12 +901,20 @@ function render() {
   dom.bondDescription.textContent = bond.description(state);
   dom.bondBadge.className = `results__badge results__badge--${bond.badgeKind}`;
   dom.bondBadge.innerHTML = badgeMarkup(bond.badgeKind, bond.badgeLabel);
+  dom.heroTooltip.textContent = `Szacunkowy wynik po podatku Belki (19%), przy założonej inflacji ${formatPercent(
+    effectiveInflation,
+  )}. Rzeczywisty zysk zależy od przyszłej inflacji.`;
 
   animateValue(dom.numeric.netProfit, bondResult.netProfit, (value) =>
     formatMoney(value, { signed: true }),
   );
   animateValue(dom.numeric.netReturn, bondResult.netReturn, (value) =>
     formatMoney(value),
+  );
+  animateValue(
+    dom.numeric.avgProfitPerYear,
+    bondResult.netProfit / bondResult.termYears,
+    (value) => `${formatMoney(value)} / rok`,
   );
   animateValue(dom.numeric.invested, bondResult.invested, (value) =>
     formatMoney(value),
@@ -935,28 +968,31 @@ function render() {
     inactionRealValue,
   )}</strong>. To realny spadek wartości o <strong class="inaction-box__loss">${formatMoney(
     inactionLoss,
-  )}</strong>, nawet jeśli nominalnie nadal widzisz te same ${formatMoney(
+  )}</strong>, nawet jeśli w portfelu nadal widzisz ${formatMoney(
     bondResult.invested,
   )}.`;
 
   dom.insightTitle.textContent = insight.title;
   dom.insightText.textContent = insight.text;
+  dom.insightBanner.hidden = true;
 
   dom.depositTitle.textContent = `Lokata (${formatPercent(state.depositRate)})`;
   dom.savingsTitle.textContent = `Konto oszczędnościowe (${formatPercent(state.savingsRate)})`;
   renderCompareDelta(
     dom.depositVs,
     bond.name,
+    "lokata",
     bondResult.netProfit - depositResult.netProfit,
   );
   renderCompareDelta(
     dom.savingsVs,
     bond.name,
+    "konto",
     bondResult.netProfit - savingsResult.netProfit,
   );
-  dom.compareHelper.textContent = `Lokata i konto liczę dla tego samego horyzontu co ${bond.name}.`;
+  dom.compareHelper.textContent = `Lokata i konto są liczone dla tego samego horyzontu co ${bond.name}.`;
 
-  dom.howSummary.textContent = `Jak działa ${bond.name}?`;
+  dom.howSummary.textContent = `Jak działa ${bond.name} - ${bond.summaryLabel}?`;
   dom.howDescription.textContent = bond.howItWorks(state);
   renderList(dom.prosList, bond.pros);
   renderList(dom.consList, bond.cons);
@@ -1041,6 +1077,71 @@ function bindEvents() {
   dom.customInflation.addEventListener("blur", () => {
     dom.customInflation.value = formatInputNumber(state.customInflation);
   });
+
+  dom.stepButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.stepTarget;
+      const delta = Number.parseFloat(button.dataset.step);
+
+      if (target === "deposit-rate") {
+        state.depositRate = steppedValue(state.depositRate, delta);
+      }
+
+      if (target === "savings-rate") {
+        state.savingsRate = steppedValue(state.savingsRate, delta);
+      }
+
+      if (target === "nbp-rate") {
+        state.nbpRate = steppedValue(state.nbpRate, delta);
+      }
+
+      if (target === "custom-inflation") {
+        state.customInflation = steppedValue(state.customInflation, delta);
+        state.inflationMode = "custom";
+      }
+
+      render();
+    });
+  });
+
+  if (dom.portfolioReturnButton) {
+    dom.portfolioReturnButton.addEventListener("click", () => {
+      const fallbackUrl =
+        dom.portfolioReturnButton.dataset.portfolioFallbackUrl;
+
+      // Future Next.js rewrite: keep this close-intent bridge, so the CTA closes the calculator layer in-place.
+      // Standalone prototype still falls back to the portfolio calculator section when nothing handles the event.
+      const closeIntent = new CustomEvent("fbo:close-calculator-layer", {
+        bubbles: true,
+        cancelable: true,
+        detail: {
+          source: "portfolio-cta",
+          fallbackUrl,
+        },
+      });
+
+      const handledInPage =
+        !dom.portfolioReturnButton.dispatchEvent(closeIntent);
+
+      if (handledInPage) {
+        return;
+      }
+
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(
+          {
+            type: "fbo:close-calculator-layer",
+            source: "portfolio-cta",
+            fallbackUrl,
+          },
+          "*",
+        );
+        return;
+      }
+
+      window.location.href = fallbackUrl;
+    });
+  }
 }
 
 bindEvents();

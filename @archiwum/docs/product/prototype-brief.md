@@ -1,4 +1,6 @@
-# Prototype Brief — Runda 1 eksploracji
+# Prototype Brief - Runda 1 eksploracji
+
+> Status note: to jest historyczny brief do pierwszej rundy eksploracji. Nie opisuje obecnego produktu i nie powinien być używany jako source of truth przy rewrite do Next.js.
 
 ## Cel
 

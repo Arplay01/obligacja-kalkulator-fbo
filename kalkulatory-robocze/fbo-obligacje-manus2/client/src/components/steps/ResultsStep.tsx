@@ -1,5 +1,5 @@
 /**
- * ResultsStep — The comparison dashboard
+ * ResultsStep - The comparison dashboard
  * Design: Insight banner + side-by-side comparison cards + growth chart + detailed breakdown.
  * Honest: if deposit wins, it's shown clearly. No persuasion.
  */
@@ -121,7 +121,7 @@ export default function ResultsStep({ results, state, onBack, onReset }: Results
             <AlertTriangle className="w-4 h-4 text-[#E8A838] shrink-0 mt-0.5" />
             <p className="text-xs text-[#1A1F36]/50 leading-relaxed">
               <strong className="text-[#1A1F36]/70">To jest symulacja, nie gwarancja.</strong> Wyniki dla obligacji zmiennoprocentowych i indeksowanych inflacją 
-              zależą od przyszłej inflacji i stóp procentowych — nikt ich nie zna. Oprocentowanie lokat i kont oszczędnościowych 
+              zależą od przyszłej inflacji i stóp procentowych - nikt ich nie zna. Oprocentowanie lokat i kont oszczędnościowych 
               może się zmienić w dowolnym momencie.
             </p>
           </motion.div>
@@ -187,13 +187,13 @@ export default function ResultsStep({ results, state, onBack, onReset }: Results
             <div className="grid sm:grid-cols-2 gap-5 text-sm text-[#1A1F36]/55">
               <div>
                 <p className="font-semibold text-[#1A1F36] mb-1">Podatek Belki (19%)</p>
-                <p className="leading-relaxed">Od każdego zysku z oszczędności — czy to z lokaty, konta, czy obligacji — państwo pobiera 19% podatku. 
+                <p className="leading-relaxed">Od każdego zysku z oszczędności - czy to z lokaty, konta, czy obligacji - państwo pobiera 19% podatku. 
                 Wszystkie kwoty powyżej to zysk NETTO, po podatku.</p>
               </div>
               <div>
                 <p className="font-semibold text-[#1A1F36] mb-1">Gwarancja BFG vs Skarb Państwa</p>
                 <p className="leading-relaxed">Lokaty i konta są gwarantowane przez BFG do 100 tys. EUR na bank. 
-                Obligacje skarbowe gwarantuje bezpośrednio Skarb Państwa — bez limitu kwoty.</p>
+                Obligacje skarbowe gwarantuje bezpośrednio Skarb Państwa - bez limitu kwoty.</p>
               </div>
               <div>
                 <p className="font-semibold text-[#1A1F36] mb-1">Inflacja zjada oszczędności</p>
@@ -220,7 +220,7 @@ export default function ResultsStep({ results, state, onBack, onReset }: Results
               Kup obligacje na obligacjeskarbowe.pl
             </a>
             <p className="text-xs text-[#1A1F36]/25">
-              Dane obligacji: obligacjeskarbowe.pl, marzec 2026. Narzędzie edukacyjne — nie stanowi porady inwestycyjnej.
+              Dane obligacji: obligacjeskarbowe.pl, marzec 2026. Narzędzie edukacyjne - nie stanowi porady inwestycyjnej.
               <br />
               Stworzone dla Finanse Bardzo Osobiste.
             </p>

@@ -1,6 +1,6 @@
 /**
- * Home — Orchestrates the wizard flow
- * Design: "Ścieżka Decyzji" — guided journey from user's situation to comparison.
+ * Home - Orchestrates the wizard flow
+ * Design: "Ścieżka Decyzji" - guided journey from user's situation to comparison.
  * 
  * Flow: Welcome → Amount → Horizon → Priority → Results
  */

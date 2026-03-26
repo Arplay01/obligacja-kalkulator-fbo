@@ -1,0 +1,42 @@
+import { InflationIcon } from "@/features/calculator/components/icons";
+
+export function CalculatorTrustFooter() {
+  return (
+    <footer className="trust-footer" aria-label="Informacje prawne i uproszczenia">
+      <div className="trust-footer__top">
+        <InflationIcon className="trust-footer__icon" />
+
+        <div className="trust-footer__copy">
+          <p className="trust-footer__disclaimer">
+            To narzędzie ma charakter edukacyjny i nie stanowi porady inwestycyjnej.
+            Wynik zależy od przyjętej inflacji, aktualnych parametrów emisji i
+            uproszczeń modelu.
+          </p>
+          <p className="trust-footer__source">
+            Stawki w prototypie: oferta detalicznych obligacji Skarbu Państwa na{" "}
+            <strong>marzec 2026</strong> oraz stopa referencyjna NBP{" "}
+            <strong>3,75%</strong>.
+          </p>
+        </div>
+      </div>
+
+      <details className="trust-footer__simplifications">
+        <summary>Uproszczenia tej symulacji</summary>
+        <ul>
+          <li>Inflacja jest stała przez cały okres i działa jako scenariusz użytkownika</li>
+          <li>
+            Lokata i konto to ręcznie ustawiane punkty odniesienia, nie najlepsza
+            oferta rynku
+          </li>
+          <li>COI i ROR/DOR pokazuję bez reinwestowania wypłacanych odsetek</li>
+          <li>Kwota inwestycji jest zaokrąglana do pełnych obligacji po 100 zł</li>
+          <li>
+            Nie modeluję ceny zamiany 99,90 zł ani przedterminowego wykupu w głównym
+            wyniku
+          </li>
+        </ul>
+      </details>
+    </footer>
+  );
+}
+

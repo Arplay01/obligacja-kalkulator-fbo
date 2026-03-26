@@ -1,5 +1,5 @@
 /**
- * HorizonStep — "Na jak długo możesz odłożyć te pieniądze?"
+ * HorizonStep - "Na jak długo możesz odłożyć te pieniądze?"
  * Design: Visual timeline with selectable periods.
  * Each period explains what it means in plain language.
  */
@@ -20,14 +20,14 @@ const HORIZONS = [
     months: 3,
     label: '3 miesiące',
     sublabel: 'Potrzebuję pieniędzy wkrótce',
-    description: 'Krótki okres — mało opcji, ale pieniądze szybko wracają.',
+    description: 'Krótki okres - mało opcji, ale pieniądze szybko wracają.',
     icon: '⚡',
   },
   {
     months: 12,
     label: '1 rok',
     sublabel: 'Mogę poczekać rok',
-    description: 'Dobry kompromis — więcej opcji niż na 3 miesiące.',
+    description: 'Dobry kompromis - więcej opcji niż na 3 miesiące.',
     icon: '📅',
   },
   {
@@ -48,7 +48,7 @@ const HORIZONS = [
     months: 48,
     label: '4 lata',
     sublabel: 'Długoterminowe oszczędzanie',
-    description: 'Obligacje indeksowane inflacją — ochrona przed wzrostem cen.',
+    description: 'Obligacje indeksowane inflacją - ochrona przed wzrostem cen.',
     icon: '🛡️',
   },
   {

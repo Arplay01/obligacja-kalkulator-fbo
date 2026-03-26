@@ -1,150 +1,178 @@
-# PRD — Kalkulator Obligacji Skarbowych PoC
+# PRD - obecny produkt kalkulatora obligacji FBO
 
 ## Cel dokumentu
 
-Ten dokument opisuje zachowanie produktu. Jest source-of-truth dla ekranu, interakcji i zakresu PoC. Nie służy jako prompt do generowania prototypów.
+Ten dokument opisuje aktualny produkt tak, jak działa w finalnym prototypie `fbo-visual-prototype-v2-fbo`. Jest source of truth dla flow, hierarchii informacji i interakcji.
 
-## Użytkownik i zadanie
+## Użytkownik i główne zadanie
 
-- Użytkownik: początkujący odbiorca FBO.
-- Główne zadanie: zrozumieć, co stanie się z jego pieniędzmi przy różnych bezpiecznych opcjach oszczędzania.
-- Główna emocja do zaadresowania: niepewność i lęk przed złą decyzją.
+- Użytkownik: początkująca osoba z ekosystemu FBO.
+- Główne zadanie: zrozumieć, co można zrobić z pieniędzmi poza biernym trzymaniem ich na lokacie albo koncie i jak zrobić pierwszy krok.
+- Główna emocja do zaadresowania: niepewność przed wejściem w obligacje.
 
-## Model doświadczenia
+## Zasady doświadczenia
 
 - Jeden ekran.
-- Brak przycisku „oblicz”; zmiany w inputach aktualizują wynik od razu.
-- Desktop-first, z pełnym wsparciem mobile.
-- Progresywne ujawnianie szczegółów: najpierw prosty wynik, potem głębsze warstwy.
+- Desktop-first z pełnym wsparciem mobile.
+- Brak przycisku `oblicz`.
+- Wynik pojawia się od razu i aktualizuje się live.
+- Najpierw odpowiedź, potem mechanika.
+- Szczegóły są schowane, ale łatwo dostępne.
+- Copy ma tłumaczyć, a nie imponować wiedzą.
 
 ## Struktura ekranu
 
 ### 1. Intro
 
-Na górze krótki blok wyjaśniający:
+Góra ekranu zawiera:
 
-- co porównujemy,
-- że narzędzie ma charakter edukacyjny,
-- że pomaga zrozumieć, a nie sprzedać konkretny produkt.
+- prostą obietnicę wartości,
+- krótką notę o porównaniu z lokatą i kontem,
+- trust note redukujący lęk przed pierwszym krokiem.
 
-Ten blok ma być krótki i nie może spychać kalkulatora poniżej pierwszego widoku na desktopie.
+Intro ma być krótkie i nie może spychać wyniku poniżej pierwszego widoku na desktopie.
 
-### 2. Inputy
+### 2. Lewa kolumna - parametry
 
-PoC ma dokładnie cztery elementy wejściowe:
+Lewa kolumna zawiera:
 
-- `kwota` — pole liczbowe w PLN, krok co 100 zł, domyślnie `10 000 zł`,
-- `horyzont` — kontrolka 1–10 lat, domyślnie `5 lat`,
-- `preset inflacji` — `niska 2,0%`, `umiarkowana 3,5%`, `wysoka 6,0%`, domyślnie `umiarkowana`,
-- `toggle IKE` — przełącza scenariusze obligacyjne na wariant bez podatku Belki.
+- wybór serii obligacji: `OTS`, `ROR`, `DOR`, `TOS`, `COI`, `EDO`,
+- ręczny wpis kwoty,
+- presetowe kwoty,
+- nieliniowy suwak do szybkiej zmiany kwoty,
+- scenariusze inflacji opisane prostym językiem,
+- rozwijaną sekcję `Więcej opcji`.
 
-Reguły:
+### 3. Więcej opcji
 
-- kwota musi być wielokrotnością `100 zł`,
-- jeśli kwota jest pusta albo niepoprawna, użytkownik dostaje prosty komunikat inline,
-- `IKE` wpływa tylko na obligacje; konto oszczędnościowe nie zmienia wyniku po przełączeniu.
+Sekcja zaawansowana zawiera:
 
-### 3. Główny wykres porównawczy
+- toggle `Konto IKE`,
+- oprocentowanie lokaty,
+- oprocentowanie konta oszczędnościowego,
+- stopę referencyjną NBP,
+- własną inflację.
 
-To jest pierwsza i najważniejsza warstwa wyniku.
+Każde pole działa live. Użytkownik może wpisywać wartości ręcznie albo zmieniać je przyciskami `-` i `+`.
 
-Wykres pokazuje:
+### 4. Prawa kolumna - wynik
 
-- `konto oszczędnościowe`,
-- `TOS 3-latki`,
-- `EDO 10-latki`,
-- przerywaną linię `kwoty potrzebnej do utrzymania siły nabywczej`.
+Prawa kolumna pokazuje:
 
-Reguły:
+- nazwę wybranej serii,
+- krótki opis mechaniki serii,
+- badge typu oprocentowania,
+- hero `Twój zysk netto`,
+- `Łącznie`,
+- `Średnio / rok`.
 
-- wykres pokazuje wartości dla kolejnych pełnych lat do wybranego horyzontu,
-- domyślnie pokazujemy wariant standardowy z podatkiem,
-- po przełączeniu `IKE` zmieniają się tylko serie obligacyjne,
-- na wykresie nigdy nie pokazujemy więcej niż 4 linii naraz,
-- COI nie trafia na wykres główny.
+To jest główna odpowiedź produktu i najważniejszy punkt uwagi.
 
-### 4. Karty podsumowania
+### 5. Koszt bezruchu
 
-Pod wykresem znajdują się trzy karty odpowiadające głównym seriom z wykresu:
+Bezpośrednio pod hero znajduje się blok `Co się stanie, jeśli nic nie zrobisz?`.
 
-- konto oszczędnościowe,
-- TOS,
-- EDO.
+Jego zadaniem jest:
 
-Każda karta pokazuje:
+- pokazać utratę siły nabywczej,
+- zbudować emocjonalny sens działania,
+- osadzić wynik w codziennym języku, nie tylko w finansowych liczbach.
 
-- wartość końcową,
-- zysk nominalny,
-- wynik realny względem inflacji,
-- krótką interpretację „co to znaczy”.
+### 6. Szczegóły kalkulacji
 
-Dodatkowo:
+Sekcja `Pokaż szczegóły kalkulacji` jest disclosure.
 
-- karty obligacyjne pokazują dwa warianty: `standard` i `IKE`,
-- karta konta oszczędnościowego pokazuje tylko wariant standardowy z notą, że `IKE nie dotyczy`.
+Domyślnie nie dominuje ekranu. Po rozwinięciu pokazuje:
 
-### 5. Szczegóły na żądanie
+- wpłaconą kwotę,
+- odsetki brutto,
+- podatek Belki,
+- efektywny wynik roczny.
 
-Domyślnie ukryta sekcja „Pokaż więcej szczegółów” rozwija tabelę porównawczą.
+Trudniejsze pojęcia są wyjaśniane lokalnymi tooltipami.
 
-Tabela zawiera trzy serie:
+### 7. Porównanie z lokatą i kontem
 
-- TOS,
-- COI,
-- EDO.
+Sekcja `Porównaj z lokatą i kontem` pokazuje dwa znane punkty odniesienia:
 
-Minimalne kolumny:
+- lokatę,
+- konto oszczędnościowe.
 
-- typ obligacji,
-- rekomendowany horyzont / charakter użycia,
-- wartość końcowa,
-- wynik realny,
-- sposób naliczania odsetek,
-- informacja o wcześniejszym wykupie.
+Pokazuje wynik netto, łączną wartość oraz krótką interpretację różnicy wobec wybranej obligacji. Sekcja jest domyślnie rozwinięta, ale użytkownik może ją zwinąć.
 
-Tabela ma uzupełniać wykres, a nie zastępować go. Jej celem jest dopowiedzenie różnic, nie przeciążenie użytkownika.
+### 8. Następny krok
 
-### 6. Uczciwe porównanie „obligacje vs lokaty”
+Sekcja `Jak kupić?` ma zamienić zrozumienie w działanie.
 
-Pod wynikami ma znaleźć się krótka sekcja edukacyjna:
+Zawiera:
 
-- kiedy obligacje mają sens,
-- kiedy lokata albo konto mogą być lepszym wyborem,
-- jakie są różnice w płynności, podatku i ochronie przed inflacją.
+- krótki opis wyzwania mailowego,
+- jedno wyraźne CTA prowadzące dalej.
 
-Ta sekcja ma budować zaufanie, nie ranking zwycięzcy.
+### 9. Głębsze warstwy edukacyjne
 
-### 7. Sekcja „Twój następny krok”
+Sekcja `Jeśli chcesz wejść głębiej` zawiera disclosure z dodatkowymi warstwami:
 
-Po wyniku użytkownik dostaje trzy ścieżki:
+- jak działa wybrana seria,
+- wykres i tabela rok po roku,
+- kiedy obligacje, a kiedy lokata.
 
-- `Jak kupić obligacje krok po kroku`,
-- `Chcę lepiej zrozumieć obligacje`,
-- `Zapisz wynik i wróć później`.
+To jest warstwa edukacyjna, a nie rdzeń głównej decyzji.
 
-W PoC linki mogą być placeholderami, ale struktura sekcji i copy muszą istnieć.
+### 10. Więcej materiałów
 
-### 8. Disclaimer i uproszczenia
+Na dole znajdują się trzy ścieżki:
 
-Na dole ekranu ma być wyraźnie widoczna warstwa zaufania:
+- artykuł edukacyjny,
+- kalkulator Excel dla zaawansowanych,
+- powrót do portfolio.
+
+Karta `Wróć do portfolio` ma specjalny status. W wersji osadzonej ma prowadzić do zamknięcia layera, a nie być zwykłym linkiem na zewnątrz.
+
+### 11. Trust footer
+
+Na końcu ekranu użytkownik dostaje:
 
 - disclaimer edukacyjny,
-- data aktualizacji parametrów,
-- lista uproszczeń PoC dostępna bez ukrywania jej w stopce serwisu.
+- datę aktualizacji danych,
+- disclosure z uproszczeniami symulacji.
 
-## Zachowanie i stany
+## Zachowanie i interakcje
 
-- Zmiana dowolnego inputu aktualizuje wykres, karty i tabelę natychmiast.
-- Horyzont krótszy niż pełny termin obligacji jest dozwolony; wynik pokazuje scenariusz zakończenia oszczędzania po wybranym czasie i musi to być opisane przy wyniku.
-- Jeśli użytkownik wybierze `IKE`, interfejs nie może sugerować, że konto oszczędnościowe także korzysta z tego mechanizmu.
-- Produkt nie pokazuje etykiet typu „najlepsza opcja”, „wygrywa”, „kup teraz”.
+- Zmiana dowolnego inputu aktualizuje wynik bez przeładowania ekranu.
+- Zmiana serii aktualizuje hero, opis produktu, badge, teksty edukacyjne, porównanie i tabelę.
+- Kwota może być wpisywana ręcznie i formatowana w locie.
+- Suwak ma wspierać szybkie ustawianie popularnych kwot, ale nie ogranicza ręcznego wpisu większych wartości.
+- `IKE` wpływa tylko na obligacje, nie na lokatę i konto.
+- Tooltips pojawiają się lokalnie przy trudniejszych pojęciach.
+- Mobile ma układać ekran w jednej kolumnie, z wynikami nad inputami.
 
-## Poza zakresem PoC
+## Najważniejsze reguły UX
 
-- ROR, DOR, ROS, ROD, OTS,
-- zmienna inflacja rok po roku,
-- pełna logika zamiany obligacji po `99,90 zł`,
-- regularne wpłaty i budowa portfela,
-- porównanie z ETF-ami lub akcjami,
-- ciężki wieloetapowy wizard,
-- ranking lub perswazyjny scoring produktów.
+- Zero przycisku `oblicz`.
+- Wynik ma być widoczny od razu.
+- Szczegóły mają być schowane, jeśli nie są potrzebne do pierwszej decyzji.
+- Trudne pojęcia tłumaczymy tam, gdzie pojawia się opór.
+- Użytkownik najpierw dostaje odpowiedź, potem mechanikę.
+- Porównanie z lokatą i kontem wspiera decyzję, ale nie zamienia produktu w ranking.
+- CTA zakupowe ma pojawić się dopiero po zbudowaniu sensu wyniku.
+
+## Poza zakresem obecnego PoC
+
+- horyzont jako główny input,
+- wykres jako główna warstwa produktu,
+- chart-first comparator,
+- eksperckie porównywanie wszystkich scenariuszy,
+- pełna logika Excela 1:1,
+- regularne wpłaty, portfele i bardziej zaawansowane strategie,
+- porównania z ETF-ami, akcjami i innymi klasami aktywów,
+- perswazyjne etykiety typu `najlepsze`, `wygrywa`, `kup teraz`.
+
+## Acceptance criteria
+
+- Po wejściu na ekran użytkownik rozumie, co narzędzie robi i czego może się po nim spodziewać.
+- Wybrana seria, kwota, inflacja i opcje zaawansowane wpływają na wynik live.
+- Hero wynik netto jest najważniejszą warstwą wyniku.
+- Blok o koszcie bezruchu pojawia się bezpośrednio pod hero.
+- Szczegóły kalkulacji i głębsze warstwy edukacyjne nie przeciążają pierwszego widoku.
+- Produkt prowadzi od zrozumienia do kolejnego kroku bez zmuszania użytkownika do studiowania pełnej mechaniki.
