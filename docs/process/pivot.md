@@ -22,6 +22,8 @@ Obecny produkt jest prostszy i bardziej activation-first:
 - potem porównanie do lokaty i konta,
 - a na końcu prosty next step.
 
+Ten kierunek działa dziś już jako aktywna aplikacja `Next.js`, a referencyjny prototyp został zostawiony w repo wyłącznie jako punkt odniesienia 1:1.
+
 ## Co się zmieniło najważniej
 
 Największa zmiana nie dotyczyła estetyki. Dotyczyła pytania, na które produkt ma odpowiadać.

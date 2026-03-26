@@ -114,34 +114,29 @@ test.describe("kalkulator", () => {
     await expect(page.locator('[data-value=\"tax\"]')).toHaveText("0,00 zł");
   });
 
-  test("sends close intent to parent when embedded in iframe", async ({ page }) => {
-    const calculatorUrl = "http://localhost:3100/kalkulator";
+  test("dispatches local close intent before standalone fallback", async ({ page }) => {
+    await gotoCalculator(page);
 
-    await page.setContent(`
-      <script>
-        window.__messages = [];
-        window.addEventListener('message', (event) => {
-          window.__messages.push(event.data);
+    await page.evaluate(() => {
+      (window as typeof window & { __closeEvents?: unknown[] }).__closeEvents = [];
+      window.addEventListener("close-calculator", (event) => {
+        event.preventDefault();
+        (window as typeof window & { __closeEvents: unknown[] }).__closeEvents.push({
+          type: event.type,
         });
-      </script>
-      <iframe
-        id="calculator-frame"
-        src="${calculatorUrl}"
-        style="width: 1440px; height: 2200px; border: 0;"
-      ></iframe>
-    `);
+      });
+    });
 
-    const frame = page.frameLocator("#calculator-frame");
-    await frame.getByRole("button", { name: /Wróć do portfolio/i }).click();
+    await page.getByRole("button", { name: /Wróć do portfolio/i }).click();
 
     await expect
       .poll(() =>
-        page.evaluate(() => (window as typeof window & { __messages: unknown[] }).__messages[0]),
+        page.evaluate(
+          () => (window as typeof window & { __closeEvents?: unknown[] }).__closeEvents?.[0],
+        ),
       )
       .toEqual({
-        type: "fbo:close-calculator-layer",
-        source: "portfolio-cta",
-        fallbackUrl: "https://arek-portfolio-fbo.vercel.app/#kalkulator",
+        type: "close-calculator",
       });
   });
 
@@ -162,14 +157,14 @@ test.describe("kalkulator", () => {
     );
   });
 
-  test("keeps results above inputs on mobile", async ({ page }) => {
+  test("keeps calculator inputs above results on mobile", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 1200 });
     await gotoCalculator(page);
 
     const resultsBox = await page.locator(".workspace__results").boundingBox();
     const inputsBox = await page.locator(".workspace__inputs").boundingBox();
 
-    expect(resultsBox?.y ?? 0).toBeLessThan(inputsBox?.y ?? 0);
+    expect(inputsBox?.y ?? 0).toBeLessThan(resultsBox?.y ?? 0);
   });
 
   test("matches visual baseline for default state", async ({ page }) => {

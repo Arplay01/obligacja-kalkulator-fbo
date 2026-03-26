@@ -57,12 +57,12 @@ To jest świadoma decyzja produktowa. Użytkownik ma wrócić do kontekstu case 
 - zewnętrzne linki edukacyjne są dozwolone jako świadome, pomocnicze wyjścia,
 - nie należy budować głównej ścieżki działania w oparciu o serię nowych kart.
 
-## Wskazówki dla rewrite do Next.js
+## Aktualny stan implementacji
 
-- traktuj `/kalkulator` jak niezależny ekran osadzany, ale nie osobny produkt,
-- zachowaj obecną hierarchię i flow 1:1 względem referencyjnego prototypu,
-- logikę zamknięcia layera potraktuj jako kontrakt integracyjny, nie jako detal UI,
-- jeśli pojawi się osobny layout dla `/kalkulator`, ma być lekki i podporządkowany osadzeniu.
+- trasa `/kalkulator` działa już jako aktywna implementacja `Next.js`,
+- `/` przekierowuje do `/kalkulator`,
+- obecna aplikacja zachowuje hierarchię i flow 1:1 względem referencyjnego prototypu,
+- logika zamknięcia layera pozostaje kontraktem integracyjnym, a nie detalem UI.
 
 ## Kryteria akceptacji
 

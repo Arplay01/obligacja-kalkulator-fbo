@@ -6,7 +6,6 @@ const eslintConfig = [
     ignores: [
       "kalkulatory-robocze/**",
       "@archiwum/**",
-      "archiwum/**",
       "docs/**",
       ".next/**",
       "coverage/**",

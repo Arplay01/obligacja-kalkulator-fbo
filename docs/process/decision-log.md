@@ -67,3 +67,9 @@ Krótki log najważniejszych decyzji produktowych, UX i UI. Kolejność ma znacz
 **Decyzja:** karta `Wróć do portfolio` i cały flow zostały zaprojektowane pod działanie wewnątrz case study.  
 **Dlaczego:** kalkulator ma wzmacniać historię produktu, a nie żyć jako osobny byt.  
 **Wartość dla użytkownika:** przejścia między narzędziem a case study są naturalne i nie rozwalają kontekstu.
+
+## 12. Rewrite do Next.js nie zmienia produktu
+
+**Decyzja:** implementacja produkcyjna została potraktowana jako rewrite 1:1, a nie nowa iteracja UX/UI.  
+**Dlaczego:** etap decyzji produktowych i dopracowania doświadczenia był już zamknięty na poziomie prototypu referencyjnego.  
+**Wartość dla użytkownika:** finalna aplikacja zachowuje ten sam spokojny, czytelny flow zamiast tracić jakość przez niepotrzebne reinterpretacje podczas wdrożenia.

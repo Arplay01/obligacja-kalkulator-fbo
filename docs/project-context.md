@@ -5,9 +5,10 @@ To repo dokumentuje proof of concept kalkulatora obligacji skarbowych dla Finans
 ## Obecny stan projektu
 
 - aktualnym source of truth dla UI, UX, copy i zachowania jest `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`,
-- obecne `brief` i `PRD` opisują już ten finalny kierunek, a nie pierwotny plan,
-- kolejnym krokiem ma być rewrite 1:1 do `Next.js + TypeScript`,
-- obecny prototyp zostaje w repo jako referencja przed implementacją produkcyjną.
+- obecne `brief` i `PRD` opisują już finalny kierunek, a nie pierwotny plan,
+- rewrite 1:1 do `Next.js + TypeScript` jest już wdrożony w rootowej aplikacji,
+- obecny prototyp zostaje w repo jako referencja dla produkcyjnej implementacji,
+- `@archiwum/` zawiera tylko historyczne materiały, bez roli aktywnego kontekstu.
 
 ## Jaki problem rozwiązujemy
 
@@ -32,6 +33,7 @@ Sedno problemu jest takie:
 - Główny nośnik wartości: prostota, koszt bezruchu, porównanie do znanych punktów odniesienia i czytelny next step.
 - Finalny model osadzenia: `/kalkulator` wewnątrz portfolio, w `iframe`, na tym samym originie.
 - Tone of voice: edukacyjny, uczciwy, bez tonu sprzedażowego.
+- Repo publiczne ma pokazywać gotowy produkt i wybrany ślad procesu, a nie pełen warsztat iteracji.
 
 ## Hierarchia source of truth
 
@@ -56,4 +58,4 @@ Jeśli historyczny dokument rozjeżdża się z obecnym prototypem w obszarze UI,
 
 ## Zasada operacyjna
 
-Najpierw aktualizujemy dokumentację, potem zlecamy rewrite do `Next.js`. Dzięki temu kolejny agent dostaje jeden, czysty kontekst zamiast mieszanki starego planu i nowego prototypu.
+Kolejne iteracje powinny wychodzić już z aktualnej aplikacji `Next.js`, a nie z wcześniejszych prototypów. Referencyjny prototyp 1:1 zostaje tylko jako punkt porównania dla UI, UX i copy.

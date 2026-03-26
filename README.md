@@ -1,8 +1,8 @@
 # Kalkulator obligacji skarbowych dla FBO
 
-To repo zawiera produkcyjne środowisko `Next.js + TypeScript` dla kalkulatora obligacji skarbowych Finanse Bardzo Osobiste oraz dokumentację procesu, który doprowadził do obecnego rozwiązania.
+To repo zawiera produkcyjną aplikację `Next.js + TypeScript` dla kalkulatora obligacji skarbowych Finanse Bardzo Osobiste oraz dokumentację procesu, który doprowadził do obecnego rozwiązania.
 
-Aktualna implementacja aplikacji jest rewrite'em 1:1 obecnego prototypu referencyjnego. Repo nadal przechowuje też artefakty procesu, decyzje produktowe i wcześniejsze kierunki robocze.
+Aktualna implementacja jest wiernym rewrite'em 1:1 prototypu referencyjnego. Repo pokazuje dziś gotowy ekran, finalne decyzje produktowe i wybrany ślad procesu, bez warsztatowego szumu z wcześniejszych iteracji.
 
 ## Jaki problem rozwiązujemy
 
@@ -54,7 +54,7 @@ Najważniejszym źródłem prawdy dla obecnego UI, UX, copy i zachowania jest:
 
 - `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`
 
-Ten folder zostaje w repo jako referencja 1:1 przed rewrite do `Next.js`.
+Ten folder zostaje w repo jako referencja 1:1 dla produkcyjnej implementacji.
 
 ## Aktualny stan techniczny
 
@@ -63,14 +63,15 @@ Ten folder zostaje w repo jako referencja 1:1 przed rewrite do `Next.js`.
 - `/` przekierowuje do `/kalkulator`,
 - styling kalkulatora został przeniesiony z prototypu i ograniczony do subtree kalkulatora,
 - logika kalkulacji jest wydzielona od warstwy UI i pokryta testami,
-- folder `kalkulatory-robocze/` zostaje w repo jako referencja procesu i porównań.
+- w repo zostaje tylko finalny prototyp referencyjny, bez starszych roboczych wariantów.
 
 ## Struktura repo
 
 - `app/` - routing i layout produkcyjnej aplikacji Next.js.
 - `src/features/calculator/` - domena, logika, komponenty i style kalkulatora.
 - `docs/` - aktualny kontekst produktu, PRD i zapis decyzji.
-- `kalkulatory-robocze/` - prototypy i starsze artefakty robocze, bez roli aktywnego kodu produkcyjnego.
+- `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` - referencyjny prototyp 1:1 dla obecnego UI, UX i copy.
+- `@archiwum/` - historyczne dokumenty i stare założenia, niekanoniczne.
 
 ## Uruchomienie
 
@@ -91,7 +92,3 @@ Starsze dokumenty domenowe i prototypowe zostały przeniesione do `@archiwum/`, 
 ## AI-assisted workflow
 
 Kod i duża część procesu powstały z pomocą Codex, Cursor, Claude.ai i Claude Code. AI było tutaj realnym narzędziem pracy: przyspieszało prototypowanie, iterację i porządkowanie kodu. Kierunek produktu, selekcja rozwiązań i korekta UX/UI pozostawały jednak świadomie prowadzone.
-
-## Co dalej
-
-Najbliższy krok po akceptacji tego rewrite'u to uporządkowanie repo i przygotowanie go jako finalnej wersji do publikacji, bez naruszania obecnej zgodności 1:1 z prototypem referencyjnym.

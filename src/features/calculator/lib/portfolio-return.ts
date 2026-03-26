@@ -3,6 +3,9 @@ export type PortfolioReturnResult =
   | "posted-to-parent"
   | "redirected";
 
+const CLOSE_CALCULATOR_EVENT = "close-calculator";
+const PORTFOLIO_ORIGIN = "https://arek-portfolio-fbo.vercel.app";
+
 export function requestPortfolioReturn(
   button: HTMLButtonElement,
   fallbackUrl: string,
@@ -10,7 +13,7 @@ export function requestPortfolioReturn(
   // This bridge is intentional: when the calculator is embedded, this CTA should
   // close the layer in place first and only fall back to navigation if nothing
   // handles the close intent locally.
-  const closeIntent = new CustomEvent("fbo:close-calculator-layer", {
+  const closeIntent = new CustomEvent(CLOSE_CALCULATOR_EVENT, {
     bubbles: true,
     cancelable: true,
     detail: {
@@ -28,11 +31,9 @@ export function requestPortfolioReturn(
   if (window.parent && window.parent !== window) {
     window.parent.postMessage(
       {
-        type: "fbo:close-calculator-layer",
-        source: "portfolio-cta",
-        fallbackUrl,
+        type: CLOSE_CALCULATOR_EVENT,
       },
-      "*",
+      PORTFOLIO_ORIGIN,
     );
 
     return "posted-to-parent";
@@ -41,4 +42,3 @@ export function requestPortfolioReturn(
   window.location.href = fallbackUrl;
   return "redirected";
 }
-

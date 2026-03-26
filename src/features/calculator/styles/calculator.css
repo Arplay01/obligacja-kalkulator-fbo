@@ -2175,10 +2175,6 @@
     flex-direction: column;
   }
 
-  .calculator-route .workspace__results {
-    order: -1;
-  }
-
   .calculator-route .results__header {
     min-height: 0;
     padding-right: 0;
