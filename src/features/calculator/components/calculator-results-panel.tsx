@@ -65,6 +65,8 @@ export function CalculatorResultsPanel({
     effectiveInflation,
   )}. Rzeczywisty zysk zależy od przyszłej inflacji.`;
 
+  const [bondTitleCode, bondTitleLabel] = bond.title.split(" - ", 2);
+
   return (
     <section
       className={`workspace__results card result-shell${isUpdating ? " is-updating" : ""}`}
@@ -74,7 +76,10 @@ export function CalculatorResultsPanel({
       <div className="results__header">
         <div className="results__headline">
           <h2 className="results__bond-name" data-bond-name>
-            {bond.title}
+            <span>{bondTitleCode ?? bond.title}</span>{" "}
+            <span className="results__bond-name-label">
+              {bondTitleLabel ?? ""}
+            </span>
           </h2>
           <p className="results__description" data-bond-description>
             {bond.description(bondCopyContext)}

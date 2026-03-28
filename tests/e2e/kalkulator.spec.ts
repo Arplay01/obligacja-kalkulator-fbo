@@ -11,9 +11,9 @@ test.describe("kalkulator", () => {
 
     await expect(
       page.locator('[data-bond-name]'),
-    ).toHaveText("COI - 4-letnie");
+    ).toHaveText("COI 4-letnie");
     await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
-      "+1620,00 zł",
+      /^\+1\s620,00 zł$/,
     );
     await expect(page.locator("[data-bond-count]")).toHaveText(
       "100 obligacji po 100 zł",
@@ -25,7 +25,7 @@ test.describe("kalkulator", () => {
     await gotoCalculator(page);
 
     await page.getByRole("tab", { name: /ROR/i }).click();
-    await expect(page.locator('[data-bond-name]')).toHaveText("ROR - roczne");
+    await expect(page.locator('[data-bond-name]')).toHaveText("ROR roczne");
 
     await page.getByText("Więcej opcji").click();
     await expect(page.locator('[data-row=\"nbp\"]')).not.toHaveClass(/is-hidden/);
@@ -60,7 +60,7 @@ test.describe("kalkulator", () => {
     await expect(amountInput).toHaveValue(sliderDrivenValue);
 
     await amountInput.fill("100000000");
-    await expect(amountInput).toHaveValue("100 000 000");
+    await expect(amountInput).toHaveValue(/^100\s000\s000$/);
     await expect(page.locator("[data-bond-count]")).toHaveText(
       "1 000 000 obligacji po 100 zł",
     );
@@ -72,9 +72,7 @@ test.describe("kalkulator", () => {
     await page.getByText("Więcej opcji").click();
     await page.locator("#custom-inflation").fill("4,2");
 
-    await expect(page.locator("[data-inflation-mode]")).toHaveText(
-      "Pierwszy rok: stałe 5,00%. Potem: oprocentowanie podąża za inflacją.",
-    );
+    await expect(page.locator("[data-inflation-mode]")).toHaveCount(0);
 
     await page.getByRole("tab", { name: /TOS/i }).click();
     await expect(page.locator("[data-inflation-mode]")).toHaveText(
@@ -101,7 +99,6 @@ test.describe("kalkulator", () => {
   test("toggles IKE and updates helper text", async ({ page }) => {
     await gotoCalculator(page);
 
-    await page.getByText("Więcej opcji").click();
     await page.locator("#ike-toggle").click();
 
     await expect(page.locator("#ike-toggle")).toHaveAttribute(
@@ -109,7 +106,7 @@ test.describe("kalkulator", () => {
       "true",
     );
     await expect(page.locator("[data-ike-helper]")).toContainText(
-      "Bez podatku od zysków.",
+      "Oszczędzasz ok.",
     );
     await expect(page.locator('[data-value=\"tax\"]')).toHaveText("0,00 zł");
   });
@@ -167,6 +164,41 @@ test.describe("kalkulator", () => {
     expect(inputsBox?.y ?? 0).toBeLessThan(resultsBox?.y ?? 0);
   });
 
+  test("keeps calculator inputs above results in narrow iframe mobile", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 288, height: 1200 });
+    await gotoCalculator(page);
+
+    const resultsBox = await page.locator(".workspace__results").boundingBox();
+    const inputsBox = await page.locator(".workspace__inputs").boundingBox();
+
+    expect(inputsBox?.y ?? 0).toBeLessThan(resultsBox?.y ?? 0);
+  });
+
+  test("keeps calculator inputs above results on ipad portrait", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 820, height: 1180 });
+    await gotoCalculator(page);
+
+    const resultsBox = await page.locator(".workspace__results").boundingBox();
+    const inputsBox = await page.locator(".workspace__inputs").boundingBox();
+
+    expect(inputsBox?.y ?? 0).toBeLessThan(resultsBox?.y ?? 0);
+  });
+
+  test("matches first fold with floating dock on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await gotoCalculator(page);
+
+    await expect(page.locator("[data-mobile-result-dock]")).toBeVisible();
+    await expect(page).toHaveScreenshot("mobile-floating-dock.png", {
+      animations: "disabled",
+    });
+  });
+
   test("matches visual baseline for default state", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1800 });
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -209,6 +241,28 @@ test.describe("kalkulator", () => {
     await gotoCalculator(page);
 
     await expect(page).toHaveScreenshot("mobile-reorder.png", {
+      fullPage: true,
+      animations: "disabled",
+    });
+  });
+
+  test("matches visual baseline for narrow iframe mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 288, height: 1600 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await gotoCalculator(page);
+
+    await expect(page).toHaveScreenshot("mobile-iframe-narrow.png", {
+      fullPage: true,
+      animations: "disabled",
+    });
+  });
+
+  test("matches visual baseline for ipad portrait", async ({ page }) => {
+    await page.setViewportSize({ width: 820, height: 1180 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await gotoCalculator(page);
+
+    await expect(page).toHaveScreenshot("ipad-portrait.png", {
       fullPage: true,
       animations: "disabled",
     });

@@ -5,7 +5,8 @@ import "../../src/features/calculator/styles/calculator.css";
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-calculator",
 });
 
 type CalculatorLayoutProps = {
@@ -16,9 +17,10 @@ export default function CalculatorLayout({
   children,
 }: CalculatorLayoutProps) {
   return (
-    <div className={`${plusJakartaSans.className} calculator-route`}>
+    <div
+      className={`${plusJakartaSans.className} ${plusJakartaSans.variable} calculator-route`}
+    >
       {children}
     </div>
   );
 }
-

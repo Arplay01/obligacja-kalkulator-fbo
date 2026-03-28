@@ -1,56 +1,73 @@
 # Pivot
 
+To nie jest pełna historia każdej iteracji. To zapis najważniejszych momentów, w których kierunek produktu albo sposób jego dowożenia realnie się zmienił. Każdy checkpoint jest datowany datą zamknięcia sesji, z której ten pivot pochodzi.
+
 ## Skąd startowaliśmy
 
-Pierwszy kierunek był szerszy i bardziej analityczny:
+Początek był szerszy i bardziej analityczny:
 
 - więcej miejsca dla parametrów,
 - więcej porównań między produktami,
 - większa rola wykresów i wizualizacji,
-- mocniejsze myślenie w kategoriach "kalkulatora".
+- mocniejsze myślenie w kategoriach klasycznego kalkulatora.
 
 To było sensowne jako eksploracja, ale nie jako najlepsza odpowiedź dla początkującego użytkownika.
 
-## Gdzie jesteśmy teraz
+## Checkpoint 2026-03-25 - najpierw szeroka eksploracja, nie od razu implementacja
 
-Obecny produkt jest prostszy i bardziej activation-first:
+Na początku zapadła świadoma decyzja, żeby nie skakać od razu do finalnego buildu w `Next.js`. Najpierw miało powstać kilka lekkich kierunków, które pokażą różne architektury doświadczenia.
 
-- wybierasz serię,
-- wpisujesz kwotę,
-- od razu widzisz wynik,
-- zaraz pod nim dostajesz koszt bezruchu,
-- potem porównanie do lokaty i konta,
-- a na końcu prosty next step.
+To był ważny pivot procesowy: z planowania w próżni na pracę na artefaktach.
 
-Ten kierunek działa dziś już jako aktywna aplikacja `Next.js`, a referencyjny prototyp został zostawiony w repo wyłącznie jako punkt odniesienia 1:1.
+## Checkpoint 2026-03-25 - FBO-led shell wygrywa z portfolio-led
 
-## Co się zmieniło najważniej
+Po porównaniu kierunków dalsza praca została oparta na wariancie bardziej FBO-led niż portfolio-led.
 
-Największa zmiana nie dotyczyła estetyki. Dotyczyła pytania, na które produkt ma odpowiadać.
+To był pivot estetyczny i komunikacyjny:
+
+- mniej case-study feel,
+- bardziej redakcyjny rytm,
+- większa zgodność z tonem i klimatem FBO.
+
+## Checkpoint 2026-03-25 - produkt przechodzi w answer-first
+
+Najmocniejszy pivot nie dotyczył samego wyglądu. Dotyczył pytania, na które produkt ma odpowiadać.
 
 ### Wcześniej
 
 "Jak porównać obligacje?"
 
-### Teraz
+### Potem
 
-"Co mogę zrobić z pieniędzmi zamiast zostawiać je bezwładnie i jak zrobić pierwszy krok?"
+"Co mogę zrobić z pieniędzmi zamiast zostawiać je bez ruchu i jak zrobić pierwszy krok?"
 
-## Dlaczego to była dobra zmiana
+W praktyce oznaczało to przejście z surowego kalkulatora do flow, które szybciej pokazuje wynik, koszt bezruchu i sens działania.
 
-Dla laika wykresy, szerokie porównania i większa liczba parametrów podnosiły próg wejścia.
+## Checkpoint 2026-03-26 - rewrite do Next.js nie otwiera produktu na nowo
 
-W praktyce okazało się, że większą wartość daje:
+Kiedy przyszło do implementacji produkcyjnej, zapadła kolejna ważna decyzja: rewrite ma zachować produkt 1:1, zamiast uruchamiać nową rundę projektowania.
 
-- szybszy aha moment,
-- prostsza kolejność informacji,
-- mniej ciężaru poznawczego,
-- bardziej ludzki język,
-- wyraźna ścieżka od zrozumienia do działania.
+To był pivot wykonawczy:
+
+- aktualny prototyp wygrał ze starszymi, szerszymi dokumentami,
+- `Next.js` miał dowieźć produkt, a nie przepisać jego sens,
+- dopuszczone zostały tylko odchylenia potrzebne dla architektury, accessibility i testów.
+
+## Checkpoint 2026-03-28 - mobile, embed i tablet stają się osobnymi środowiskami
+
+Późny pass UX/UI przyniósł jeszcze jeden istotny pivot, tym razem w sposobie traktowania powierzchni.
+
+To już nie był nowy pivot produktowy, tylko świadoma zmiana egzekucyjna:
+
+- mobile przestał być pomniejszonym desktopem,
+- wąski `iframe` został potraktowany jako osobny przypadek,
+- tablet portrait dostał własny breakpoint między desktopem a telefonem.
+
+W tej sesji kierunek UX/UI był decyzją użytkownika, a agent realizował wdrożenie i walidację.
 
 ## Co zostało po drodze
 
-Nie wszystko z pierwszych podejść zostało wyrzucone.
+Nie wszystko z wcześniejszych podejść zostało wyrzucone.
 
 Zostały:
 
@@ -59,4 +76,4 @@ Zostały:
 - chęć pokazania użytkownikowi sensu decyzji,
 - warstwa głębszych szczegółów dla osób bardziej dociekliwych.
 
-Zmieniła się tylko kolejność i ciężar tych elementów.
+Zmieniła się kolejność, ciężar i sposób podania tych elementów.

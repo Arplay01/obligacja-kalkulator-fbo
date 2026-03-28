@@ -36,8 +36,7 @@ type CalculatorInputPanelProps = {
   bonds: Record<BondId, BondDefinition>;
   state: CalculatorState;
   sliderFill: number;
-  inflationModeText: string;
-  inflationHelperText: string;
+  inflationModeText: string | null;
   ikeHelperText: string;
   showNbpRow: boolean;
   advancedOptionsOpen: boolean;
@@ -159,7 +158,6 @@ export function CalculatorInputPanel({
   state,
   sliderFill,
   inflationModeText,
-  inflationHelperText,
   ikeHelperText,
   showNbpRow,
   advancedOptionsOpen,
@@ -219,14 +217,25 @@ export function CalculatorInputPanel({
                     <CheckIcon />
                   </span>
                 ) : null}
-                <span className="bond-chip__ticker">{bond.name}</span>
+                <div className="bond-chip__header">
+                  <span className="bond-chip__ticker">{bond.name}</span>
+                  <span className="bond-chip__badge-slot bond-chip__badge-slot--inline">
+                    <BondBadge
+                      kind={bond.badgeKind}
+                      label={bond.chipBadgeLabel}
+                      variant="chip"
+                    />
+                  </span>
+                </div>
                 <span className="bond-chip__label">{bond.pickerLabel}</span>
                 <span className="bond-chip__rate">{formatPercent(bond.firstRate)}</span>
-                <BondBadge
-                  kind={bond.badgeKind}
-                  label={bond.chipBadgeLabel}
-                  variant="chip"
-                />
+                <span className="bond-chip__badge-slot bond-chip__badge-slot--stacked">
+                  <BondBadge
+                    kind={bond.badgeKind}
+                    label={bond.chipBadgeLabel}
+                    variant="chip"
+                  />
+                </span>
               </button>
             );
           })}
@@ -314,9 +323,11 @@ export function CalculatorInputPanel({
         <div className="state-panel__inner">
           <div className="input-heading">
             <h2 className="input-title">Jaki poziom inflacji założyć?</h2>
-            <p className="input-inline-note" data-inflation-mode>
-              {inflationModeText}
-            </p>
+            {inflationModeText ? (
+              <p className="input-inline-note" data-inflation-mode>
+                {inflationModeText}
+              </p>
+            ) : null}
           </div>
 
           <div
@@ -357,10 +368,36 @@ export function CalculatorInputPanel({
               );
             })}
           </div>
+        </div>
+      </section>
 
-          <p className="helper-text" data-inflation-helper>
-            {inflationHelperText}
-          </p>
+      <section className="panel-block panel-block--ike" aria-label="Konto IKE">
+        <div className="option-row option-row--surface">
+          <div className="option-row__label">
+            <div className="label-with-help">
+              <strong>Konto IKE</strong>
+              <TermHelp
+                label="Wyjaśnienie: konto IKE"
+                tooltip="IKE to konto, które pozwala oszczędzać bez 19% podatku od zysków. W tym kalkulatorze pokazuję ten efekt dla obligacji."
+              />
+            </div>
+            <span className="helper-text" data-ike-helper>
+              {ikeHelperText}
+            </span>
+          </div>
+          <button
+            className="toggle"
+            id="ike-toggle"
+            type="button"
+            role="switch"
+            aria-checked={state.ike}
+            aria-label="Konto IKE"
+            onClick={onIkeToggle}
+          >
+            <span className="toggle__track">
+              <span className="toggle__thumb" />
+            </span>
+          </button>
         </div>
       </section>
 
@@ -377,34 +414,6 @@ export function CalculatorInputPanel({
         </summary>
 
         <div className="advanced-options__body">
-          <div className="option-row">
-            <div className="option-row__label">
-              <div className="label-with-help">
-                <strong>Konto IKE</strong>
-                <TermHelp
-                  label="Wyjaśnienie: konto IKE"
-                  tooltip="IKE to konto, które pozwala oszczędzać bez 19% podatku od zysków. W tym kalkulatorze pokazuję ten efekt dla obligacji."
-                />
-              </div>
-              <span className="helper-text" data-ike-helper>
-                {ikeHelperText}
-              </span>
-            </div>
-            <button
-              className="toggle"
-              id="ike-toggle"
-              type="button"
-              role="switch"
-              aria-checked={state.ike}
-              aria-label="Konto IKE"
-              onClick={onIkeToggle}
-            >
-              <span className="toggle__track">
-                <span className="toggle__thumb" />
-              </span>
-            </button>
-          </div>
-
           <InlineStepInput
             label="Oprocentowanie lokaty"
             helper="Ręcznie ustawiane porównanie"

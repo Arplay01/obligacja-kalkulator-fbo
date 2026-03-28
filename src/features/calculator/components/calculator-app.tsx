@@ -6,6 +6,7 @@ import { type CalculatorState } from "@/features/calculator/domain/types";
 import { CalculatorDeepDive } from "@/features/calculator/components/calculator-deep-dive";
 import { CalculatorInputPanel } from "@/features/calculator/components/calculator-input-panel";
 import { CalculatorIntro } from "@/features/calculator/components/calculator-intro";
+import { MobileResultDock } from "@/features/calculator/components/mobile-result-dock";
 import { CalculatorNextSteps } from "@/features/calculator/components/calculator-next-steps";
 import { CalculatorResultsPanel } from "@/features/calculator/components/calculator-results-panel";
 import { CalculatorTrustFooter } from "@/features/calculator/components/calculator-trust-footer";
@@ -160,19 +161,12 @@ export function CalculatorApp() {
 
   const inflationModeText =
     bond.badgeKind === "inflation"
-      ? `Pierwszy rok: stałe ${formatPercent(
-          bond.firstRate,
-        )}. Potem: oprocentowanie podąża za inflacją.`
+      ? null
       : state.inflationMode === "custom"
         ? `Aktywna własna inflacja: ${formatPercent(effectiveInflation)}`
         : "Zmienia tylko wynik realny";
 
-  const inflationHelperText =
-    bond.badgeKind === "inflation"
-      ? `Dla ${bond.name} ta wartość zmienia oprocentowanie od 2. roku.`
-      : `Dla ${bond.name} inflacja nie zmienia kuponu, ale zmienia realną wartość wyniku.`;
-
-  const ikeHelperText = `Bez podatku od zysków. Tutaj oszczędzasz ok. ${formatMoneyRounded(
+  const ikeHelperText = `Oszczędzasz ok. ${formatMoneyRounded(
     bondResult.totalInterest * 0.19,
   )}.`;
 
@@ -186,7 +180,6 @@ export function CalculatorApp() {
           state={state}
           sliderFill={sliderFill}
           inflationModeText={inflationModeText}
-          inflationHelperText={inflationHelperText}
           ikeHelperText={ikeHelperText}
           showNbpRow={bond.badgeKind === "variable"}
           advancedOptionsOpen={uiState.advancedOptionsOpen}
@@ -255,6 +248,7 @@ export function CalculatorApp() {
 
       <CalculatorNextSteps onPortfolioReturn={handlePortfolioReturn} />
       <CalculatorTrustFooter />
+      <MobileResultDock netProfit={bondResult.netProfit} />
     </main>
   );
 }

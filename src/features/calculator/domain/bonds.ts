@@ -163,11 +163,11 @@ export const BONDS: Record<BondId, BondDefinition> = {
     description: (context) =>
       `Pierwszy rok: stałe ${formatPercent(5)}. Od 2. roku: inflacja ${formatPercent(
         inflation(context),
-      )} + ${formatPercent(1.5)}. Odsetki wypłacane co roku na konto.`,
+      )} + marża ${formatPercent(1.5)}. Odsetki wypłacane co roku na konto.`,
     howItWorks: (context) =>
       `W pierwszym roku COI płaci stałe ${formatPercent(
         5,
-      )}. Od drugiego roku oprocentowanie liczy się jako inflacja + ${formatPercent(
+      )}. Od drugiego roku oprocentowanie liczy się jako inflacja + marża ${formatPercent(
         1.5,
       )}, czyli w tym scenariuszu ${formatPercent(
         inflation(context) + 1.5,
@@ -202,11 +202,11 @@ export const BONDS: Record<BondId, BondDefinition> = {
     description: (context) =>
       `Pierwszy rok: stałe ${formatPercent(5.6)}. Od 2. roku: inflacja ${formatPercent(
         inflation(context),
-      )} + ${formatPercent(2)}. Odsetki kapitalizują się co roku.`,
+      )} + marża ${formatPercent(2)}. Odsetki kapitalizują się co roku.`,
     howItWorks: (context) =>
       `EDO zaczyna od ${formatPercent(
         5.6,
-      )} w pierwszym roku, a potem przechodzi na inflację + ${formatPercent(
+      )} w pierwszym roku, a potem przechodzi na inflację + marżę ${formatPercent(
         2,
       )}, czyli tutaj ${formatPercent(
         inflation(context) + 2,

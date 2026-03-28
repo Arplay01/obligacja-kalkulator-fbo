@@ -5,7 +5,7 @@ description: Use when the user types /end or asks for a wrap-up, handoff note, s
 
 # Session Wrap Up
 
-Use this skill to close the current session and append one concise entry to `.codex/memory/session-log.jsonl`, using `.codex/memory/session-state.json` to avoid duplicate wrap-ups.
+Use this skill to close the current session and append one concise entry to `.codex/memory/session-log.jsonl`, using `.codex/memory/session-state.json` to avoid duplicate wrap-ups. When a session creates durable decisions or a real pivot, this skill also keeps `docs/process/decision-log.md` and/or `docs/process/pivot.md` in sync.
 
 ## Trigger
 
@@ -23,6 +23,11 @@ Use this skill to close the current session and append one concise entry to `.co
 - If `/end` is repeated with no new work, return a no-op instead of appending noise.
 - If meaningful work resumes after `/end` in the same conversation, append an `addendum` instead of a second full wrap-up.
 - If the current conversation is a fresh work session, start a new `session_id`.
+- If the session introduced durable product, UX/UI, process decisions, or a pivot, update `docs/process/decision-log.md` and/or `docs/process/pivot.md` in the same `/end` flow.
+- Use the wrap-up `timestamp` as the source of truth for doc dates and write only `YYYY-MM-DD` in those markdown files.
+- If a decision cannot be confidently tied to a closed session, do not add it to dated process docs.
+- If the session contains no durable decisions or pivot, leave process docs unchanged.
+- The markdown docs are synced manually by the agent; `append_session_log.py` remains only the JSONL/state writer.
 
 ## Required Fields
 
@@ -39,8 +44,9 @@ Use this skill to close the current session and append one concise entry to `.co
 1. Gather outcomes from the current session and any delegated handoff notes.
 2. Decide whether this `/end` is a new wrap-up, an addendum, or a no-op.
 3. Reduce the outcomes to concise bullets.
-4. Append one JSONL entry with `scripts/append_session_log.py`.
-5. Confirm what was written and call out anything still unresolved.
+4. If the session contains durable decisions or a pivot, sync `docs/process/decision-log.md` and/or `docs/process/pivot.md` using the same session-close date.
+5. Append one JSONL entry with `scripts/append_session_log.py`.
+6. Confirm what was written and call out anything still unresolved.
 
 ## Script
 

@@ -39,9 +39,14 @@ function getChartPoints(invested: number, breakdown: BreakdownRow[]): ChartPoint
   ];
 }
 
-function getPolylinePoints(points: ChartPoint[], maxValue: number, key: "netBalance" | "realValue") {
+function getPolylinePoints(
+  points: ChartPoint[],
+  scale: { min: number; max: number },
+  key: "netBalance" | "realValue",
+) {
   const innerWidth = CHART_WIDTH - CHART_PADDING.left - CHART_PADDING.right;
   const innerHeight = CHART_HEIGHT - CHART_PADDING.top - CHART_PADDING.bottom;
+  const range = Math.max(scale.max - scale.min, 1);
 
   return points
     .map((point, index) => {
@@ -51,7 +56,7 @@ function getPolylinePoints(points: ChartPoint[], maxValue: number, key: "netBala
       const y =
         CHART_PADDING.top +
         innerHeight -
-        (point[key] / maxValue) * innerHeight;
+        ((point[key] - scale.min) / range) * innerHeight;
 
       return { x, y };
     });
@@ -76,10 +81,12 @@ function buildAreaPath(points: { x: number; y: number }[]) {
   return `${linePath} L ${lastPoint.x.toFixed(2)} ${baselineY.toFixed(2)} L ${firstPoint.x.toFixed(2)} ${baselineY.toFixed(2)} Z`;
 }
 
-function getYAxisTicks(maxValue: number) {
+function getYAxisTicks(scale: { min: number; max: number }) {
+  const range = Math.max(scale.max - scale.min, 1);
+
   return Array.from({ length: 5 }, (_, index) => {
     const ratio = index / 4;
-    const value = maxValue * (1 - ratio);
+    const value = scale.min + (1 - ratio) * range;
     const y =
       CHART_PADDING.top +
       (CHART_HEIGHT - CHART_PADDING.top - CHART_PADDING.bottom) * ratio;
@@ -138,10 +145,17 @@ export function GrowthChart({
   }
 
   const chartFinalPoint = finalPoint;
-  const maxValue = Math.max(...points.map((point) => point.netBalance), invested) * 1.08;
-  const nominalPoints = getPolylinePoints(points, maxValue, "netBalance");
-  const realPoints = getPolylinePoints(points, maxValue, "realValue");
-  const yAxisTicks = getYAxisTicks(maxValue);
+  const values = points.flatMap((point) => [point.netBalance, point.realValue]);
+  const rawMin = Math.min(...values);
+  const rawMax = Math.max(...values);
+  const padding = Math.max((rawMax - rawMin) * 0.08, invested * 0.01, 1);
+  const scale = {
+    min: Math.max(0, rawMin - padding),
+    max: rawMax + padding,
+  };
+  const nominalPoints = getPolylinePoints(points, scale, "netBalance");
+  const realPoints = getPolylinePoints(points, scale, "realValue");
+  const yAxisTicks = getYAxisTicks(scale);
   const nominalPath = buildLinePath(nominalPoints);
   const realPath = buildLinePath(realPoints);
   const areaPath = buildAreaPath(nominalPoints);

@@ -32,22 +32,14 @@ function getAmountFontSize(displayValue: string) {
   const length = displayValue.length;
 
   if (length <= 7) {
-    return "clamp(2rem, 4vw, 2.65rem)";
+    return "clamp(2.1rem, 4vw, 2.7rem)";
   }
 
-  if (length === 8) {
-    return "clamp(1.8rem, 3.6vw, 2.35rem)";
+  if (length <= 9) {
+    return "clamp(1.75rem, 3.3vw, 2.25rem)";
   }
 
-  if (length === 9) {
-    return "clamp(1.6rem, 3.2vw, 2.05rem)";
-  }
-
-  if (length === 10) {
-    return "clamp(1.4rem, 2.8vw, 1.8rem)";
-  }
-
-  return "clamp(1.2rem, 2.4vw, 1.55rem)";
+  return "clamp(1.25rem, 2.5vw, 1.7rem)";
 }
 
 export function AmountInput({

@@ -49,6 +49,10 @@ This repository is prepared for Codex-native collaboration with repo-local skill
 - Use `.codex/memory/session-log.jsonl` as the append-only history of completed sessions.
 - Use `.codex/memory/session-state.json` as the lightweight state file for `/end` handling.
 - Treat `/end` as a repo convention that triggers `session-wrap-up`.
+- When handling `/end`, also sync `docs/process/decision-log.md` and/or `docs/process/pivot.md` if the session introduced durable product, UX/UI, process decisions, or an actual pivot.
+- Use the session entry `timestamp` as the source of truth for dates in process docs; write only the `YYYY-MM-DD` date from the session close.
+- If a decision or pivot cannot be confidently tied to a closed session, do not add it to the dated process docs during `/end`.
+- If `/end` does not contain durable decisions or a pivot, leave `docs/process/decision-log.md` and `docs/process/pivot.md` unchanged.
 - Do not read `.codex/memory/session-log.jsonl` during normal implementation, research, or review work.
 - Do not read `.codex/memory/session-state.json` during normal work unless you are handling `/end` or session bookkeeping.
 - Read the session log only when the user explicitly asks for handoff, history, retrospection, or decision analysis.
