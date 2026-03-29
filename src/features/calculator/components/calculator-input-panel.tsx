@@ -183,11 +183,17 @@ export function CalculatorInputPanel({
     <aside className="workspace__inputs card" aria-label="Parametry symulacji">
       <section
         className="panel-block panel-block--selector"
-        aria-label="Wybierz rodzaj obligacji"
+        aria-label="Wybierz czas oszczędzania"
       >
-        <h2 className="section-title section-title--compact">Wybierz obligację</h2>
+        <div className="panel-heading">
+          <h2 className="input-title">Na jak długo chcesz odłożyć pieniądze?</h2>
+          <p className="helper-text">
+            Najpierw wybierz czas. Na każdej karcie pokazuję też odpowiadającą mu
+            serię obligacji.
+          </p>
+        </div>
 
-        <div className="bond-grid" role="tablist" aria-label="Rodzaje obligacji">
+        <div className="bond-grid" role="tablist" aria-label="Dostępne okresy oszczędzania">
           {BOND_ORDER.map((bondId, index) => {
             const bond = bonds[bondId];
             const isActive = state.bondId === bondId;
@@ -218,7 +224,7 @@ export function CalculatorInputPanel({
                   </span>
                 ) : null}
                 <div className="bond-chip__header">
-                  <span className="bond-chip__ticker">{bond.name}</span>
+                  <span className="bond-chip__label">{bond.termLabel}</span>
                   <span className="bond-chip__badge-slot bond-chip__badge-slot--inline">
                     <BondBadge
                       kind={bond.badgeKind}
@@ -227,8 +233,8 @@ export function CalculatorInputPanel({
                     />
                   </span>
                 </div>
-                <span className="bond-chip__label">{bond.pickerLabel}</span>
                 <span className="bond-chip__rate">{formatPercent(bond.firstRate)}</span>
+                <span className="bond-chip__ticker">Seria {bond.name}</span>
                 <span className="bond-chip__badge-slot bond-chip__badge-slot--stacked">
                   <BondBadge
                     kind={bond.badgeKind}

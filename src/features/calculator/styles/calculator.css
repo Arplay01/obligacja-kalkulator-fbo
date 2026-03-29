@@ -546,6 +546,12 @@
   gap: 0.8rem;
 }
 
+.calculator-route .panel-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
 .calculator-route .panel-block--ike {
   gap: 0;
 }
@@ -658,11 +664,11 @@
 }
 
 .calculator-route .bond-chip__ticker {
-  font-size: var(--type-label-xs-size);
-  line-height: var(--type-label-xs-line);
-  font-weight: var(--type-label-xs-weight);
-  letter-spacing: var(--type-label-xs-track);
-  text-transform: uppercase;
+  font-size: var(--type-caption-sm-size);
+  line-height: var(--type-caption-sm-line);
+  font-weight: var(--type-caption-sm-weight);
+  letter-spacing: var(--type-caption-sm-track);
+  color: var(--text-40);
 }
 
 .calculator-route .bond-chip__header {
@@ -676,15 +682,15 @@
 }
 
 .calculator-route .bond-chip__label {
-  font-size: var(--type-caption-sm-size);
-  line-height: var(--type-caption-sm-line);
-  font-weight: var(--type-caption-sm-weight);
-  letter-spacing: var(--type-caption-sm-track);
-  color: var(--text-40);
+  font-size: var(--type-body-lg-size);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
 }
 
 .calculator-route .bond-chip__rate {
-  margin-top: 0;
+  margin-top: 0.08rem;
   font-size: var(--type-title-sm-size);
   line-height: var(--type-title-sm-line);
   font-weight: 700;
@@ -697,6 +703,10 @@
 }
 
 .calculator-route .bond-chip--active .bond-chip__label {
+  color: var(--text-strong);
+}
+
+.calculator-route .bond-chip--active .bond-chip__ticker {
   color: var(--text-60);
 }
 
@@ -2631,8 +2641,8 @@
   }
 
   .calculator-route .bond-chip__label {
-    font-size: 0.8125rem;
-    line-height: 1.2;
+    font-size: 0.95rem;
+    line-height: 1.18;
   }
 
   .calculator-route .bond-chip__rate {
