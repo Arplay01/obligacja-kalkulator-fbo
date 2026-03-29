@@ -2,7 +2,7 @@
 
 To repo zawiera produkcyjną aplikację `Next.js + TypeScript` dla kalkulatora obligacji skarbowych w ramach rekrutacji na Product Managera w Finanse Bardzo Osobiste. Dodatkowo repo zawiera aktualną dokumentację procesu, który doprowadził do obecnego rozwiązania.
 
-Aktualna implementacja jest wiernym rewrite'em 1:1 prototypu referencyjnego. Repo pokazuje dziś gotowy ekran, finalne decyzje produktowe i wybrany ślad procesu, bez warsztatowego szumu z wcześniejszych iteracji.
+Aktualna implementacja nie jest już prostym rewrite'em prototypu HTML 1:1. Produkt dojrzewał dalej już w aplikacji `Next.js`: zmieniła się hierarchia informacji, warstwa edukacyjna, mobile flow i finalna warstwa wizualna. Repo pokazuje dziś żywy produkt, finalne decyzje produktowe i wybrany ślad procesu, bez warsztatowego szumu z wcześniejszych iteracji.
 
 ## Jaki problem rozwiązujemy
 
@@ -28,12 +28,12 @@ Docelowym odbiorcą PoC jest początkująca osoba z ekosystemu FBO, która:
 
 Finalny kierunek to answer-first calculator:
 
-- wybierasz serię obligacji,
-- wpisujesz kwotę,
+- najpierw wybierasz czas odkładania pieniędzy, a dopiero w drugiej warstwie widzisz serię obligacji,
+- wpisujesz kwotę albo ustawiasz ją presetami i suwakiem,
 - od razu widzisz szacunkowy wynik netto,
-- zaraz pod nim dostajesz koszt bezruchu,
-- potem porównanie z lokatą i kontem,
-- a na końcu prosty kolejny krok: jak kupić pierwszą obligację.
+- pod wynikiem dostajesz jedno zdanie, które łączy zysk z kosztem bezruchu,
+- niżej porównujesz wynik z lokatą i kontem,
+- a dopiero potem wchodzisz głębiej w mechanikę, wykres i materiały edukacyjne.
 
 Kluczowy pivot polegał na przejściu z szerokiego porównywacza i bardziej analitycznego flow do prostszego narzędzia aktywacyjnego. Sednem produktu przestało być porównywanie obligacji samo w sobie. Zaczęło nim być uruchomienie decyzji.
 
@@ -52,25 +52,29 @@ Kluczowy pivot polegał na przejściu z szerokiego porównywacza i bardziej anal
 
 Najważniejszym źródłem prawdy dla obecnego UI, UX, copy i zachowania jest:
 
-- `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`
+- działająca aplikacja w `app/` i `src/features/calculator/`,
+- `docs/product/prd.md`,
+- `docs/process/decision-log.md` dla trwałych decyzji produktowych i UX/UI.
 
-Ten folder zostaje w repo jako referencja 1:1 dla produkcyjnej implementacji.
+Folder `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` zostaje w repo tylko jako historyczna referencja procesu i punkt porównania, a nie aktywny source of truth.
 
 ## Aktualny stan techniczny
 
 - root repo jest aplikacją `Next.js + TypeScript`,
 - docelowy ekran działa pod `/kalkulator`,
 - `/` przekierowuje do `/kalkulator`,
-- styling kalkulatora został przeniesiony z prototypu i ograniczony do subtree kalkulatora,
+- styling kalkulatora jest utrzymywany lokalnie w subtree kalkulatora i rozwijany już niezależnie od pierwotnego prototypu,
 - logika kalkulacji jest wydzielona od warstwy UI i pokryta testami,
-- w repo zostaje tylko finalny prototyp referencyjny, bez starszych roboczych wariantów.
+- repo zawiera też lokalne skills i dokumentację procesu pracy z agentami.
 
 ## Struktura repo
 
 - `app/` - routing i layout produkcyjnej aplikacji Next.js.
 - `src/features/calculator/` - domena, logika, komponenty i style kalkulatora.
+- `tests/` - scenariusze e2e i regresje dla kalkulatora.
 - `docs/` - aktualny kontekst produktu, PRD i zapis decyzji.
-- `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` - referencyjny prototyp 1:1 dla obecnego UI, UX i copy.
+- `.codex/skills/` - repo-local skills do pracy produktowej, UX i implementacyjnej.
+- `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` - historyczny prototyp referencyjny do porównań procesu.
 - `@archiwum/` - historyczne dokumenty i stare założenia, niekanoniczne.
 
 ## Uruchomienie

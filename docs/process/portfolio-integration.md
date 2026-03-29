@@ -61,7 +61,7 @@ To jest świadoma decyzja produktowa. Użytkownik ma wrócić do kontekstu case 
 
 - trasa `/kalkulator` działa już jako aktywna implementacja `Next.js`,
 - `/` przekierowuje do `/kalkulator`,
-- obecna aplikacja zachowuje hierarchię i flow 1:1 względem referencyjnego prototypu,
+- obecna aplikacja rozwinęła się już dalej niż referencyjny prototyp i to ona pozostaje źródłem prawdy dla bieżącego flow oraz hierarchii,
 - logika zamknięcia layera pozostaje kontraktem integracyjnym, a nie detalem UI.
 
 ## Kryteria akceptacji

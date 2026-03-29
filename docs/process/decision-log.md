@@ -141,3 +141,17 @@ Krótki log najważniejszych decyzji produktowych, UX i UI. Każdy wpis jest dat
 **Decyzja:** wynik, wpływ inflacji, porównanie i głębsze sekcje zostały spięte w jedną narrację: od odpowiedzi, przez koszt bezruchu, po dodatkowe szczegóły i materiały.  
 **Dlaczego:** osobne liczby i osobne sekcje nie składały się automatycznie w prosty wniosek dla początkującej osoby.  
 **Wartość dla użytkownika:** kalkulator prowadzi do decyzji czytelniej, bo mówi nie tylko `ile możesz zyskać`, ale też `co to znaczy w praktyce`.
+
+## 21. Lżejszy wariant wizualny staje się nowym defaultem produktu
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** po osobnym eksperymencie wizualnym wybrany został lżejszy kierunek z białą bazą strony, spokojniejszymi powierzchniami kart i czerwonym akcentem bliższym identyfikacji FBO, a następnie został wdrożony na `main`.  
+**Dlaczego:** wcześniejsza, bardziej kremowa warstwa wizualna zbyt mocno zlewała tło, formularz i karty, przez co wynik i hierarchia sekcji traciły czytelność.  
+**Wartość dla użytkownika:** ekran jest lżejszy, wyraźniej prowadzi wzrok do odpowiedzi i lepiej rozdziela strefę działania od strefy wyniku.
+
+## 22. Layout kalkulatora został przebudowany pod hierarchię odpowiedzi, a nie równowagę kolumn
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** po audycie UX/UI przebudowana została waga layoutu: lewa kolumna została uproszczona jako strefa konfiguracji, prawa dostała więcej przestrzeni jako strefa odpowiedzi, hero wyniku zyskało większy oddech, a sekcje wtórne zostały rozdzielone mocniejszym rytmem pionowym.  
+**Dlaczego:** wcześniejszy układ był zbyt równy wizualnie - formularz, wynik i kolejne sekcje konkurowały o uwagę zamiast prowadzić użytkownika do najważniejszej odpowiedzi.  
+**Wartość dla użytkownika:** ekran czytelniej komunikuje, gdzie podejmuje się decyzję, a gdzie dostaje się odpowiedź, dzięki czemu kalkulator jest łatwiejszy do skanowania i szybszy w użyciu.

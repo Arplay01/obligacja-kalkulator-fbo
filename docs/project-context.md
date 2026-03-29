@@ -4,10 +4,10 @@ To repo dokumentuje proof of concept kalkulatora obligacji skarbowych dla Finans
 
 ## Obecny stan projektu
 
-- aktualnym source of truth dla UI, UX, copy i zachowania jest `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/`,
-- obecne `brief` i `PRD` opisują już finalny kierunek, a nie pierwotny plan,
-- rewrite 1:1 do `Next.js + TypeScript` jest już wdrożony w rootowej aplikacji,
-- obecny prototyp zostaje w repo jako referencja dla produkcyjnej implementacji,
+- aktualnym source of truth dla UI, UX, copy i zachowania jest działająca aplikacja `Next.js` w `app/` i `src/features/calculator/`,
+- obecne `brief` i `PRD` opisują już finalny kierunek produktu po iteracjach wykonanych bezpośrednio w aplikacji,
+- repo nie jest już prostym rewrite'em prototypu 1:1 - część najważniejszych decyzji zapadła już po wdrożeniu do `Next.js`,
+- obecny prototyp zostaje w repo wyłącznie jako historyczna referencja procesu i punkt porównania,
 - `@archiwum/` zawiera tylko historyczne materiały, bez roli aktywnego kontekstu.
 
 ## Jaki problem rozwiązujemy
@@ -37,13 +37,15 @@ Sedno problemu jest takie:
 
 ## Hierarchia source of truth
 
-1. `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` - UI, UX, copy i zachowanie.
-2. `docs/product/brief.md` - finalne założenia produktu.
-3. `docs/product/prd.md` - finalny opis flow i interakcji.
-4. `docs/process/portfolio-integration.md` - kontrakt osadzenia w portfolio.
-5. `@archiwum/` - historyczne dokumenty i starsze założenia, które mogą być przydatne tylko jako materiał procesu.
+1. `app/` i `src/features/calculator/` - realne zachowanie produktu, UI, UX i copy.
+2. `docs/product/prd.md` - finalny opis flow i interakcji.
+3. `docs/product/brief.md` - finalne założenia produktu.
+4. `docs/process/decision-log.md` - trwałe decyzje produktowe, UX i UI.
+5. `docs/process/portfolio-integration.md` - kontrakt osadzenia w portfolio.
+6. `kalkulatory-robocze/fbo-visual-prototype-v2-fbo/` - historyczna referencja procesu.
+7. `@archiwum/` - historyczne dokumenty i starsze założenia, które mogą być przydatne tylko jako materiał procesu.
 
-Jeśli historyczny dokument rozjeżdża się z obecnym prototypem w obszarze UI, UX, copy albo kolejności doświadczenia, wygrywa aktualny prototyp.
+Jeśli historyczny dokument albo prototyp rozjeżdża się z obecną aplikacją w obszarze UI, UX, copy albo kolejności doświadczenia, wygrywa aktualna implementacja `Next.js`.
 
 ## Routing dokumentów
 
@@ -58,4 +60,4 @@ Jeśli historyczny dokument rozjeżdża się z obecnym prototypem w obszarze UI,
 
 ## Zasada operacyjna
 
-Kolejne iteracje powinny wychodzić już z aktualnej aplikacji `Next.js`, a nie z wcześniejszych prototypów. Referencyjny prototyp 1:1 zostaje tylko jako punkt porównania dla UI, UX i copy.
+Kolejne iteracje powinny wychodzić z aktualnej aplikacji `Next.js`, a nie z wcześniejszych prototypów. Referencyjny prototyp zostaje tylko jako punkt porównania dla procesu i historii zmian.

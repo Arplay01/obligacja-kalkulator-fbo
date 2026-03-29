@@ -2,7 +2,7 @@
 
 ## Cel dokumentu
 
-Ten dokument opisuje aktualny produkt tak, jak działa w finalnym prototypie `fbo-visual-prototype-v2-fbo`. Jest source of truth dla flow, hierarchii informacji i interakcji.
+Ten dokument opisuje aktualny produkt tak, jak działa w aplikacji `Next.js` pod `/kalkulator`. Jest source of truth dla flow, hierarchii informacji i interakcji, a starszy prototyp pozostaje jedynie historyczną referencją procesu.
 
 ## Użytkownik i główne zadanie
 
@@ -27,8 +27,7 @@ Ten dokument opisuje aktualny produkt tak, jak działa w finalnym prototypie `fb
 Góra ekranu zawiera:
 
 - prostą obietnicę wartości,
-- krótką notę o porównaniu z lokatą i kontem,
-- trust note redukujący lęk przed pierwszym krokiem.
+- krótką notę o porównaniu z lokatą i kontem.
 
 Intro ma być krótkie i nie może spychać wyniku poniżej pierwszego widoku na desktopie.
 
@@ -36,7 +35,7 @@ Intro ma być krótkie i nie może spychać wyniku poniżej pierwszego widoku na
 
 Lewa kolumna zawiera:
 
-- wybór serii obligacji: `OTS`, `ROR`, `DOR`, `TOS`, `COI`, `EDO`,
+- wybór czasu odkładania pieniędzy, z serią obligacji pokazaną jako druga warstwa informacji,
 - ręczny wpis kwoty,
 - presetowe kwoty,
 - nieliniowy suwak do szybkiej zmiany kwoty,
@@ -62,15 +61,15 @@ Prawa kolumna pokazuje:
 - nazwę wybranej serii,
 - krótki opis mechaniki serii,
 - badge typu oprocentowania,
-- hero `Twój zysk netto`,
-- `Łącznie`,
+- hero `Szacowany zysk netto`,
+- `Na koniec`,
 - `Średnio / rok`.
 
 To jest główna odpowiedź produktu i najważniejszy punkt uwagi.
 
 ### 5. Koszt bezruchu
 
-Bezpośrednio pod hero znajduje się blok `Co się stanie, jeśli nic nie zrobisz?`.
+Bezpośrednio pod hero znajduje się krótkie zdanie typu `W praktyce`, które łączy wynik obligacji z kosztem bezruchu.
 
 Jego zadaniem jest:
 
@@ -113,6 +112,7 @@ Zawiera:
 
 Sekcja `Jeśli chcesz wejść głębiej` zawiera disclosure z dodatkowymi warstwami:
 
+- czym są obligacje i dlaczego to sensowny pierwszy krok,
 - jak działa wybrana seria,
 - wykres i tabela rok po roku,
 - kiedy obligacje, a kiedy lokata.
@@ -140,12 +140,12 @@ Na końcu ekranu użytkownik dostaje:
 ## Zachowanie i interakcje
 
 - Zmiana dowolnego inputu aktualizuje wynik bez przeładowania ekranu.
-- Zmiana serii aktualizuje hero, opis produktu, badge, teksty edukacyjne, porównanie i tabelę.
+- Zmiana wybranego czasu i serii aktualizuje hero, opis produktu, badge, teksty edukacyjne, porównanie i tabelę.
 - Kwota może być wpisywana ręcznie i formatowana w locie.
 - Suwak ma wspierać szybkie ustawianie popularnych kwot, ale nie ogranicza ręcznego wpisu większych wartości.
 - `IKE` wpływa tylko na obligacje, nie na lokatę i konto.
 - Tooltips pojawiają się lokalnie przy trudniejszych pojęciach.
-- Mobile ma układać ekran w jednej kolumnie, z wynikami nad inputami.
+- Mobile ma układać ekran w jednej kolumnie, a najważniejszy wynik pozostaje dostępny także w fixowanym docku.
 
 ## Najważniejsze reguły UX
 
@@ -159,7 +159,6 @@ Na końcu ekranu użytkownik dostaje:
 
 ## Poza zakresem obecnego PoC
 
-- horyzont jako główny input,
 - wykres jako główna warstwa produktu,
 - chart-first comparator,
 - eksperckie porównywanie wszystkich scenariuszy,
@@ -171,8 +170,8 @@ Na końcu ekranu użytkownik dostaje:
 ## Acceptance criteria
 
 - Po wejściu na ekran użytkownik rozumie, co narzędzie robi i czego może się po nim spodziewać.
-- Wybrana seria, kwota, inflacja i opcje zaawansowane wpływają na wynik live.
+- Wybrany czas i seria, kwota, inflacja i opcje zaawansowane wpływają na wynik live.
 - Hero wynik netto jest najważniejszą warstwą wyniku.
-- Blok o koszcie bezruchu pojawia się bezpośrednio pod hero.
+- Most narracyjny o koszcie bezruchu pojawia się bezpośrednio pod hero.
 - Szczegóły kalkulacji i głębsze warstwy edukacyjne nie przeciążają pierwszego widoku.
 - Produkt prowadzi od zrozumienia do kolejnego kroku bez zmuszania użytkownika do studiowania pełnej mechaniki.
