@@ -214,10 +214,9 @@ export function CalculatorInputPanel({
         aria-label="Wybierz czas oszczędzania"
       >
         <div className="panel-heading">
-          <h2 className="input-title">Na jak długo chcesz odłożyć pieniądze?</h2>
-          <p className="helper-text">
-            Najpierw wybierz czas. Na każdej karcie widać też odpowiadającą mu serię
-            obligacji.
+          <h2 className="input-title">Jak długo chcesz odłożyć pieniądze?</h2>
+          <p className="helper-text panel-heading__helper--desktop-only">
+            Najpierw wybierz czas. Na każdej karcie widać też serię obligacji.
           </p>
         </div>
 
