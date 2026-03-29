@@ -23,53 +23,81 @@ export function AnimatedNumberText({
   animateOnMount = false,
   ...elementProps
 }: AnimatedNumberTextProps) {
-  const [displayValue, setDisplayValue] = useState(() =>
-    animateOnMount ? 0 : value,
-  );
+  // Bugfix: render the final amount first so slow hydration never leaves the hero at 0,00 zl.
+  const [displayValue, setDisplayValue] = useState(value);
   const hasAnimatedRef = useRef(false);
-  const displayValueRef = useRef(animateOnMount ? 0 : value);
+  const displayValueRef = useRef(value);
   const animationFrameRef = useRef<number | null>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
+  const [isInViewport, setIsInViewport] = useState(!animateOnMount);
 
   useEffect(() => {
+    if (!animateOnMount) {
+      return undefined;
+    }
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      return undefined;
+    }
+
+    const element = elementRef.current;
+
+    if (!element) {
+      return undefined;
+    }
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        setIsInViewport(entry?.isIntersecting ?? false);
+      },
+      {
+        threshold: 0.2,
+      },
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [animateOnMount]);
+
+  useEffect(() => {
+    const scheduleDisplayValueUpdate = (nextValue: number) => {
+      animationFrameRef.current = window.requestAnimationFrame(() => {
+        displayValueRef.current = nextValue;
+        setDisplayValue(nextValue);
+        animationFrameRef.current = null;
+      });
+
+      return () => {
+        if (animationFrameRef.current) {
+          window.cancelAnimationFrame(animationFrameRef.current);
+        }
+      };
+    };
+
     if (animationFrameRef.current) {
       window.cancelAnimationFrame(animationFrameRef.current);
     }
 
     if (!hasAnimatedRef.current) {
       hasAnimatedRef.current = true;
-
-      if (!animateOnMount) {
-        displayValueRef.current = value;
-        return undefined;
-      }
+      displayValueRef.current = value;
+      return undefined;
     }
 
     const startValue = displayValueRef.current;
 
     if (Math.abs(startValue - value) < 0.0001) {
-      animationFrameRef.current = window.requestAnimationFrame(() => {
-        displayValueRef.current = value;
-        setDisplayValue(value);
-        animationFrameRef.current = null;
-      });
-      return () => {
-        if (animationFrameRef.current) {
-          window.cancelAnimationFrame(animationFrameRef.current);
-        }
-      };
+      return scheduleDisplayValueUpdate(value);
     }
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      animationFrameRef.current = window.requestAnimationFrame(() => {
-        displayValueRef.current = value;
-        setDisplayValue(value);
-        animationFrameRef.current = null;
-      });
-      return () => {
-        if (animationFrameRef.current) {
-          window.cancelAnimationFrame(animationFrameRef.current);
-        }
-      };
+    if (
+      (animateOnMount && !isInViewport) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return scheduleDisplayValueUpdate(value);
     }
 
     const startTime = performance.now();
@@ -99,17 +127,44 @@ export function AnimatedNumberText({
         window.cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [animateOnMount, value]);
+  }, [animateOnMount, isInViewport, value]);
 
   const content = format(displayValue);
 
   if (tag === "strong") {
-    return <strong {...elementProps}>{content}</strong>;
+    return (
+      <strong
+        {...elementProps}
+        ref={(node) => {
+          elementRef.current = node;
+        }}
+      >
+        {content}
+      </strong>
+    );
   }
 
   if (tag === "span") {
-    return <span {...elementProps}>{content}</span>;
+    return (
+      <span
+        {...elementProps}
+        ref={(node) => {
+          elementRef.current = node;
+        }}
+      >
+        {content}
+      </span>
+    );
   }
 
-  return <p {...elementProps}>{content}</p>;
+  return (
+    <p
+      {...elementProps}
+      ref={(node) => {
+        elementRef.current = node;
+      }}
+    >
+      {content}
+    </p>
+  );
 }

@@ -28,6 +28,7 @@ type CalculatorUiState = {
   advancedOptionsOpen: boolean;
   calculationDetailsOpen: boolean;
   compareOpen: boolean;
+  basicsOpen: boolean;
   howOpen: boolean;
   chartOpen: boolean;
   educationOpen: boolean;
@@ -37,6 +38,7 @@ const DEFAULT_UI_STATE: CalculatorUiState = {
   advancedOptionsOpen: false,
   calculationDetailsOpen: false,
   compareOpen: true,
+  basicsOpen: false,
   howOpen: false,
   chartOpen: false,
   educationOpen: false,
@@ -48,12 +50,44 @@ type StepTarget =
   | "nbp-rate"
   | "custom-inflation";
 
+function revealComparisonSettings() {
+  const settingsTrigger = document.getElementById("advanced-options-trigger");
+  const depositRateInput = document.getElementById("deposit-rate");
+  const depositRateRow =
+    depositRateInput instanceof HTMLElement
+      ? depositRateInput.closest(".option-row")
+      : null;
+
+  if (depositRateRow instanceof HTMLElement) {
+    depositRateRow.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  } else if (settingsTrigger instanceof HTMLElement) {
+    settingsTrigger.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
+
+  if (depositRateInput instanceof HTMLInputElement) {
+    depositRateInput.focus({ preventScroll: true });
+    depositRateInput.select();
+    return;
+  }
+
+  if (settingsTrigger instanceof HTMLElement) {
+    settingsTrigger.focus({ preventScroll: true });
+  }
+}
+
 export function CalculatorApp() {
   const [state, setState] = useState<CalculatorState>(DEFAULT_CALCULATOR_STATE);
   const [uiState, setUiState] = useState<CalculatorUiState>(DEFAULT_UI_STATE);
   const [isUpdating, setIsUpdating] = useState(false);
   const hasRenderedRef = useRef(false);
   const updateTimeoutRef = useRef<number | null>(null);
+  const pendingAdvancedOptionsRevealRef = useRef(false);
 
   useEffect(() => {
     hasRenderedRef.current = true;
@@ -64,6 +98,22 @@ export function CalculatorApp() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!uiState.advancedOptionsOpen || !pendingAdvancedOptionsRevealRef.current) {
+      return undefined;
+    }
+
+    pendingAdvancedOptionsRevealRef.current = false;
+
+    const frameId = window.requestAnimationFrame(() => {
+      revealComparisonSettings();
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [uiState.advancedOptionsOpen]);
 
   const bond = BONDS[state.bondId];
   const effectiveInflation = getEffectiveInflation(state);
@@ -159,12 +209,22 @@ export function CalculatorApp() {
     );
   }
 
+  function handleComparisonSettingsReveal() {
+    if (uiState.advancedOptionsOpen) {
+      revealComparisonSettings();
+      return;
+    }
+
+    pendingAdvancedOptionsRevealRef.current = true;
+    updateUiState({ advancedOptionsOpen: true });
+  }
+
   const inflationModeText =
     bond.badgeKind === "inflation"
       ? null
       : state.inflationMode === "custom"
         ? `Aktywna własna inflacja: ${formatPercent(effectiveInflation)}`
-        : "Zmienia tylko wynik realny";
+        : null;
 
   const ikeHelperText = `Oszczędzasz ok. ${formatMoneyRounded(
     bondResult.totalInterest * 0.19,
@@ -220,12 +280,13 @@ export function CalculatorApp() {
           depositRate={state.depositRate}
           savingsRate={state.savingsRate}
           effectiveInflation={effectiveInflation}
-          inactionRealValue={inactionRealValue}
           inactionLoss={inactionLoss}
           insight={insight}
           isUpdating={isUpdating}
+          advancedOptionsOpen={uiState.advancedOptionsOpen}
           calculationDetailsOpen={uiState.calculationDetailsOpen}
           compareOpen={uiState.compareOpen}
+          onComparisonSettingsReveal={handleComparisonSettingsReveal}
           onCalculationDetailsToggle={(open) =>
             updateUiState({ calculationDetailsOpen: open })
           }
@@ -238,9 +299,11 @@ export function CalculatorApp() {
         bondCopyContext={bondCopyContext}
         bondResult={bondResult}
         effectiveInflation={effectiveInflation}
+        basicsOpen={uiState.basicsOpen}
         howOpen={uiState.howOpen}
         chartOpen={uiState.chartOpen}
         educationOpen={uiState.educationOpen}
+        onBasicsToggle={(open) => updateUiState({ basicsOpen: open })}
         onHowToggle={(open) => updateUiState({ howOpen: open })}
         onChartToggle={(open) => updateUiState({ chartOpen: open })}
         onEducationToggle={(open) => updateUiState({ educationOpen: open })}

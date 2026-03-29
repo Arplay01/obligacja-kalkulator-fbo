@@ -19,7 +19,7 @@ export function MobileResultDock({
     netProfit >= 0
       ? "mobile-result-dock--positive"
       : "mobile-result-dock--negative";
-  const netProfitLabel = `Twój zysk netto ${formatHoldingPeriodLabel(termMonths)}`;
+  const netProfitLabel = `Szacowany zysk netto ${formatHoldingPeriodLabel(termMonths)}`;
 
   return (
     <div

@@ -348,7 +348,7 @@ export function buildInsight(
   if (bond.badgeKind === "variable") {
     return {
       title: "Ta seria żyje stopą NBP",
-      text: `Po pierwszych 3 miesiącach liczę kupon jako ${formatPercent(
+      text: `Po pierwszych 3 miesiącach kupon liczony jest jako ${formatPercent(
         nbpRate + bond.margin,
       )}. Zmienisz NBP w opcjach i od razu zobaczysz, jak wynik się przesuwa.`,
     };

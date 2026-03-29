@@ -1,4 +1,5 @@
 import type {
+  BondBadgeKind,
   BondDefinition,
   BondId,
   CalculatorState,
@@ -8,7 +9,11 @@ import { BondBadge } from "@/features/calculator/components/bond-badge";
 import { CheckIcon, SettingsIcon } from "@/features/calculator/components/icons";
 import { FormattedNumberInput } from "@/features/calculator/components/formatted-number-input";
 import { TermHelp } from "@/features/calculator/components/term-help";
-import { BOND_ORDER } from "@/features/calculator/lib/constants";
+import {
+  BOND_ORDER,
+  EXTERNAL_LINKS,
+  SLIDER_MAX,
+} from "@/features/calculator/lib/constants";
 import {
   amountToSliderValue,
   formatBondCount,
@@ -25,6 +30,28 @@ import type { CSSProperties, KeyboardEvent, SyntheticEvent } from "react";
 
 const AMOUNT_PRESETS = [3000, 5000, 10_000, 20_000, 50_000];
 const INFLATION_PRESETS = [2, 3.5, 5];
+const AMOUNT_SLIDER_MARKERS = [
+  { label: "100 zł", amount: 100, align: "start" },
+  { label: "100 tys.", amount: 100_000, align: "center" },
+  { label: "500 tys. zł", amount: 500_000, align: "end" },
+] as const;
+const BOND_BADGE_HELP: Record<
+  BondBadgeKind,
+  { title: string; description: string }
+> = {
+  fixed: {
+    title: "Stałe oprocentowanie",
+    description: "Wiesz z góry, ile zarobisz.",
+  },
+  variable: {
+    title: "Zmienne oprocentowanie",
+    description: "Wynik zależy od stóp procentowych.",
+  },
+  inflation: {
+    title: "Oprocentowanie powiązane z inflacją",
+    description: "Rośnie razem z cenami.",
+  },
+};
 
 type StepTarget =
   | "deposit-rate"
@@ -175,6 +202,7 @@ export function CalculatorInputPanel({
 }: CalculatorInputPanelProps) {
   const bondCountText = formatBondCount(normaliseAmount(state.amount) / 100);
   const sliderValue = amountToSliderValue(state.amount);
+  const selectedBadgeHelp = BOND_BADGE_HELP[bonds[state.bondId].badgeKind];
   const sliderStyle = {
     "--slider-fill": `${sliderFill.toFixed(2)}%`,
   } as CSSProperties & { "--slider-fill": string };
@@ -188,8 +216,8 @@ export function CalculatorInputPanel({
         <div className="panel-heading">
           <h2 className="input-title">Na jak długo chcesz odłożyć pieniądze?</h2>
           <p className="helper-text">
-            Najpierw wybierz czas. Na każdej karcie pokazuję też odpowiadającą mu
-            serię obligacji.
+            Najpierw wybierz czas. Na każdej karcie widać też odpowiadającą mu serię
+            obligacji.
           </p>
         </div>
 
@@ -225,6 +253,9 @@ export function CalculatorInputPanel({
                 ) : null}
                 <div className="bond-chip__header">
                   <span className="bond-chip__label">{bond.termLabel}</span>
+                </div>
+                <div className="bond-chip__meta">
+                  <span className="bond-chip__rate">{formatPercent(bond.firstRate)}</span>
                   <span className="bond-chip__badge-slot bond-chip__badge-slot--inline">
                     <BondBadge
                       kind={bond.badgeKind}
@@ -233,7 +264,6 @@ export function CalculatorInputPanel({
                     />
                   </span>
                 </div>
-                <span className="bond-chip__rate">{formatPercent(bond.firstRate)}</span>
                 <span className="bond-chip__ticker">Seria {bond.name}</span>
                 <span className="bond-chip__badge-slot bond-chip__badge-slot--stacked">
                   <BondBadge
@@ -246,6 +276,26 @@ export function CalculatorInputPanel({
             );
           })}
         </div>
+
+        <p
+          className="helper-text bond-grid__helper"
+          data-bond-badge-help
+          aria-live="polite"
+        >
+          <span className="bond-grid__helper-title">{selectedBadgeHelp.title}:</span>
+          <span className="bond-grid__helper-text">{selectedBadgeHelp.description}</span>
+        </p>
+        <p className="helper-text bond-grid__family-note">
+          <span>Otrzymujesz 800+?</span>{" "}
+          <a
+            className="bond-grid__family-link"
+            href={EXTERNAL_LINKS.familyBonds}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Sprawdź obligacje rodzinne.
+          </a>
+        </p>
       </section>
 
       <section className="panel-block" aria-label="Kwota inwestycji">
@@ -294,9 +344,24 @@ export function CalculatorInputPanel({
               }
             />
             <div className="amount-slider__limits" aria-hidden="true">
-              <span>100 zł</span>
-              <span>100 tyś.</span>
-              <span>500 tys. zł</span>
+              {AMOUNT_SLIDER_MARKERS.map((marker) => {
+                const position =
+                  (amountToSliderValue(marker.amount) / SLIDER_MAX) * 100;
+
+                return (
+                  <span
+                    key={marker.amount}
+                    className={`amount-slider__limit amount-slider__limit--${marker.align}`}
+                    style={
+                      {
+                        "--amount-slider-limit": `${position.toFixed(2)}%`,
+                      } as CSSProperties & { "--amount-slider-limit": string }
+                    }
+                  >
+                    {marker.label}
+                  </span>
+                );
+              })}
             </div>
           </div>
 
@@ -384,7 +449,7 @@ export function CalculatorInputPanel({
               <strong>Konto IKE</strong>
               <TermHelp
                 label="Wyjaśnienie: konto IKE"
-                tooltip="IKE to konto, które pozwala oszczędzać bez 19% podatku od zysków. W tym kalkulatorze pokazuję ten efekt dla obligacji."
+                tooltip="IKE to konto, które pozwala oszczędzać bez 19% podatku od zysków. W kalkulatorze pokazano ten efekt dla obligacji."
               />
             </div>
             <span className="helper-text" data-ike-helper>
@@ -408,13 +473,18 @@ export function CalculatorInputPanel({
       </section>
 
       <details
+        id="advanced-options"
         className="advanced-options"
         open={advancedOptionsOpen}
         onToggle={(event: SyntheticEvent<HTMLDetailsElement>) => {
           onAdvancedOptionsToggle(event.currentTarget.open);
         }}
       >
-        <summary className="advanced-options__trigger">
+        <summary
+          className="advanced-options__trigger"
+          id="advanced-options-trigger"
+          data-advanced-options-trigger
+        >
           <SettingsIcon className="advanced-options__icon" />
           Więcej opcji
         </summary>

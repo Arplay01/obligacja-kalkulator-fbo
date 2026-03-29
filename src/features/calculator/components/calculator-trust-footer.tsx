@@ -28,15 +28,14 @@ export function CalculatorTrustFooter() {
             Lokata i konto to ręcznie ustawiane punkty odniesienia, nie najlepsza
             oferta rynku
           </li>
-          <li>COI i ROR/DOR pokazuję bez reinwestowania wypłacanych odsetek</li>
+          <li>Dla COI i ROR/DOR nie uwzględniono reinwestowania wypłacanych odsetek</li>
           <li>Kwota inwestycji jest zaokrąglana do pełnych obligacji po 100 zł</li>
           <li>
-            Nie modeluję ceny zamiany 99,90 zł ani przedterminowego wykupu w głównym
-            wyniku
+            W głównym wyniku nie uwzględniono ceny zamiany 99,90 zł ani
+            przedterminowego wykupu
           </li>
         </ul>
       </details>
     </footer>
   );
 }
-

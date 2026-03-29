@@ -44,6 +44,34 @@ Zamiast robić osobne sekcje edukacyjne na dole, lepiej działały małe wyjaśn
 
 Sekcja `Jak kupić?` zaczęła działać dopiero wtedy, gdy trafiła po wyniku i po podstawowym zrozumieniu scenariusza. Wcześniej byłaby tylko kolejnym przyciskiem na ekranie.
 
+## 9. Późny audit najlepiej robić na działającym produkcie
+
+Końcowy polish najwięcej dał wtedy, gdy nie był już debatą o pomysłach, tylko serią konkretnych obserwacji na żywym buildzie. Dużo łatwiej było ocenić:
+
+- czy coś spowalnia wejście do kalkulatora,
+- czy wynik jest naprawdę wiarygodny w pierwszej sekundzie,
+- czy użytkownik rozumie, z czym porównuje wynik,
+- czy dana sekcja jeszcze pomaga, czy już tylko zajmuje miejsce.
+
+## 10. W audycie warto rozdzielić UX flow od zmian wizualnych
+
+Pomogło świadome rozdzielenie dwóch trybów pracy:
+
+- najpierw przebudowa ścieżki użytkownika, copy i hierarchii informacji,
+- potem osobny pass dla ciężaru boxów, spacingu, kreski disclosure i proporcji layoutu.
+
+Dzięki temu łatwiej było ocenić, czy coś rozwiązuje problem, czy tylko wygląda inaczej.
+
+## 11. Przy polishu najpierw reuse systemu, potem wyjątki
+
+W późnych poprawkach warto najpierw korzystać z istniejących komponentów, typografii i wag informacji. Nowe style mają sens dopiero wtedy, gdy obecny system naprawdę nie daje odpowiedzi.
+
+To szczególnie pomogło przy:
+
+- helperach i objaśnieniach pod pickerami,
+- lekkich kartach w sekcjach wynikowych,
+- ujednolicaniu disclosure między kalkulatorem a deep dive.
+
 ## AI-assisted workflow
 
 Cały kod i spora część iteracji powstały z pomocą Codex, Cursor, Claude.ai i Claude Code.

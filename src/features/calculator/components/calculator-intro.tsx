@@ -10,12 +10,6 @@ export function CalculatorIntro() {
           I porównaj wynik z lokatą albo kontem oszczędnościowym.
         </p>
       </div>
-      <p className="intro__trust">
-        <strong>Spokojny pierwszy krok.</strong>
-        <span className="intro__trust-copy">
-          Obligacje skarbowe są gwarantowane przez Skarb Państwa.
-        </span>
-      </p>
     </header>
   );
 }

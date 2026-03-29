@@ -64,7 +64,7 @@ export const BONDS: Record<BondId, BondDefinition> = {
     howItWorks: (context) =>
       `Przez pierwsze 3 miesiące ROR ma stałe oprocentowanie ${formatPercent(
         4.25,
-      )}. Potem oprocentowanie przechodzi na stopę referencyjną NBP, czyli w tej symulacji ${formatPercent(
+      )}. Potem oprocentowanie przechodzi na stopę referencyjną NBP, co w tej symulacji daje ${formatPercent(
         context.nbpRate,
       )}. Odsetki nie kapitalizują się, tylko co miesiąc wpadają na konto.`,
     pros: [
@@ -200,15 +200,15 @@ export const BONDS: Record<BondId, BondDefinition> = {
     payout: "at_maturity",
     introMonths: 12,
     description: (context) =>
-      `Pierwszy rok: stałe ${formatPercent(5.6)}. Od 2. roku: inflacja ${formatPercent(
+      `1. rok: stałe ${formatPercent(5.6)}. Od 2. roku: inflacja ${formatPercent(
         inflation(context),
-      )} + marża ${formatPercent(2)}. Odsetki kapitalizują się co roku.`,
+      )} + ${formatPercent(2)} marży. Odsetki kapitalizują się co roku i pracują dalej.`,
     howItWorks: (context) =>
       `EDO zaczyna od ${formatPercent(
         5.6,
       )} w pierwszym roku, a potem przechodzi na inflację + marżę ${formatPercent(
         2,
-      )}, czyli tutaj ${formatPercent(
+      )}, co w tej symulacji daje ${formatPercent(
         inflation(context) + 2,
       )}. Najważniejsze jest to, że odsetki są kapitalizowane, więc w kolejnych latach pracują już także na siebie.`,
     pros: [

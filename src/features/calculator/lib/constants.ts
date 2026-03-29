@@ -34,7 +34,7 @@ export const EXTERNAL_LINKS = {
   challenge: "https://marciniwuc.com/wyzwanie-pierwsza-obligacja/",
   education:
     "https://marciniwuc.com/obligacje-indeksowane-inflacja-kalkulator/",
+  familyBonds: "https://marciniwuc.com/rodzinne-obligacje-skarbowe/",
   excel:
     "https://marciniwuc.com/wp-content/uploads/2026/02/Kalkulator-obligacji-marzec-2026-Finanse-Bardzo-Osobiste.xlsx",
 };
-

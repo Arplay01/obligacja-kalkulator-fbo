@@ -6,9 +6,27 @@ async function gotoCalculator(page: Page) {
 }
 
 test.describe("kalkulator", () => {
+  test("renders the final hero amount before client hydration", async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+
+    await gotoCalculator(page);
+
+    await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
+      /^\+1\s620,00 zł$/,
+    );
+
+    await context.close();
+  });
+
   test("renders default state from the prototype logic", async ({ page }) => {
     await gotoCalculator(page);
 
+    await expect(
+      page.getByText("Nie wiesz, czym są obligacje? Przeczytaj w 30 sekund"),
+    ).toBeVisible();
     await expect(
       page.locator('[data-bond-name]'),
     ).toHaveText("COI 4-letnie");
@@ -18,7 +36,22 @@ test.describe("kalkulator", () => {
     await expect(page.locator("[data-bond-count]")).toHaveText(
       "100 obligacji po 100 zł",
     );
+    await expect(page.locator("[data-result-bridge]")).toContainText(
+      "Twoje 10 000 zł po 4 latach może dać 11 620 zł netto",
+    );
+    await expect(page.locator("[data-result-bridge]")).toContainText(
+      "realnie stracisz 1 286 zł",
+    );
     await expect(page.locator(".compare-section")).toHaveAttribute("open", "");
+  });
+
+  test("opens comparison settings from the compare helper", async ({ page }) => {
+    await gotoCalculator(page);
+
+    await page.getByRole("button", { name: /Zmień stawki w ustawieniach/i }).click();
+
+    await expect(page.locator("#advanced-options")).toHaveAttribute("open", "");
+    await expect(page.locator("#deposit-rate")).toBeFocused();
   });
 
   test("updates hero and NBP row visibility when bond changes", async ({ page }) => {
@@ -87,6 +120,12 @@ test.describe("kalkulator", () => {
 
     await page.getByText("Wykres i tabela rok po roku").click();
     await expect(page.locator("[data-growth-chart]")).toBeVisible();
+    await expect(page.locator("[data-growth-chart]")).toContainText(
+      "Inflacja",
+    );
+    await expect(page.locator("[data-chart-helper]")).toContainText(
+      "Linia inflacji pokazuje",
+    );
     await expect(page.locator("[data-chart-empty]")).toHaveCount(0);
 
     await page.getByRole("tab", { name: /OTS/i }).click();

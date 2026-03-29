@@ -106,3 +106,38 @@ Krótki log najważniejszych decyzji produktowych, UX i UI. Każdy wpis jest dat
 **Decyzja:** mobile, wąski `iframe` i tablet portrait zostały potraktowane jako osobne środowiska z własnymi breakpointami i decyzjami layoutowymi.  
 **Dlaczego:** jeden uniwersalny responsive layer nie wystarczał - część rozdzielczości wpadała w martwe progi między desktopem a telefonem.  
 **Wartość dla użytkownika:** kalkulator lepiej zachowuje hierarchię, proporcje i czytelność na realnych urządzeniach, a nie tylko w skrajnym desktopie i skrajnym mobile.
+
+## 16. Końcowy audit UX/UI jest prowadzony na żywym buildzie, nie w oderwaniu od produktu
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** końcowy polish został przeprowadzony jako audit działającej aplikacji, rozdzielony na dwie warstwy: ścieżkę użytkownika i późniejszy tuning wizualny.  
+**Dlaczego:** dopiero na żywym ekranie było widać, które elementy realnie spowalniają decyzję, dublują się albo mają złą wagę wizualną.  
+**Wartość dla użytkownika:** poprawki wzmacniają realne tempo korzystania z kalkulatora zamiast dodawać przypadkowe ozdobniki.
+
+## 17. Wynik finansowy ma być zawsze poprawny i transparentnie opisany
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** hero wyniku ma zawsze pokazywać finalną wartość jako bezpieczny fallback, a copy zostało doprecyzowane do formy `Szacowany zysk netto`, żeby nie obiecywać fałszywej pewności.  
+**Dlaczego:** chwilowe `0,00 zł` i zbyt kategoryczny język natychmiast podważały wiarygodność kalkulatora finansowego.  
+**Wartość dla użytkownika:** użytkownik dostaje wynik, któremu łatwiej zaufać - poprawny technicznie i uczciwie opisany.
+
+## 18. Selekcja obligacji ma być prowadzona językiem czasu, nie skrótów serii
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** picker obligacji został uporządkowany wokół pytania o czas odkładania pieniędzy, a symbol serii przesunięto do trzeciej warstwy informacji.  
+**Dlaczego:** początkujący użytkownik myśli kategorią czasu i celu, a nie skrótów typu `OTS`, `COI` czy `EDO`.  
+**Wartość dla użytkownika:** wejście do kalkulatora jest bardziej naturalne i nie wymaga znajomości technicznego języka obligacji.
+
+## 19. Wyjaśnienia i założenia mają być blisko decyzji, ale nie na jej drodze
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** edukacyjne treści i wyjaśnienia mechaniki zostały przesunięte niżej, do sekcji disclosure, a kluczowe założenia porównania i inflacji zostały pokazane przy samym wyniku lub przy odpowiednich kontrolkach.  
+**Dlaczego:** blok edukacyjny wstawiony między obietnicę a kalkulator spowalniał wejście, a ukryte defaulty lokaty i konta osłabiały zrozumienie porównania.  
+**Wartość dla użytkownika:** użytkownik najpierw liczy, a dopiero potem sięga głębiej - ale nadal rozumie najważniejsze założenia bez szukania ich po ekranie.
+
+## 20. Końcowy ekran ma opowiadać jedną decyzję, nie kilka osobnych faktów
+
+**Data sesji zamknięcia:** `2026-03-29`  
+**Decyzja:** wynik, wpływ inflacji, porównanie i głębsze sekcje zostały spięte w jedną narrację: od odpowiedzi, przez koszt bezruchu, po dodatkowe szczegóły i materiały.  
+**Dlaczego:** osobne liczby i osobne sekcje nie składały się automatycznie w prosty wniosek dla początkującej osoby.  
+**Wartość dla użytkownika:** kalkulator prowadzi do decyzji czytelniej, bo mówi nie tylko `ile możesz zyskać`, ale też `co to znaczy w praktyce`.

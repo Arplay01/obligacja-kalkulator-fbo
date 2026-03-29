@@ -13,6 +13,7 @@ import { EXTERNAL_LINKS } from "@/features/calculator/lib/constants";
 import {
   formatHoldingPeriodLabel,
   formatMoney,
+  formatMoneyRounded,
   formatPercent,
 } from "@/features/calculator/lib/formatters";
 import { getCompareDelta } from "@/features/calculator/lib/calculator";
@@ -27,12 +28,13 @@ type CalculatorResultsPanelProps = {
   depositRate: number;
   savingsRate: number;
   effectiveInflation: number;
-  inactionRealValue: number;
   inactionLoss: number;
   insight: Insight;
   isUpdating: boolean;
+  advancedOptionsOpen: boolean;
   calculationDetailsOpen: boolean;
   compareOpen: boolean;
+  onComparisonSettingsReveal: () => void;
   onCalculationDetailsToggle: (open: boolean) => void;
   onCompareToggle: (open: boolean) => void;
 };
@@ -46,12 +48,13 @@ export function CalculatorResultsPanel({
   depositRate,
   savingsRate,
   effectiveInflation,
-  inactionRealValue,
   inactionLoss,
   insight,
   isUpdating,
+  advancedOptionsOpen,
   calculationDetailsOpen,
   compareOpen,
+  onComparisonSettingsReveal,
   onCalculationDetailsToggle,
   onCompareToggle,
 }: CalculatorResultsPanelProps) {
@@ -68,7 +71,8 @@ export function CalculatorResultsPanel({
   const heroTooltip = `Szacunkowy wynik po podatku Belki (19%), przy założonej inflacji ${formatPercent(
     effectiveInflation,
   )}. Rzeczywisty zysk zależy od przyszłej inflacji.`;
-  const netProfitLabel = `Twój zysk netto ${formatHoldingPeriodLabel(bond.termMonths)}`;
+  const holdingPeriodLabel = formatHoldingPeriodLabel(bond.termMonths);
+  const netProfitLabel = `Szacowany zysk netto ${holdingPeriodLabel}`;
 
   const [bondTitleCode, bondTitleLabel] = bond.title.split(" - ", 2);
 
@@ -100,7 +104,7 @@ export function CalculatorResultsPanel({
         <div className="micro-label label-with-help">
           <span>{netProfitLabel}</span>
           <TermHelp
-            label="Wyjaśnienie: twój zysk netto"
+            label="Wyjaśnienie: szacowany zysk netto"
             tooltip={heroTooltip}
             tooltipDataAttribute="data-hero-tooltip"
           />
@@ -115,7 +119,7 @@ export function CalculatorResultsPanel({
         />
         <p className="hero-metric__total">
           <span className="hero-metric__meta-group">
-            Łącznie:
+            Na koniec:
             <AnimatedNumberText
               tag="strong"
               value={bondResult.netReturn}
@@ -135,22 +139,21 @@ export function CalculatorResultsPanel({
             />
           </span>
         </p>
-      </div>
-
-      <div className="inaction-box">
-        <div className="inaction-box__head">
-          <h3 className="inaction-box__title">
-            Co się stanie, jeśli nic nie zrobisz?
-          </h3>
-        </div>
-        <p data-inaction-text>
-          Przy inflacji {formatPercent(effectiveInflation)} rocznie Twoje{" "}
-          {formatMoney(bondResult.invested)} za {bond.termLabel.toLowerCase()} będzie
-          mieć siłę nabywczą ok.{" "}
-          <strong className="inaction-box__value">{formatMoney(inactionRealValue)}</strong>.
-          To realny spadek wartości o{" "}
-          <strong className="inaction-box__loss">{formatMoney(inactionLoss)}</strong>,
-          nawet jeśli w portfelu nadal widzisz {formatMoney(bondResult.invested)}.
+        <p className="interpretation hero-metric__bridge" data-result-bridge>
+          <span className="hero-metric__bridge-lead">W praktyce:</span>{" "}
+          Twoje {formatMoneyRounded(bondResult.invested)} {holdingPeriodLabel} może dać{" "}
+          <strong className="hero-metric__bridge-amount hero-metric__bridge-amount--return">
+            {formatMoneyRounded(bondResult.netReturn)}
+          </strong>{" "}
+          netto. Jeśli nic nie zrobisz, realnie stracisz{" "}
+          <strong className="hero-metric__bridge-amount hero-metric__bridge-amount--loss">
+            {formatMoneyRounded(inactionLoss)}
+          </strong>
+          , nawet jeśli w portfelu nadal widzisz{" "}
+          <strong className="hero-metric__bridge-amount">
+            {formatMoneyRounded(bondResult.invested)}
+          </strong>
+          .
         </p>
       </div>
 
@@ -268,7 +271,7 @@ export function CalculatorResultsPanel({
                 className="compare-card__total"
                 value={depositResult.netReturn}
                 data-value="depositTotal"
-                format={(value) => `Łącznie: ${formatMoney(value)}`}
+                format={(value) => `Na koniec: ${formatMoney(value)}`}
               />
               <p
                 className={`compare-card__vs ${depositDelta.positive ? "compare-card__vs--positive" : "compare-card__vs--negative"}`}
@@ -304,7 +307,7 @@ export function CalculatorResultsPanel({
                 className="compare-card__total"
                 value={savingsResult.netReturn}
                 data-value="savingsTotal"
-                format={(value) => `Łącznie: ${formatMoney(value)}`}
+                format={(value) => `Na koniec: ${formatMoney(value)}`}
               />
               <p
                 className={`compare-card__vs ${savingsDelta.positive ? "compare-card__vs--positive" : "compare-card__vs--negative"}`}
@@ -325,8 +328,21 @@ export function CalculatorResultsPanel({
             </div>
           </div>
 
-          <p className="helper-text" data-compare-helper>
-            Lokata i konto są liczone dla tego samego horyzontu co {bond.name}.
+          <p className="helper-text compare-section__helper" data-compare-helper>
+            <span>
+              W porównaniu przyjęto ten sam czas oszczędzania, a domyślnie lokatę{" "}
+              {formatPercent(depositRate)} i konto {formatPercent(savingsRate)}.
+            </span>
+            <button
+              className="compare-section__helper-action"
+              type="button"
+              aria-controls="advanced-options"
+              aria-expanded={advancedOptionsOpen}
+              data-compare-settings-action
+              onClick={onComparisonSettingsReveal}
+            >
+              Zmień stawki w ustawieniach
+            </button>
           </p>
         </div>
       </details>
