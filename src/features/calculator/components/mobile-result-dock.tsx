@@ -1,17 +1,25 @@
 "use client";
 
 import { AnimatedNumberText } from "@/features/calculator/components/animated-number-text";
-import { formatMoney } from "@/features/calculator/lib/formatters";
+import {
+  formatHoldingPeriodLabel,
+  formatMoney,
+} from "@/features/calculator/lib/formatters";
 
 type MobileResultDockProps = {
   netProfit: number;
+  termMonths: number;
 };
 
-export function MobileResultDock({ netProfit }: MobileResultDockProps) {
+export function MobileResultDock({
+  netProfit,
+  termMonths,
+}: MobileResultDockProps) {
   const toneClass =
     netProfit >= 0
       ? "mobile-result-dock--positive"
       : "mobile-result-dock--negative";
+  const netProfitLabel = `Twój zysk netto ${formatHoldingPeriodLabel(termMonths)}`;
 
   return (
     <div
@@ -19,7 +27,7 @@ export function MobileResultDock({ netProfit }: MobileResultDockProps) {
       aria-hidden="true"
       data-mobile-result-dock
     >
-      <span className="mobile-result-dock__label">Twój zysk netto</span>
+      <span className="mobile-result-dock__label">{netProfitLabel}</span>
       <AnimatedNumberText
         tag="p"
         className="mobile-result-dock__value"

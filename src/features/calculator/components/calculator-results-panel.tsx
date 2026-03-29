@@ -10,7 +10,11 @@ import { BondBadge } from "@/features/calculator/components/bond-badge";
 import { InsightIcon } from "@/features/calculator/components/icons";
 import { TermHelp } from "@/features/calculator/components/term-help";
 import { EXTERNAL_LINKS } from "@/features/calculator/lib/constants";
-import { formatMoney, formatPercent } from "@/features/calculator/lib/formatters";
+import {
+  formatHoldingPeriodLabel,
+  formatMoney,
+  formatPercent,
+} from "@/features/calculator/lib/formatters";
 import { getCompareDelta } from "@/features/calculator/lib/calculator";
 import type { SyntheticEvent } from "react";
 
@@ -64,6 +68,7 @@ export function CalculatorResultsPanel({
   const heroTooltip = `Szacunkowy wynik po podatku Belki (19%), przy założonej inflacji ${formatPercent(
     effectiveInflation,
   )}. Rzeczywisty zysk zależy od przyszłej inflacji.`;
+  const netProfitLabel = `Twój zysk netto ${formatHoldingPeriodLabel(bond.termMonths)}`;
 
   const [bondTitleCode, bondTitleLabel] = bond.title.split(" - ", 2);
 
@@ -93,7 +98,7 @@ export function CalculatorResultsPanel({
 
       <div className="hero-metric">
         <div className="micro-label label-with-help">
-          <span>Twój zysk netto</span>
+          <span>{netProfitLabel}</span>
           <TermHelp
             label="Wyjaśnienie: twój zysk netto"
             tooltip={heroTooltip}

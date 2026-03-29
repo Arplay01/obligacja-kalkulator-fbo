@@ -86,3 +86,15 @@ export function formatInteger(value: number) {
 export function formatGroupedInteger(value: number) {
   return formatInteger(value);
 }
+
+export function formatHoldingPeriodLabel(termMonths: number) {
+  if (termMonths % 12 === 0) {
+    const years = termMonths / 12;
+
+    return years === 1 ? "po 1 roku" : `po ${years} latach`;
+  }
+
+  return termMonths === 1
+    ? "po 1 miesiącu"
+    : `po ${termMonths} miesiącach`;
+}

@@ -248,7 +248,7 @@ export function CalculatorApp() {
 
       <CalculatorNextSteps onPortfolioReturn={handlePortfolioReturn} />
       <CalculatorTrustFooter />
-      <MobileResultDock netProfit={bondResult.netProfit} />
+      <MobileResultDock netProfit={bondResult.netProfit} termMonths={bond.termMonths} />
     </main>
   );
 }
