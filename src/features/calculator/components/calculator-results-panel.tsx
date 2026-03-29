@@ -264,14 +264,14 @@ export function CalculatorResultsPanel({
                 className="compare-card__profit"
                 value={depositResult.netProfit}
                 data-value="depositProfit"
-                format={(value) => formatMoney(value, { signed: true })}
+                format={(value) => formatMoneyRounded(value, { signed: true })}
               />
               <AnimatedNumberText
                 tag="p"
                 className="compare-card__total"
                 value={depositResult.netReturn}
                 data-value="depositTotal"
-                format={(value) => `Na koniec: ${formatMoney(value)}`}
+                format={(value) => `Na koniec: ${formatMoneyRounded(value)}`}
               />
               <p
                 className={`compare-card__vs ${depositDelta.positive ? "compare-card__vs--positive" : "compare-card__vs--negative"}`}
@@ -300,14 +300,14 @@ export function CalculatorResultsPanel({
                 className="compare-card__profit"
                 value={savingsResult.netProfit}
                 data-value="savingsProfit"
-                format={(value) => formatMoney(value, { signed: true })}
+                format={(value) => formatMoneyRounded(value, { signed: true })}
               />
               <AnimatedNumberText
                 tag="p"
                 className="compare-card__total"
                 value={savingsResult.netReturn}
                 data-value="savingsTotal"
-                format={(value) => `Na koniec: ${formatMoney(value)}`}
+                format={(value) => `Na koniec: ${formatMoneyRounded(value)}`}
               />
               <p
                 className={`compare-card__vs ${savingsDelta.positive ? "compare-card__vs--positive" : "compare-card__vs--negative"}`}

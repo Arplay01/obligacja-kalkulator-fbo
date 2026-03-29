@@ -53,10 +53,11 @@ export function CalculatorDeepDive({
         <div className="disclosure__body">
           <p className="deep-dive__lead">
             Kupując obligacje, pożyczasz pieniądze państwu na określony czas. W
-            zamian dostajesz odsetki. To rozwiązanie często wybierane na początek,
-            bo zasady są proste, ryzyko jest niższe niż przy wielu innych
-            inwestycjach, a tutaj od razu widać szacowany wynik po podatku i
-            inflacji.
+            zamian dostajesz odsetki. Detaliczne obligacje skarbowe są
+            gwarantowane przez Skarb Państwa. To rozwiązanie często wybierane na
+            początek, bo zasady są proste, ryzyko jest niższe niż przy wielu
+            innych inwestycjach, a tutaj od razu widać szacowany wynik po
+            podatku i inflacji.
           </p>
           <p>
             Nie trzeba umieć analizować giełdy ani wybierać spółek. Na start ważne
