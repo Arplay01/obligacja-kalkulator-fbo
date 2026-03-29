@@ -115,7 +115,7 @@ export function CalculatorResultsPanel({
           value={bondResult.netProfit}
           animateOnMount
           data-value="netProfit"
-          format={(value) => formatMoney(value, { signed: true })}
+          format={(value) => formatMoneyRounded(value, { signed: true })}
         />
         <p className="hero-metric__total">
           <span className="hero-metric__meta-group">
@@ -125,7 +125,7 @@ export function CalculatorResultsPanel({
               value={bondResult.netReturn}
               animateOnMount
               data-value="netReturn"
-              format={(value) => formatMoney(value)}
+              format={(value) => formatMoneyRounded(value)}
             />
           </span>
           <span className="hero-metric__meta-group hero-metric__yearly">
@@ -135,7 +135,7 @@ export function CalculatorResultsPanel({
               value={bondResult.netProfit / bondResult.termYears}
               animateOnMount
               data-value="avgProfitPerYear"
-              format={(value) => `${formatMoney(value)} / rok`}
+              format={(value) => `${formatMoneyRounded(value)} / rok`}
             />
           </span>
         </p>

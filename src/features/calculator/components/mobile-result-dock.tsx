@@ -3,7 +3,7 @@
 import { AnimatedNumberText } from "@/features/calculator/components/animated-number-text";
 import {
   formatHoldingPeriodLabel,
-  formatMoney,
+  formatMoneyRounded,
 } from "@/features/calculator/lib/formatters";
 
 type MobileResultDockProps = {
@@ -34,7 +34,7 @@ export function MobileResultDock({
         value={netProfit}
         animateOnMount
         data-mobile-result-dock-value
-        format={(value) => formatMoney(value, { signed: true })}
+        format={(value) => formatMoneyRounded(value, { signed: true })}
       />
     </div>
   );

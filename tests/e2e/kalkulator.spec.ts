@@ -15,7 +15,7 @@ test.describe("kalkulator", () => {
     await gotoCalculator(page);
 
     await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
-      /^\+1\s620,00 zł$/,
+      /^\+1\s620 zł$/,
     );
 
     await context.close();
@@ -31,7 +31,7 @@ test.describe("kalkulator", () => {
       page.locator('[data-bond-name]'),
     ).toHaveText("COI 4-letnie");
     await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
-      /^\+1\s620,00 zł$/,
+      /^\+1\s620 zł$/,
     );
     await expect(page.locator("[data-bond-count]")).toHaveText(
       "100 obligacji po 100 zł",
