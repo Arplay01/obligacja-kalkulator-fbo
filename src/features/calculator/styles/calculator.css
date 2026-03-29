@@ -2614,9 +2614,9 @@
     border-radius: inherit;
     background: linear-gradient(
       135deg,
-      rgba(232, 168, 56, 0.05),
+      rgba(211, 84, 74, 0.06),
       transparent 42%,
-      rgba(92, 141, 103, 0.04)
+      rgba(200, 77, 67, 0.05)
     );
     pointer-events: none;
   }
