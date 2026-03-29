@@ -23,7 +23,7 @@ export function AnimatedNumberText({
   animateOnMount = false,
   ...elementProps
 }: AnimatedNumberTextProps) {
-  // Bugfix: render the final amount first so slow hydration never leaves the hero at 0,00 zl.
+  // Bugfix: the first animated render must sync to the final value, otherwise a hydration race can leave the hero stuck at 0,00 zl.
   const [displayValue, setDisplayValue] = useState(value);
   const hasAnimatedRef = useRef(false);
   const displayValueRef = useRef(value);
@@ -83,8 +83,7 @@ export function AnimatedNumberText({
 
     if (!hasAnimatedRef.current) {
       hasAnimatedRef.current = true;
-      displayValueRef.current = value;
-      return undefined;
+      return scheduleDisplayValueUpdate(value);
     }
 
     const startValue = displayValueRef.current;
