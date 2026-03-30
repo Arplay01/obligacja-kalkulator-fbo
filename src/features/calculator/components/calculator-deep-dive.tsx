@@ -65,7 +65,7 @@ export function CalculatorDeepDive({
             oprocentowanie bardziej Ci odpowiada.
           </p>
           <ul className="deep-dive__quick-points">
-            <li>Jedna obligacja kosztuje 100 zł, więc można zacząć od małej kwoty.</li>
+            <li>Jedna obligacja ma wartość 100 zł, dlatego kalkulator liczy kwotę w pełnych setkach.</li>
             <li>Od razu wiadomo, na jaki czas odkładasz pieniądze i jak liczony jest wynik.</li>
             <li>Możliwy jest wcześniejszy wykup, ale zwykle z opłatą za każdą obligację.</li>
           </ul>

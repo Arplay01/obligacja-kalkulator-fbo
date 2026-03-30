@@ -33,9 +33,7 @@ test.describe("kalkulator", () => {
     await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
       /^\+1\s620 zł$/,
     );
-    await expect(page.locator("[data-bond-count]")).toHaveText(
-      "100 obligacji po 100 zł",
-    );
+    await expect(page.locator("[data-amount-summary]")).toHaveText("10 000 zł");
     await expect(page.locator("[data-result-bridge]")).toContainText(
       "Twoje 10 000 zł po 4 latach może dać 11 620 zł netto",
     );
@@ -72,9 +70,7 @@ test.describe("kalkulator", () => {
 
     await page.getByRole("button", { name: "50 000" }).click();
     await expect(page.locator("#amount-input")).toHaveValue(/50\s000/);
-    await expect(page.locator("[data-bond-count]")).toHaveText(
-      "500 obligacji po 100 zł",
-    );
+    await expect(page.locator("[data-amount-summary]")).toHaveText("50 000 zł");
   });
 
   test("keeps manual amount input formatted and synced after slider changes", async ({
@@ -94,9 +90,7 @@ test.describe("kalkulator", () => {
 
     await amountInput.fill("100000000");
     await expect(amountInput).toHaveValue(/^100\s000\s000$/);
-    await expect(page.locator("[data-bond-count]")).toHaveText(
-      "1 000 000 obligacji po 100 zł",
-    );
+    await expect(page.locator("[data-amount-summary]")).toHaveText("100 000 000 zł");
   });
 
   test("switches to custom inflation live", async ({ page }) => {

@@ -16,7 +16,6 @@ import {
 } from "@/features/calculator/lib/constants";
 import {
   amountToSliderValue,
-  formatBondCount,
   getEffectiveInflation,
   normaliseAmount,
   parseLocaleNumber,
@@ -24,6 +23,7 @@ import {
 import {
   formatGroupedInteger,
   formatInputNumber,
+  formatMoneyRounded,
   formatPercent,
 } from "@/features/calculator/lib/formatters";
 import type { CSSProperties, KeyboardEvent, SyntheticEvent } from "react";
@@ -200,8 +200,9 @@ export function CalculatorInputPanel({
   onCustomInflationChange,
   onStep,
 }: CalculatorInputPanelProps) {
-  const bondCountText = formatBondCount(normaliseAmount(state.amount) / 100);
+  const amountSummaryText = formatMoneyRounded(normaliseAmount(state.amount));
   const sliderValue = amountToSliderValue(state.amount);
+  const selectedBadgeKind = bonds[state.bondId].badgeKind;
   const selectedBadgeHelp = BOND_BADGE_HELP[bonds[state.bondId].badgeKind];
   const sliderStyle = {
     "--slider-fill": `${sliderFill.toFixed(2)}%`,
@@ -281,7 +282,11 @@ export function CalculatorInputPanel({
           data-bond-badge-help
           aria-live="polite"
         >
-          <span className="bond-grid__helper-title">{selectedBadgeHelp.title}:</span>
+          <span
+            className={`bond-grid__helper-title bond-grid__helper-title--${selectedBadgeKind}`}
+          >
+            {selectedBadgeHelp.title}:
+          </span>
           <span className="bond-grid__helper-text">{selectedBadgeHelp.description}</span>
         </p>
         <p className="helper-text bond-grid__family-note">
@@ -300,8 +305,8 @@ export function CalculatorInputPanel({
       <section className="panel-block" aria-label="Kwota inwestycji">
         <div className="input-heading">
           <h2 className="input-title">Ile chcesz ulokować?</h2>
-          <p className="input-inline-note" data-bond-count>
-            {bondCountText}
+          <p className="input-inline-note" data-amount-summary>
+            {amountSummaryText}
           </p>
         </div>
 

@@ -611,6 +611,18 @@
   color: var(--text-60);
 }
 
+.calculator-route .bond-grid__helper-title--fixed {
+  color: var(--badge-fixed);
+}
+
+.calculator-route .bond-grid__helper-title--variable {
+  color: var(--badge-variable);
+}
+
+.calculator-route .bond-grid__helper-title--inflation {
+  color: var(--badge-inflation);
+}
+
 .calculator-route .bond-grid__helper-text {
   color: var(--text-40);
 }
@@ -2516,7 +2528,7 @@
 
 @media (max-width: 900px) {
   .calculator-route .pros-cons,
-.calculator-route .edu-grid {
+  .calculator-route .edu-grid {
     grid-template-columns: 1fr;
   }
 }
