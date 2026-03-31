@@ -83,79 +83,84 @@ export function CalculatorResultsPanel({
       aria-label="Wyniki symulacji"
       aria-live="polite"
     >
-      <div className="results__header">
-        <div className="results__headline">
-          <h2 className="results__bond-name" data-bond-name>
-            <span>{bondTitleCode ?? bond.title}</span>{" "}
-            <span className="results__bond-name-label">
-              {bondTitleLabel ?? ""}
+      <div className="results__hero-card">
+        <div className="results__header">
+          <div className="results__headline">
+            <h2 className="results__bond-name" data-bond-name>
+              <span>{bondTitleCode ?? bond.title}</span>{" "}
+              <span className="results__bond-name-label">
+                {bondTitleLabel ?? ""}
+              </span>
+            </h2>
+            <p className="results__description" data-bond-description>
+              {bond.description(bondCopyContext)}
+            </p>
+          </div>
+
+          <span data-bond-badge>
+            <BondBadge kind={bond.badgeKind} label={bond.badgeLabel} variant="result" />
+          </span>
+        </div>
+
+        <div className="hero-metric">
+          <div className="micro-label label-with-help">
+            <span>{netProfitLabel}</span>
+            <TermHelp
+              label="Wyjaśnienie: szacowany zysk netto"
+              tooltip={heroTooltip}
+              tooltipDataAttribute="data-hero-tooltip"
+            />
+          </div>
+          <AnimatedNumberText
+            tag="p"
+            className={`hero-metric__value ${bondResult.netProfit >= 0 ? "hero-metric__value--positive" : "hero-metric__value--negative"}`}
+            value={bondResult.netProfit}
+            animateOnMount
+            data-value="netProfit"
+            format={(value) => formatMoneyRounded(value, { signed: true })}
+          />
+          <p className="hero-metric__total">
+            <span className="hero-metric__meta-group">
+              Na koniec:
+              <AnimatedNumberText
+                tag="strong"
+                value={bondResult.netReturn}
+                animateOnMount
+                data-value="netReturn"
+                format={(value) => formatMoneyRounded(value)}
+              />
             </span>
-          </h2>
-          <p className="results__description" data-bond-description>
-            {bond.description(bondCopyContext)}
+            <span className="hero-metric__meta-group hero-metric__yearly">
+              Średnio:
+              <AnimatedNumberText
+                tag="strong"
+                value={bondResult.netProfit / bondResult.termYears}
+                animateOnMount
+                data-value="avgProfitPerYear"
+                format={(value) => `${formatMoneyRounded(value)} / rok`}
+              />
+            </span>
+          </p>
+          <p className="interpretation hero-metric__bridge" data-result-bridge>
+            <span className="hero-metric__bridge-lead">W praktyce:</span>{" "}
+            Twoje {formatMoneyRounded(bondResult.invested)} {holdingPeriodLabel} może dać{" "}
+            <strong className="hero-metric__bridge-amount hero-metric__bridge-amount--return">
+              {formatMoneyRounded(bondResult.netReturn)}
+            </strong>{" "}
+            netto.
+            <span className="hero-metric__bridge-secondary">
+              Jeśli nic nie zrobisz, realnie stracisz{" "}
+              <strong className="hero-metric__bridge-amount hero-metric__bridge-amount--loss">
+                {formatMoneyRounded(inactionLoss)}
+              </strong>
+              , nawet jeśli w portfelu nadal widzisz{" "}
+              <strong className="hero-metric__bridge-amount">
+                {formatMoneyRounded(bondResult.invested)}
+              </strong>
+              .
+            </span>
           </p>
         </div>
-
-        <span data-bond-badge>
-          <BondBadge kind={bond.badgeKind} label={bond.badgeLabel} variant="result" />
-        </span>
-      </div>
-
-      <div className="hero-metric">
-        <div className="micro-label label-with-help">
-          <span>{netProfitLabel}</span>
-          <TermHelp
-            label="Wyjaśnienie: szacowany zysk netto"
-            tooltip={heroTooltip}
-            tooltipDataAttribute="data-hero-tooltip"
-          />
-        </div>
-        <AnimatedNumberText
-          tag="p"
-          className={`hero-metric__value ${bondResult.netProfit >= 0 ? "hero-metric__value--positive" : "hero-metric__value--negative"}`}
-          value={bondResult.netProfit}
-          animateOnMount
-          data-value="netProfit"
-          format={(value) => formatMoneyRounded(value, { signed: true })}
-        />
-        <p className="hero-metric__total">
-          <span className="hero-metric__meta-group">
-            Na koniec:
-            <AnimatedNumberText
-              tag="strong"
-              value={bondResult.netReturn}
-              animateOnMount
-              data-value="netReturn"
-              format={(value) => formatMoneyRounded(value)}
-            />
-          </span>
-          <span className="hero-metric__meta-group hero-metric__yearly">
-            Średnio:
-            <AnimatedNumberText
-              tag="strong"
-              value={bondResult.netProfit / bondResult.termYears}
-              animateOnMount
-              data-value="avgProfitPerYear"
-              format={(value) => `${formatMoneyRounded(value)} / rok`}
-            />
-          </span>
-        </p>
-        <p className="interpretation hero-metric__bridge" data-result-bridge>
-          <span className="hero-metric__bridge-lead">W praktyce:</span>{" "}
-          Twoje {formatMoneyRounded(bondResult.invested)} {holdingPeriodLabel} może dać{" "}
-          <strong className="hero-metric__bridge-amount hero-metric__bridge-amount--return">
-            {formatMoneyRounded(bondResult.netReturn)}
-          </strong>{" "}
-          netto. Jeśli nic nie zrobisz, realnie stracisz{" "}
-          <strong className="hero-metric__bridge-amount hero-metric__bridge-amount--loss">
-            {formatMoneyRounded(inactionLoss)}
-          </strong>
-          , nawet jeśli w portfelu nadal widzisz{" "}
-          <strong className="hero-metric__bridge-amount">
-            {formatMoneyRounded(bondResult.invested)}
-          </strong>
-          .
-        </p>
       </div>
 
       <div className="insight-banner" hidden>

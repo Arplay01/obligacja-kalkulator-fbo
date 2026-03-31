@@ -19,7 +19,7 @@ export const DEFAULT_CALCULATOR_STATE: CalculatorState = {
   inflationPreset: 3.5,
   customInflation: 3.5,
   depositRate: 4,
-  savingsRate: 4.5,
+  savingsRate: 3.75,
   nbpRate: DEFAULT_NBP_RATE,
   ike: false,
 };

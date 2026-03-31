@@ -9,7 +9,6 @@ import { BondBadge } from "@/features/calculator/components/bond-badge";
 import { CheckIcon, SettingsIcon } from "@/features/calculator/components/icons";
 import { FormattedNumberInput } from "@/features/calculator/components/formatted-number-input";
 import { TermHelp } from "@/features/calculator/components/term-help";
-import { ViewModeSwitch } from "@/features/calculator/components/view-mode-switch";
 import {
   BOND_ORDER,
   EXTERNAL_LINKS,
@@ -201,7 +200,6 @@ export function CalculatorInputPanel({
   onCustomInflationChange,
   onStep,
 }: CalculatorInputPanelProps) {
-  const amountSummaryText = formatMoneyRounded(normaliseAmount(state.amount));
   const sliderValue = amountToSliderValue(state.amount);
   const selectedBadgeKind = bonds[state.bondId].badgeKind;
   const selectedBadgeHelp = BOND_BADGE_HELP[bonds[state.bondId].badgeKind];
@@ -211,17 +209,12 @@ export function CalculatorInputPanel({
 
   return (
     <aside className="workspace__inputs card" aria-label="Parametry symulacji">
-      <ViewModeSwitch mode="calculator" variant="panel" />
-
       <section
         className="panel-block panel-block--selector"
         aria-label="Wybierz czas oszczędzania"
       >
         <div className="panel-heading">
           <h2 className="input-title">Na jak długo chcesz odłożyć pieniądze?</h2>
-          <p className="helper-text panel-heading__helper--desktop-only">
-            Najpierw wybierz czas. Na każdej karcie widać też serię obligacji.
-          </p>
         </div>
 
         <div className="bond-grid" role="tablist" aria-label="Dostępne okresy oszczędzania">
@@ -267,7 +260,6 @@ export function CalculatorInputPanel({
                     />
                   </span>
                 </div>
-                <span className="bond-chip__ticker">Seria {bond.name}</span>
                 <span className="bond-chip__badge-slot bond-chip__badge-slot--stacked">
                   <BondBadge
                     kind={bond.badgeKind}
@@ -308,9 +300,6 @@ export function CalculatorInputPanel({
       <section className="panel-block" aria-label="Kwota inwestycji">
         <div className="input-heading">
           <h2 className="input-title">Ile chcesz ulokować?</h2>
-          <p className="input-inline-note" data-amount-summary>
-            {amountSummaryText}
-          </p>
         </div>
 
         <div className="amount-stack">

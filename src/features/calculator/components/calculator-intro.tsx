@@ -1,3 +1,5 @@
+import { ViewModeSwitch } from "@/features/calculator/components/view-mode-switch";
+
 export function CalculatorIntro() {
   return (
     <header className="intro" aria-label="Wprowadzenie">
@@ -10,6 +12,7 @@ export function CalculatorIntro() {
           I porównaj wynik z lokatą albo kontem oszczędnościowym.
         </p>
       </div>
+      <ViewModeSwitch mode="calculator" />
     </header>
   );
 }

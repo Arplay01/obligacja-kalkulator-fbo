@@ -64,12 +64,11 @@ export function ComparisonApp() {
             Obligacje EDO, COI, TOS i lokata na 10, 20 albo 30 lat.
           </p>
         </div>
+        <ViewModeSwitch mode="comparison" />
       </header>
 
       <section className="comparison-layout" aria-label="Porównanie opcji">
         <aside className="comparison-sidebar card">
-          <ViewModeSwitch mode="comparison" variant="panel" />
-
           <div
             className="comparison-sidebar__blur-shell"
             data-comparison-sidebar-blur

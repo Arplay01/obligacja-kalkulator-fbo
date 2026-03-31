@@ -117,11 +117,6 @@
   backdrop-filter: blur(3.5px) saturate(0.975);
 }
 
-.comparison-route .comparison-sidebar > .view-mode-switch {
-  position: relative;
-  z-index: 6;
-}
-
 .comparison-route .comparison-sidebar__blur-shell::before,
 .comparison-route .comparison-main__blur-shell::before {
   content: "";
@@ -417,10 +412,11 @@
 
 .comparison-route .comparison-hero__note {
   margin-top: 0.3rem;
-  color: var(--text-60);
-  font-size: var(--type-body-md-size);
-  line-height: var(--type-body-md-line);
-  font-weight: var(--type-body-md-weight);
+  color: var(--text-helper);
+  font-size: var(--type-helper-size);
+  line-height: var(--type-helper-line);
+  font-weight: var(--type-helper-weight);
+  letter-spacing: var(--type-helper-track);
 }
 
 .comparison-route .comparison-mode-switch {
