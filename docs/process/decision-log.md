@@ -155,3 +155,24 @@ Krótki log najważniejszych decyzji produktowych, UX i UI. Każdy wpis jest dat
 **Decyzja:** po audycie UX/UI przebudowana została waga layoutu: lewa kolumna została uproszczona jako strefa konfiguracji, prawa dostała więcej przestrzeni jako strefa odpowiedzi, hero wyniku zyskało większy oddech, a sekcje wtórne zostały rozdzielone mocniejszym rytmem pionowym.  
 **Dlaczego:** wcześniejszy układ był zbyt równy wizualnie - formularz, wynik i kolejne sekcje konkurowały o uwagę zamiast prowadzić użytkownika do najważniejszej odpowiedzi.  
 **Wartość dla użytkownika:** ekran czytelniej komunikuje, gdzie podejmuje się decyzję, a gdzie dostaje się odpowiedź, dzięki czemu kalkulator jest łatwiejszy do skanowania i szybszy w użyciu.
+
+## 23. Porównywarka wychodzi jako osobna ścieżka po kalkulatorze
+
+**Data sesji zamknięcia:** `2026-03-31`  
+**Decyzja:** porównanie długiego horyzontu zostało wdrożone jako osobna trasa `/porownaj`, zamiast rozbudowywać główny ekran `/kalkulator` o kolejną warstwę dashboardu.  
+**Dlaczego:** kalkulator główny odpowiada na proste pytanie o jedną serię obligacji, a porównywarka wymaga szerszego układu, większego wykresu i innego tempa eksploracji.  
+**Wartość dla użytkownika:** początkująca osoba nadal dostaje prosty punkt wejścia, a bardziej świadomy użytkownik ma naturalny kolejny krok bez przeciążania pierwszego ekranu.
+
+## 24. Obliczam i Porównuję stają się dwoma trybami jednego narzędzia
+
+**Data sesji zamknięcia:** `2026-03-31`  
+**Decyzja:** oba widoki zostały spięte wspólnym przełącznikiem `Obliczam / Porównuję`, osadzonym na górze lewej kolumny.  
+**Dlaczego:** osobna porównywarka bez wyraźnego przejścia mogłaby wyglądać jak drugi, niezależny produkt zamiast rozwinięcia tego samego flow.  
+**Wartość dla użytkownika:** łatwiej przechodzić między szybkim policzeniem jednej obligacji a szerszym porównaniem scenariuszy.
+
+## 25. Porównywarka może wejść na main jako świadomy WIP preview
+
+**Data sesji zamknięcia:** `2026-03-31`  
+**Decyzja:** `/porownaj` zostało wypuszczone na `main` jako publicznie widoczny preview z celowym blurrem, blokadą interakcji i komunikatem `Praca w trakcie`.  
+**Dlaczego:** zespół chciał pokazać kierunek produktu i zachować spójny routing już teraz, ale bez udawania, że warstwa porównawcza jest ostatecznie domknięta.  
+**Wartość dla użytkownika:** użytkownik widzi, dokąd rozwija się narzędzie, a jednocześnie nie dostaje mylącego sygnału, że niedokończona porównywarka jest już pełnoprawnym, zaufanym workflow.
