@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type {
   BenchmarkResult,
   BondCalculationResult,
@@ -328,22 +329,30 @@ export function CalculatorResultsPanel({
             </div>
           </div>
 
-          <p className="helper-text compare-section__helper" data-compare-helper>
-            <span>
+          <div className="compare-section__helper" data-compare-helper>
+            <p className="helper-text">
               W porównaniu przyjęto ten sam czas oszczędzania, a domyślnie lokatę{" "}
               {formatPercent(depositRate)} i konto {formatPercent(savingsRate)}.
-            </span>
-            <button
-              className="compare-section__helper-action"
-              type="button"
-              aria-controls="advanced-options"
-              aria-expanded={advancedOptionsOpen}
-              data-compare-settings-action
-              onClick={onComparisonSettingsReveal}
-            >
-              Zmień stawki w ustawieniach
-            </button>
-          </p>
+            </p>
+            <div className="compare-section__helper-actions">
+              <button
+                className="compare-section__helper-action"
+                type="button"
+                aria-controls="advanced-options"
+                aria-expanded={advancedOptionsOpen}
+                data-compare-settings-action
+                onClick={onComparisonSettingsReveal}
+              >
+                Zmień stawki w ustawieniach
+              </button>
+              <Link
+                className="compare-section__helper-action compare-section__helper-action--secondary"
+                href="/porownaj"
+              >
+                Zobacz pełne porównanie ścieżek
+              </Link>
+            </div>
+          </div>
         </div>
       </details>
 

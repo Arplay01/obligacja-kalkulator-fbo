@@ -9,6 +9,7 @@ import { BondBadge } from "@/features/calculator/components/bond-badge";
 import { CheckIcon, SettingsIcon } from "@/features/calculator/components/icons";
 import { FormattedNumberInput } from "@/features/calculator/components/formatted-number-input";
 import { TermHelp } from "@/features/calculator/components/term-help";
+import { ViewModeSwitch } from "@/features/calculator/components/view-mode-switch";
 import {
   BOND_ORDER,
   EXTERNAL_LINKS,
@@ -210,6 +211,8 @@ export function CalculatorInputPanel({
 
   return (
     <aside className="workspace__inputs card" aria-label="Parametry symulacji">
+      <ViewModeSwitch mode="calculator" variant="panel" />
+
       <section
         className="panel-block panel-block--selector"
         aria-label="Wybierz czas oszczędzania"
