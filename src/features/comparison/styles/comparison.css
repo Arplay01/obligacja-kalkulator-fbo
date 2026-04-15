@@ -10,13 +10,13 @@
   display: none;
 }
 
-.comparison-route .comparison-page {
+.calculator-route.comparison-route .page.comparison-page {
   --comparison-page-padding-inline-base: clamp(1.5rem, 4.5vw, 3.75rem);
   --comparison-page-padding-inline-end: calc(
-    var(--comparison-page-padding-inline-base) * 1.5
+    var(--comparison-page-padding-inline-base) * 2.25
   );
   --comparison-page-padding-inline-start: calc(
-    var(--comparison-page-padding-inline-base) * 1.5
+    var(--comparison-page-padding-inline-base) * 2.25
   );
   --comparison-shell-inner-padding: clamp(1.2rem, 2vw, 1.65rem);
   --comparison-header-height: 0px;

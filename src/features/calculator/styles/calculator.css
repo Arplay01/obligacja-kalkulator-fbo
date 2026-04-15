@@ -489,6 +489,7 @@
   line-height: var(--type-body-lg-line);
   font-weight: 600;
   letter-spacing: var(--type-body-lg-track);
+  white-space: nowrap;
   position: relative;
   transition:
     color var(--ease-fast),

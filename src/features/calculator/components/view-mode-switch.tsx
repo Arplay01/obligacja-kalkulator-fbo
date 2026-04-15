@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 type ViewModeSwitchProps = {
-  mode: "calculator" | "comparison";
+  mode: "calculator" | "comparison" | "comparisonLegacy";
 };
 
 export function ViewModeSwitch({ mode }: ViewModeSwitchProps) {
@@ -21,6 +21,13 @@ export function ViewModeSwitch({ mode }: ViewModeSwitchProps) {
       >
         Porównuję
         <span className="view-mode-switch__dot" aria-label="nowość" />
+      </Link>
+      <Link
+        className={`view-mode-switch__link${mode === "comparisonLegacy" ? " view-mode-switch__link--active" : ""}`}
+        href="/porownaj-przed-ui-polishingiem"
+        aria-current={mode === "comparisonLegacy" ? "page" : undefined}
+      >
+        Porównaj - przed UI polishingiem
       </Link>
     </nav>
   );
