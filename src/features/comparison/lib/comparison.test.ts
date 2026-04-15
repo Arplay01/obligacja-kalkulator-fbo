@@ -88,9 +88,9 @@ describe("comparison simulation", () => {
     const edo = oneYear.allResults.find((item) => item.id === "EDO");
     const tos = oneYear.allResults.find((item) => item.id === "TOS");
 
-    expect(edo?.finalNet ?? 0).toBeLessThan(10_560);
+    expect(edo?.finalNet ?? 0).toBeLessThan(10_535);
     expect(edo?.finalNet ?? 0).toBeGreaterThan(10_000);
-    expect(tos?.finalNet ?? 0).toBeLessThan(10_465);
+    expect(tos?.finalNet ?? 0).toBeLessThan(10_440);
     expect(tos?.finalNet ?? 0).toBeGreaterThan(10_000);
   });
 
@@ -157,6 +157,9 @@ describe("recommendation engine", () => {
 
     expect(result.recommendation.bestId).toBe("EDO");
     expect(result.recommendation.isTermAligned).toBe(true);
+    expect(result.recommendation.depositHeading).toBe(
+      "Dlaczego lokata przegrywa",
+    );
   });
 
   it("shows early exit info for 6-year EDO", () => {
@@ -272,7 +275,7 @@ describe("COI fee cap", () => {
     const result = simulateComparisonScenario(state);
     const coiResult = result.allResults.find((r) => r.id === "COI")!;
 
-    /* Fee = 1 bond * 2 PLN = 2 PLN, but interest on 100 PLN at 5% = 5 PLN gross.
+    /* Fee = 1 bond * 2 PLN = 2 PLN, but interest on 100 PLN at 4.75% = 4.75 PLN gross.
        Fee should not exceed accrued gross interest, and principal should not be lost. */
     expect(coiResult.finalNet).toBeGreaterThanOrEqual(100);
   });

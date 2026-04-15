@@ -454,58 +454,48 @@ function getEarlyExitYearsBefore(
   return definition.termYears - remainingYears;
 }
 
-function buildSubheadline(
-  definition: ComparisonInstrumentDefinition,
-): string {
-  switch (definition.id) {
-    case "TOS":
-      return `Obligacje ${definition.termYears}-letnie ze stałym oprocentowaniem ${definition.firstRate}%`;
-    case "EDO":
-      return `Obligacje ${definition.termYears}-letnie indeksowane inflacją z kapitalizacją`;
-    case "COI":
-      return `Obligacje ${definition.termYears}-letnie indeksowane inflacją`;
-    case "DEPOSIT":
-      return "Lokata bankowa";
-  }
-}
-
-function buildRecommendationBody(
+function buildRecommendationBestBody(
   result: ComparisonInstrumentResult,
   definition: ComparisonInstrumentDefinition,
-  amount: number,
   isTermAligned: boolean,
   earlyExitFee: number,
   earlyExitYearsBefore: number,
 ): string {
-  let body = `Twoje ${formatMoneyRounded(amount)} urośnie do ok. ${formatMoneyRounded(result.finalNet)} netto.`;
-
-  if (isTermAligned) {
-    body +=
-      " Termin obligacji pokrywa się z Twoim horyzontem - zero opłat za wcześniejsze wyjście.";
-  } else if (earlyExitYearsBefore > 0 && definition.id !== "DEPOSIT") {
-    body += ` Uwaga: ${definition.label} to obligacja ${definition.termYears}-letnia - wyjście ${earlyExitYearsBefore} ${formatYearsPolish(earlyExitYearsBefore)} przed terminem kosztuje ${formatMoneyRounded(earlyExitFee)} opłaty.`;
-  }
-
   switch (definition.id) {
     case "COI":
-      body +=
-        " Pamiętaj: odsetki trafiają na Twoje konto co rok i nie pracują dalej.";
-      break;
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. Odsetki wpadają co roku na Twoje konto, więc masz do nich dostęp, ale same nie pracują dalej.${isTermAligned ? " W tym horyzoncie nie płacisz za wyjście przed terminem." : ` Wcześniejsze wyjście obniży wynik o około ${formatMoneyRounded(earlyExitFee)}.`}`;
     case "EDO":
-      body +=
-        " Odsetki kapitalizują się - pracują na Ciebie przez cały okres.";
-      break;
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. Odsetki są dopisywane do obligacji, więc dalej pracują.${isTermAligned ? ` Ponieważ trzymasz ją przez pełne ${definition.termYears} ${formatYearsPolish(definition.termYears)}, nie płacisz za wyjście przed terminem.` : ` To opcja na dłuższe trzymanie - wyjście ${earlyExitYearsBefore} ${formatYearsPolish(earlyExitYearsBefore)} przed końcem obniży wynik o około ${formatMoneyRounded(earlyExitFee)}.`}`;
     case "TOS":
-      body +=
-        " Stałe oprocentowanie - wiesz dokładnie ile dostaniesz.";
-      break;
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. Oprocentowanie jest stałe, więc od początku wiesz, czego się spodziewać.${isTermAligned ? " W tym horyzoncie nie płacisz za wyjście przed terminem." : ` Wcześniejsze wyjście obniży wynik o około ${formatMoneyRounded(earlyExitFee)}.`}`;
+    case "DEPOSIT":
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. To najprostsza opcja, ale zwykle słabiej chroni wartość pieniędzy, gdy ceny rosną.`;
+  }
+}
+
+function buildDepositRecommendation(
+  bestActive: ComparisonInstrumentResult,
+  depositResult: ComparisonInstrumentResult | undefined,
+): Pick<ComparisonRecommendation, "depositHeading" | "depositBody"> {
+  if (!depositResult || depositResult.finalNet >= bestActive.finalNet - 1) {
+    return {
+      depositHeading: "Na co uważać przy lokacie",
+      depositBody:
+        "Nawet gdy lokata wypada tu dobrze, nadal wymaga pilnowania końca okresu i odnawiania. Podatek Belki zabiera część odsetek po każdym zakończonym okresie, więc kolejny okres startujesz z mniejszą bazą.",
+    };
   }
 
-  return body;
+  return {
+    depositHeading: "Dlaczego lokata przegrywa",
+    depositBody:
+      "Wymaga ciągłej uwagi i odnawiania. Co gorsza, podatek Belki uszczupla Twój zysk po każdym okresie, więc kapitał rośnie wolniej.",
+  };
 }
 
 function buildRecommendation(
   activeResults: ComparisonInstrumentResult[],
+  allResults: ComparisonInstrumentResult[],
+  baseline: ComparisonBaselineResult,
   amount: number,
   horizonYears: number,
 ): ComparisonRecommendation {
@@ -527,15 +517,19 @@ function buildRecommendation(
   const earlyExitFee =
     earlyExitYearsBefore > 0 ? bondCount * definition.feePerBond : 0;
 
-  const headline = `Na ${horizonYears} ${formatYearsPolish(horizonYears)} najlepszym wyborem jest ${definition.shortLabel}`;
-  const subheadline = buildSubheadline(definition);
-  const body = buildRecommendationBody(
+  const headline = `Na ${horizonYears} ${formatYearsPolish(horizonYears)}, spośród zaznaczonych opcji, najlepiej wypada ${definition.label}.`;
+  const bestBody = buildRecommendationBestBody(
     bestActive,
     definition,
-    amount,
     isTermAligned,
     earlyExitFee,
     earlyExitYearsBefore,
+  );
+  const inactionLoss = Math.max(0, amount - baseline.finalReal);
+  const inactionBody = `Realnie stracisz ${formatMoneyRounded(inactionLoss)}, nawet jeśli w portfelu nadal widzisz ${formatMoneyRounded(baseline.finalNet)}. To znaczy, że przez wzrost cen te pieniądze kupią mniej niż dziś.`;
+  const { depositHeading, depositBody } = buildDepositRecommendation(
+    bestActive,
+    allResults.find((result) => result.id === "DEPOSIT"),
   );
 
   return {
@@ -547,8 +541,10 @@ function buildRecommendation(
     earlyExitFee,
     earlyExitYearsBefore,
     headline,
-    subheadline,
-    body,
+    bestBody,
+    inactionBody,
+    depositHeading,
+    depositBody,
   };
 }
 
@@ -681,6 +677,8 @@ export function simulateComparisonScenario(
 
   const recommendation = buildRecommendation(
     activeResults,
+    allResults,
+    baseline,
     amount,
     state.horizonYears,
   );

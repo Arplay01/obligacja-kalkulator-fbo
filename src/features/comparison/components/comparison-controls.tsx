@@ -1,13 +1,11 @@
 import type { CSSProperties } from "react";
 import { AmountInput } from "@/features/calculator/components/amount-input";
-import {
-  CheckIcon,
-  FixedRateIcon,
-  InflationIcon,
-  VariableRateIcon,
-} from "@/features/calculator/components/icons";
+import { BondBadge } from "@/features/calculator/components/bond-badge";
+import { CheckIcon } from "@/features/calculator/components/icons";
 import { FormattedNumberInput } from "@/features/calculator/components/formatted-number-input";
 import { TermHelp } from "@/features/calculator/components/term-help";
+import { BONDS } from "@/features/calculator/domain/bonds";
+import type { BondBadgeKind } from "@/features/calculator/domain/types";
 import type {
   ComparisonScenarioState,
   ComparisonSelectableInstrumentId,
@@ -15,7 +13,6 @@ import type {
 import { COMPARISON_INSTRUMENTS } from "@/features/comparison/domain/instruments";
 import {
   COMPARISON_AMOUNT_PRESETS,
-  COMPARISON_HORIZON_PRESETS,
   COMPARISON_INFLATION_PRESETS,
 } from "@/features/comparison/lib/constants";
 import {
@@ -29,6 +26,7 @@ import {
   formatInputNumber,
   formatPercent,
 } from "@/features/calculator/lib/formatters";
+import { formatYearsPolish } from "@/features/comparison/lib/comparison";
 
 const AMOUNT_SLIDER_MARKERS = [
   { label: "100 zł", value: 100, align: "start" },
@@ -42,20 +40,43 @@ const HORIZON_SLIDER_MARKERS = [
   { label: "30 lat", value: 30, align: "end" },
 ] as const;
 
-function InstrumentIcon({
-  instrumentId,
-}: {
-  instrumentId: ComparisonSelectableInstrumentId;
-}) {
-  if (instrumentId === "EDO" || instrumentId === "COI") {
-    return <InflationIcon />;
+const COMPARISON_INSTRUMENT_BADGES = {
+  EDO: {
+    kind: BONDS.EDO.badgeKind,
+    label: BONDS.EDO.chipBadgeLabel,
+  },
+  COI: {
+    kind: BONDS.COI.badgeKind,
+    label: BONDS.COI.chipBadgeLabel,
+  },
+  TOS: {
+    kind: BONDS.TOS.badgeKind,
+    label: BONDS.TOS.chipBadgeLabel,
+  },
+  DEPOSIT: {
+    kind: BONDS.TOS.badgeKind,
+    label: BONDS.TOS.chipBadgeLabel,
+  },
+} as const satisfies Record<
+  ComparisonSelectableInstrumentId,
+  { kind: BondBadgeKind; label: string }
+>;
+
+function getComparisonInstrumentRateLabel(
+  instrumentId: ComparisonSelectableInstrumentId,
+  depositRate: number,
+) {
+  const instrument = COMPARISON_INSTRUMENTS[instrumentId];
+
+  if (instrumentId === "DEPOSIT") {
+    return `${formatPercent(depositRate)} brutto`;
   }
 
-  if (instrumentId === "TOS") {
-    return <FixedRateIcon />;
+  if (instrument.kind === "fixed_capitalized") {
+    return `${formatPercent(instrument.firstRate)} stałe`;
   }
 
-  return <VariableRateIcon />;
+  return `${formatPercent(instrument.firstRate)} start`;
 }
 
 /* --- Entry controls: amount + horizon --- */
@@ -86,9 +107,6 @@ export function ComparisonEntryControls({
       <section className="panel-block" aria-label="Kwota inwestycji">
         <div className="input-heading">
           <h3 className="input-title">Ile chcesz zainwestować?</h3>
-          <p className="input-inline-note" data-comparison-amount-summary>
-            {formatGroupedInteger(amount)} zł
-          </p>
         </div>
 
         <div className="amount-stack">
@@ -175,8 +193,17 @@ export function ComparisonEntryControls({
       <section className="panel-block" aria-label="Horyzont czasowy">
         <div className="input-heading">
           <h3 className="input-title">Na ile lat?</h3>
-          <p className="input-inline-note" data-comparison-horizon-summary>
-            {horizonYears} lat
+          <p
+            className="comparison-entry-summary"
+            data-comparison-horizon-summary
+          >
+            <span className="comparison-entry-summary__value">
+              {horizonYears}
+            </span>
+            {" "}
+            <span className="comparison-entry-summary__unit">
+              {formatYearsPolish(horizonYears)}
+            </span>
           </p>
         </div>
 
@@ -218,24 +245,6 @@ export function ComparisonEntryControls({
             })}
           </div>
         </div>
-
-        <div className="chip-row chip-row--compact comparison-chip-row">
-          {COMPARISON_HORIZON_PRESETS.map((preset) => {
-            const isActive = horizonYears === preset;
-
-            return (
-              <button
-                key={preset}
-                className={`chip${isActive ? " chip--active" : ""}`}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => onHorizonChange(preset)}
-              >
-                {preset} lat
-              </button>
-            );
-          })}
-        </div>
       </section>
     </>
   );
@@ -269,42 +278,51 @@ export function ComparisonProductControls({
         ).map((instrumentId) => {
           const instrument = COMPARISON_INSTRUMENTS[instrumentId];
           const isActive = state.activeInstrumentIds.includes(instrumentId);
+          const badge = COMPARISON_INSTRUMENT_BADGES[instrumentId];
 
           return (
             <button
               key={instrumentId}
-              className={`comparison-toggle${isActive ? " comparison-toggle--active" : ""}`}
+              className={`comparison-toggle bond-chip${isActive ? " comparison-toggle--active bond-chip--active" : ""}`}
               type="button"
               aria-pressed={isActive}
               data-instrument-toggle={instrumentId}
               onClick={() => onInstrumentToggle(instrumentId)}
             >
-              <div className="comparison-toggle__header">
-                <span className="comparison-toggle__icon" aria-hidden="true">
-                  <InstrumentIcon instrumentId={instrumentId} />
+              {isActive ? (
+                <span
+                  className="comparison-toggle__check bond-chip__check"
+                  aria-hidden="true"
+                >
+                  <CheckIcon />
                 </span>
+              ) : null}
+
+              <div className="comparison-toggle__header bond-chip__header">
                 <div className="comparison-toggle__copy">
-                  <strong>{instrument.label}</strong>
-                  <span>{instrument.summary}</span>
+                  <strong className="comparison-toggle__label bond-chip__label">
+                    {instrument.label}
+                  </strong>
                 </div>
               </div>
 
-              <span className="comparison-toggle__meta">
-                <span className="comparison-toggle__rate">
-                  {instrumentId === "DEPOSIT"
-                    ? `${formatPercent(state.depositRate)} brutto`
-                    : instrument.kind === "fixed_capitalized"
-                      ? `${formatPercent(instrument.firstRate)} stałe`
-                      : `${formatPercent(instrument.firstRate)} start`}
+              <span className="comparison-toggle__meta bond-chip__meta">
+                <span className="comparison-toggle__rate bond-chip__rate">
+                  {getComparisonInstrumentRateLabel(
+                    instrumentId,
+                    state.depositRate,
+                  )}
                 </span>
-                {isActive ? (
-                  <span
-                    className="comparison-toggle__check"
-                    aria-hidden="true"
-                  >
-                    <CheckIcon />
-                  </span>
-                ) : null}
+                <span className="bond-chip__badge-slot bond-chip__badge-slot--inline">
+                  <BondBadge
+                    kind={badge.kind}
+                    label={badge.label}
+                    variant="chip"
+                  />
+                </span>
+              </span>
+              <span className="bond-chip__badge-slot bond-chip__badge-slot--stacked">
+                <BondBadge kind={badge.kind} label={badge.label} variant="chip" />
               </span>
             </button>
           );

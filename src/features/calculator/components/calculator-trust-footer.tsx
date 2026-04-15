@@ -1,4 +1,9 @@
 import { InflationIcon } from "@/features/calculator/components/icons";
+import {
+  CURRENT_BOND_OFFER_MONTH_LABEL,
+  CURRENT_NBP_REFERENCE_RATE,
+} from "@/features/calculator/lib/current-bond-offer";
+import { formatPercent } from "@/features/calculator/lib/formatters";
 
 export function CalculatorTrustFooter() {
   return (
@@ -14,8 +19,8 @@ export function CalculatorTrustFooter() {
           </p>
           <p className="trust-footer__source">
             Stawki w prototypie: oferta detalicznych obligacji Skarbu Państwa na{" "}
-            <strong>marzec 2026</strong> oraz stopa referencyjna NBP{" "}
-            <strong>3,75%</strong>.
+            <strong>{CURRENT_BOND_OFFER_MONTH_LABEL}</strong> oraz stopa referencyjna NBP{" "}
+            <strong>{formatPercent(CURRENT_NBP_REFERENCE_RATE)}</strong>.
           </p>
         </div>
       </div>

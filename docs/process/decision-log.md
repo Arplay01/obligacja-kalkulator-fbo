@@ -176,3 +176,38 @@ Krótki log najważniejszych decyzji produktowych, UX i UI. Każdy wpis jest dat
 **Decyzja:** `/porownaj` zostało wypuszczone na `main` jako publicznie widoczny preview z celowym blurrem, blokadą interakcji i komunikatem `Praca w trakcie`.  
 **Dlaczego:** zespół chciał pokazać kierunek produktu i zachować spójny routing już teraz, ale bez udawania, że warstwa porównawcza jest ostatecznie domknięta.  
 **Wartość dla użytkownika:** użytkownik widzi, dokąd rozwija się narzędzie, a jednocześnie nie dostaje mylącego sygnału, że niedokończona porównywarka jest już pełnoprawnym, zaufanym workflow.
+
+## 26. Porównywarka przechodzi na dashboardowy shell dla szerokich ekranów
+
+**Data sesji zamknięcia:** `2026-04-15`  
+**Decyzja:** `/porownaj` zostało przebudowane na układ z fixed headerem, stałą lewą kolumną narzędziową i niezależnie scrollowaną prawą kolumną treści.  
+**Dlaczego:** zwykły dokumentowy scroll nie dawał wystarczająco dobrego tempa pracy przy równoczesnym ustawianiu parametrów i odczytywaniu wyniku.  
+**Wartość dla użytkownika:** użytkownik może stale zmieniać kwotę, horyzont i wybór instrumentów bez gubienia wykresu i sekcji interpretacyjnych.
+
+## 27. Porównywarka dziedziczy dojrzały język wizualny z kalkulatora
+
+**Data sesji zamknięcia:** `2026-04-15`  
+**Decyzja:** lewa kolumna, picker obligacji, badge oraz CTA wejścia w zakup zostały spięte z komponentami i tokenami używanymi już w `/kalkulator`.  
+**Dlaczego:** lokalne warianty w `porownaj` zaczęły się rozjeżdżać z bardziej dopracowanym ekranem głównym i osłabiały spójność całego narzędzia.  
+**Wartość dla użytkownika:** oba widoki są czytane jako jeden produkt, a nie dwa osobne interfejsy o różnych zasadach.
+
+## 28. Prawa kolumna porównywarki ma tłumaczyć decyzję prostym językiem dla amatora
+
+**Data sesji zamknięcia:** `2026-04-15`  
+**Decyzja:** warstwa interpretacyjna pod wykresem została przepisana na prostszy język korzyści, kosztu bezczynności i wysiłku potrzebnego do utrzymania danej ścieżki oszczędzania.  
+**Dlaczego:** sam wykres i liczby nie wystarczały początkującemu użytkownikowi, który nie zna mechaniki obligacji i nie myśli kategorią instrumentów finansowych.  
+**Wartość dla użytkownika:** ekran nie tylko pokazuje wynik, ale też wyjaśnia, dlaczego dana opcja wygrywa i co oznacza w praktyce dla codziennej decyzyjności.
+
+## 29. Czytelność wykresu jest ważniejsza niż pokazanie wszystkich sygnałów naraz
+
+**Data sesji zamknięcia:** `2026-04-15`  
+**Decyzja:** markery wcześniejszego wyjścia zostały schowane z samego wykresu i z legendy, a zachowane w tooltipie; dodatkowo ujednolicono grubość linii i uproszczono pomocnicze oznaczenia.  
+**Dlaczego:** nadmiar markerów osłabiał czytelność głównej porównawczej warstwy wykresu i utrudniał szybkie zrozumienie przebiegu serii.  
+**Wartość dla użytkownika:** wynik jest łatwiejszy do odczytania przy pierwszym kontakcie, bez utraty ważnych szczegółów po wejściu w tooltip.
+
+## 30. Kalkulator i porównywarka mają wspólne źródło prawdy dla aktualnej oferty obligacji
+
+**Data sesji zamknięcia:** `2026-04-15`  
+**Decyzja:** oba widoki zostały zaktualizowane do oferty detalicznych obligacji skarbowych z kwietnia 2026 i spięte jednym lokalnym source of truth dla stawek, marż i okresów promocyjnych.  
+**Dlaczego:** rozdzielone definicje stawek zwiększały ryzyko niespójności, a produkt finansowy traci wiarygodność, jeśli pokazuje nieaktualne parametry.  
+**Wartość dla użytkownika:** użytkownik dostaje aktualniejsze i spójniejsze wyliczenia w obu ścieżkach produktu.

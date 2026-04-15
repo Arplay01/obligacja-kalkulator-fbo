@@ -143,8 +143,10 @@ export type ComparisonRecommendation = {
   earlyExitFee: number;
   earlyExitYearsBefore: number;
   headline: string;
-  subheadline: string;
-  body: string;
+  bestBody: string;
+  inactionBody: string;
+  depositHeading: string;
+  depositBody: string;
 };
 
 export type ComparisonSmartSuggestion = {

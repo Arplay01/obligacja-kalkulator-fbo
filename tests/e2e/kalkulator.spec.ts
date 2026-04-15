@@ -15,7 +15,7 @@ test.describe("kalkulator", () => {
     await gotoCalculator(page);
 
     await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
-      /^\+1\s620 zł$/,
+      /^\+1\s405 zł$/,
     );
 
     await context.close();
@@ -31,14 +31,14 @@ test.describe("kalkulator", () => {
       page.locator('[data-bond-name]'),
     ).toHaveText("COI 4-letnie");
     await expect(page.locator('[data-value=\"netProfit\"]')).toHaveText(
-      /^\+1\s620 zł$/,
+      /^\+1\s405 zł$/,
     );
-    await expect(page.locator("[data-amount-summary]")).toHaveText("10 000 zł");
+    await expect(page.locator("#amount-input")).toHaveValue(/10\s000/);
     await expect(page.locator("[data-result-bridge]")).toContainText(
-      "Twoje 10 000 zł po 4 latach może dać 11 620 zł netto",
+      "Twoje 10 000 zł po 4 latach może dać 11 405 zł netto",
     );
     await expect(page.locator("[data-result-bridge]")).toContainText(
-      "realnie stracisz 1 286 zł",
+      "realnie stracisz 1 011 zł",
     );
     await expect(page.locator(".compare-section")).toHaveAttribute("open", "");
   });
@@ -55,13 +55,13 @@ test.describe("kalkulator", () => {
   test("updates hero and NBP row visibility when bond changes", async ({ page }) => {
     await gotoCalculator(page);
 
-    await page.getByRole("tab", { name: /ROR/i }).click();
+    await page.locator('[data-bond="ROR"]').click();
     await expect(page.locator('[data-bond-name]')).toHaveText("ROR roczne");
 
     await page.getByText("Więcej opcji").click();
     await expect(page.locator('[data-row=\"nbp\"]')).not.toHaveClass(/is-hidden/);
 
-    await page.getByRole("tab", { name: /COI/i }).click();
+    await page.locator('[data-bond="COI"]').click();
     await expect(page.locator('[data-row=\"nbp\"]')).toHaveClass(/is-hidden/);
   });
 
@@ -70,7 +70,6 @@ test.describe("kalkulator", () => {
 
     await page.getByRole("button", { name: "50 000" }).click();
     await expect(page.locator("#amount-input")).toHaveValue(/50\s000/);
-    await expect(page.locator("[data-amount-summary]")).toHaveText("50 000 zł");
   });
 
   test("keeps manual amount input formatted and synced after slider changes", async ({
@@ -90,7 +89,6 @@ test.describe("kalkulator", () => {
 
     await amountInput.fill("100000000");
     await expect(amountInput).toHaveValue(/^100\s000\s000$/);
-    await expect(page.locator("[data-amount-summary]")).toHaveText("100 000 000 zł");
   });
 
   test("switches to custom inflation live", async ({ page }) => {
@@ -101,7 +99,7 @@ test.describe("kalkulator", () => {
 
     await expect(page.locator("[data-inflation-mode]")).toHaveCount(0);
 
-    await page.getByRole("tab", { name: /TOS/i }).click();
+    await page.locator('[data-bond="TOS"]').click();
     await expect(page.locator("[data-inflation-mode]")).toHaveText(
       "Aktywna własna inflacja: 4,20%",
     );
@@ -122,7 +120,7 @@ test.describe("kalkulator", () => {
     );
     await expect(page.locator("[data-chart-empty]")).toHaveCount(0);
 
-    await page.getByRole("tab", { name: /OTS/i }).click();
+    await page.locator('[data-bond="OTS"]').click();
     await expect(page.locator("[data-chart-empty]")).toBeVisible();
     await expect(page.locator("[data-chart-empty]")).toContainText(
       "Za krótka symulacja na wykres liniowy",
@@ -247,7 +245,7 @@ test.describe("kalkulator", () => {
     await page.setViewportSize({ width: 1440, height: 1800 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await gotoCalculator(page);
-    await page.getByRole("tab", { name: /EDO/i }).click();
+    await page.locator('[data-bond="EDO"]').click();
 
     await expect(page).toHaveScreenshot("series-change-edo.png", {
       fullPage: true,

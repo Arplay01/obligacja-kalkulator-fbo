@@ -1,7 +1,55 @@
+.calculator-route.comparison-route {
+  --page-bg-start: #fefdfd;
+  --page-bg-end: #fefdfd;
+  --page-bg-surface: #fefdfd;
+  --bg-page: #fefdfd;
+}
+
+.calculator-route.comparison-route::before,
+.calculator-route.comparison-route::after {
+  display: none;
+}
+
 .comparison-route .comparison-page {
-  gap: clamp(1.1rem, 2.6vw, 1.75rem);
+  --comparison-page-padding-inline-base: clamp(1.5rem, 4.5vw, 3.75rem);
+  --comparison-page-padding-inline-end: calc(
+    var(--comparison-page-padding-inline-base) * 1.5
+  );
+  --comparison-page-padding-inline-start: calc(
+    var(--comparison-page-padding-inline-base) * 1.5
+  );
+  --comparison-shell-inner-padding: clamp(1.2rem, 2vw, 1.65rem);
+  --comparison-header-height: 0px;
+  --comparison-shell-top-gap: clamp(1rem, 2vw, 1.3rem);
+  --comparison-shell-bottom-gap: clamp(1.5rem, 2.5vw, 2rem);
+  --comparison-shell-sidebar-bottom-gap: var(--comparison-shell-top-gap);
+  --comparison-shell-column-gap-base: clamp(1.5rem, 2.25vw, 2.25rem);
+  --comparison-shell-column-gap: calc(
+    var(--comparison-shell-column-gap-base) * 1.5
+  );
+  --comparison-shell-sidebar-width: 320px;
+  display: block;
   max-width: none;
-  padding: 0 clamp(1rem, 3vw, 2.5rem);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding-block: 0;
+  padding-inline-start: var(--comparison-page-padding-inline-start);
+  padding-inline-end: var(--comparison-page-padding-inline-end);
+  isolation: isolate;
+}
+
+.comparison-route .comparison-shell__header {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  z-index: 20;
+  padding-inline-start: var(--comparison-page-padding-inline-start);
+  padding-inline-end: var(--comparison-page-padding-inline-end);
+  padding-bottom: 0;
+  /* Bugfix: header used its own gradient and looked off against the page shell, so it now uses the shared page surface token. */
+  background: var(--page-bg-surface);
 }
 
 .comparison-route .comparison-intro {
@@ -14,28 +62,56 @@
 }
 
 .comparison-route .comparison-layout {
+  position: relative;
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: clamp(1rem, 1.5vw, 1.5rem);
-  align-items: start;
+  grid-template-columns: var(--comparison-shell-sidebar-width) minmax(0, 1fr);
+  gap: var(--comparison-shell-column-gap);
+  align-items: stretch;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.comparison-route .comparison-layout__sidebar {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 0;
+  padding-block-start: calc(
+    var(--comparison-header-height) + var(--comparison-shell-top-gap)
+  );
+  padding-block-end: var(--comparison-shell-sidebar-bottom-gap);
+  z-index: 1;
 }
 
 .calculator-route.comparison-route .comparison-sidebar.card {
-  position: sticky;
-  top: 1rem;
+  /* Bugfix: the left rail itself stays fixed while scrolling happens inside the card box. */
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.95rem;
-  width: 320px;
+  width: 100%;
   max-width: 100%;
   min-width: 0;
-  max-height: calc(100vh - 2rem);
+  height: calc(
+    100dvh - var(--comparison-header-height) -
+      var(--comparison-shell-top-gap) -
+      var(--comparison-shell-sidebar-bottom-gap)
+  );
+  max-height: calc(
+    100dvh - var(--comparison-header-height) -
+      var(--comparison-shell-top-gap) -
+      var(--comparison-shell-sidebar-bottom-gap)
+  );
   overflow-y: auto;
-  padding: clamp(1.2rem, 2vw, 1.65rem);
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: var(--comparison-shell-inner-padding);
   background: linear-gradient(
     180deg,
-    rgba(251, 251, 251, 0.98),
-    rgba(248, 248, 248, 0.98)
+    var(--inputs-panel-bg-start),
+    var(--inputs-panel-bg-end)
   );
   animation: fadeInUp 0.5s ease-out both;
   animation-delay: 0.1s;
@@ -87,6 +163,42 @@
 
 .comparison-route .comparison-chip-row {
   gap: 0.5rem;
+}
+
+/* Bugfix: amount presets sit on very narrow tracks, so tighten them before labels spill past the chip bounds. */
+.comparison-route .chip-row--amount .chip {
+  width: 100%;
+  min-width: 0;
+  padding-inline: 0.18rem;
+  font-size: clamp(0.58rem, 0.52rem + 0.16vw, 0.66rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+/* Bugfix: the compact horizon summary must render a real space between the number and the unit. */
+.comparison-route .comparison-entry-summary {
+  display: inline-block;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.comparison-route .comparison-entry-summary__value {
+  display: inline-block;
+  font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.7rem);
+  line-height: 1;
+  font-weight: var(--type-display-lg-weight);
+  letter-spacing: var(--type-display-lg-track);
+  color: var(--text-strong);
+}
+
+.comparison-route .comparison-entry-summary__unit {
+  display: inline-block;
+  margin-inline-start: 0.18em;
+  font-size: var(--type-title-sm-size);
+  line-height: var(--type-title-sm-line);
+  font-weight: var(--type-title-sm-weight);
+  letter-spacing: var(--type-title-sm-track);
+  color: var(--text-60);
 }
 
 .comparison-route .comparison-helper-note {
@@ -148,228 +260,269 @@
 .comparison-route .comparison-toggle-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.72rem;
+  gap: 0.62rem;
 }
 
+/* Comparison option cards share the calculator chip shell and only add sidebar-specific compaction. */
 .comparison-route .comparison-toggle {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.9rem 0.95rem;
-  border-radius: var(--radius-panel);
-  border: 1px solid var(--border);
-  background: linear-gradient(
-    180deg,
-    var(--bg-secondary-strong) 0%,
-    var(--bg-secondary) 100%
-  );
-  text-align: left;
-  transition:
-    transform var(--ease-fast),
-    border-color var(--ease-fast),
-    box-shadow var(--ease-fast),
-    background var(--ease-fast);
-}
-
-.comparison-route .comparison-toggle:hover,
-.comparison-route .comparison-toggle:focus-visible {
-  transform: translateY(-1px);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-card-hover);
-  outline: none;
-}
-
-.comparison-route .comparison-toggle--active {
-  border-color: rgba(41, 39, 35, 0.04);
-  background: linear-gradient(180deg, rgba(47, 46, 43, 0.98), rgba(35, 34, 31, 0.98));
-  color: #ffffff;
-}
-
-.comparison-route .comparison-toggle--active:hover,
-.comparison-route .comparison-toggle--active:focus-visible {
-  border-color: rgba(41, 39, 35, 0.04);
+  gap: 0.2rem;
+  min-height: auto;
+  padding: 0.58rem 0.72rem 0.62rem;
 }
 
 .comparison-route .comparison-toggle__header {
-  display: flex;
-  gap: 0.7rem;
-  align-items: flex-start;
-}
-
-.comparison-route .comparison-toggle__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  background: rgba(41, 39, 35, 0.06);
-  color: var(--text-60);
-  flex-shrink: 0;
-}
-
-.comparison-route .comparison-toggle--active .comparison-toggle__icon {
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.86);
-}
-
-.comparison-route .comparison-toggle__icon svg {
-  width: 1rem;
-  height: 1rem;
+  padding-right: 1.15rem;
 }
 
 .comparison-route .comparison-toggle__copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.18rem;
   min-width: 0;
 }
 
-.comparison-route .comparison-toggle__copy strong {
-  font-size: var(--type-body-lg-size);
-  line-height: var(--type-body-lg-line);
-  font-weight: var(--type-body-lg-weight);
-}
-
-.comparison-route .comparison-toggle--active .comparison-toggle__copy strong {
-  color: #ffffff;
-}
-
-.comparison-route .comparison-toggle__copy span {
-  font-size: var(--type-caption-sm-size);
-  line-height: var(--type-caption-sm-line);
-  font-weight: var(--type-caption-sm-weight);
-  color: var(--text-60);
-}
-
-.comparison-route .comparison-toggle--active .comparison-toggle__copy span {
-  color: rgba(255, 255, 255, 0.68);
+.comparison-route .comparison-toggle__label {
+  display: block;
 }
 
 .comparison-route .comparison-toggle__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem;
+  padding-right: 0.1rem;
 }
 
-.comparison-route .comparison-toggle__rate {
-  font-size: var(--type-caption-sm-size);
-  line-height: var(--type-caption-sm-line);
-  font-weight: 600;
-  letter-spacing: var(--type-caption-sm-track);
-  color: var(--text-60);
-}
-
-.comparison-route .comparison-toggle--active .comparison-toggle__rate {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.comparison-route .comparison-toggle__check {
+.comparison-route .comparison-toggle .bond-chip__badge-slot--inline {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  color: #f2d8a6;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.comparison-route .comparison-toggle .bond-chip__badge-slot--stacked {
+  display: none;
 }
 
 .comparison-route .comparison-toggle__check svg {
-  width: 0.82rem;
-  height: 0.82rem;
+  width: 0.78rem;
+  height: 0.78rem;
 }
 
 /* --- Smart suggestion banner --- */
 
 .comparison-route .comparison-smart-suggestion {
-  background: linear-gradient(
-    135deg,
-    rgba(92, 141, 103, 0.08),
-    rgba(92, 141, 103, 0.03)
-  );
-  border: 1px solid rgba(92, 141, 103, 0.2);
-  border-radius: var(--radius-panel);
-  padding: 1rem 1.25rem;
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.45rem;
+  margin-top: 0.15rem;
+  padding: 0.05rem 0 0.05rem 1rem;
+}
+
+.comparison-route .comparison-smart-suggestion::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.12rem;
+  bottom: 0.12rem;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(92, 141, 103, 0.88),
+    rgba(92, 141, 103, 0.46)
+  );
+  transition: background var(--ease-fast);
+}
+
+.comparison-route .comparison-smart-suggestion:hover::before {
+  background: linear-gradient(
+    180deg,
+    rgba(92, 141, 103, 0.96),
+    rgba(92, 141, 103, 0.58)
+  );
 }
 
 .comparison-route .comparison-smart-suggestion__text {
-  font-size: 0.95rem;
-  color: var(--text-strong);
+  margin: 0;
+  font-size: var(--type-body-md-size);
+  line-height: var(--type-body-md-line);
+  font-weight: 500;
+  letter-spacing: var(--type-body-md-track);
+  color: var(--text-60);
+}
+
+.comparison-route .comparison-smart-suggestion__amount {
+  font-weight: 700;
+  color: var(--color-mint);
 }
 
 .comparison-route .comparison-smart-suggestion__button {
-  background: var(--color-mint);
-  color: white;
-  border: none;
-  border-radius: 999px;
-  padding: 0.5rem 1.2rem;
+  padding: 0;
+  border-radius: 0.3rem;
+  background: none;
+  color: var(--text-strong);
   font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
+  font-size: var(--type-body-md-size);
+  line-height: var(--type-body-md-line);
+  letter-spacing: var(--type-body-md-track);
   white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.12em;
 }
 
 .comparison-route .comparison-smart-suggestion__button:hover {
-  opacity: 0.9;
+  color: var(--color-mint);
+}
+
+.comparison-route .comparison-smart-suggestion__button:focus-visible {
+  outline: 2px solid rgba(92, 141, 103, 0.22);
+  outline-offset: 3px;
 }
 
 /* --- Recommendation hero --- */
 
 .comparison-route .comparison-recommendation {
-  background: linear-gradient(
-    180deg,
-    rgba(250, 249, 247, 0.98),
-    rgba(245, 243, 240, 0.98)
-  );
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: clamp(1.25rem, 2vw, 2rem);
-  box-shadow: var(--shadow-rest);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.2rem, 2.6vw, 1.75rem);
+  margin-block: clamp(0.95rem, 2.2vw, 1.45rem) clamp(1.3rem, 3vw, 1.9rem);
 }
 
 .comparison-route .comparison-recommendation__headline {
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
-  font-weight: 700;
+  position: relative;
+  margin: 0;
+  padding: 0.1rem 0 0.1rem 1rem;
+  font-size: var(--type-title-md-size);
+  line-height: var(--type-title-md-line);
+  font-weight: var(--type-title-md-weight);
+  letter-spacing: var(--type-title-md-track);
   color: var(--text-strong);
-  margin: 0 0 0.25rem;
 }
 
-.comparison-route .comparison-recommendation__subheadline {
-  font-size: 0.9rem;
-  color: var(--text-muted, var(--text-40));
+.comparison-route .comparison-recommendation__headline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.14rem;
+  bottom: 0.14rem;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(92, 141, 103, 0.74),
+    rgba(200, 100, 91, 0.64)
+  );
+}
+
+.comparison-route .comparison-recommendation__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.1rem, 2.4vw, 1.7rem);
+}
+
+.comparison-route .comparison-recommendation__panel {
+  --comparison-recommendation-accent: rgba(41, 39, 35, 0.18);
+  --comparison-recommendation-text-inset: 0.95rem;
+  min-width: 0;
+  padding: 0.15rem 0 0.15rem 0.1rem;
+}
+
+.comparison-route .comparison-recommendation__panel--best {
+  --comparison-recommendation-accent: rgba(92, 141, 103, 0.34);
+}
+
+.comparison-route .comparison-recommendation__panel--inaction {
+  --comparison-recommendation-accent: rgba(200, 100, 91, 0.28);
+}
+
+.comparison-route .comparison-recommendation__panel--deposit {
+  --comparison-recommendation-accent: rgba(213, 148, 43, 0.3);
+}
+
+.comparison-route .comparison-recommendation__label {
+  position: relative;
   margin: 0 0 0.75rem;
+  padding-left: var(--comparison-recommendation-text-inset);
+  font-size: var(--type-caption-sm-size);
+  line-height: var(--type-caption-sm-line);
+  font-weight: var(--type-label-xs-weight);
+  letter-spacing: 0.06em;
+  color: var(--text-80);
+  text-transform: uppercase;
+}
+
+.comparison-route .comparison-recommendation__label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  bottom: 0.05rem;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--comparison-recommendation-accent);
 }
 
 .comparison-route .comparison-recommendation__body {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--text-strong);
+  /* Bugfix: keep the recommendation copy aligned with its mini header and lift the header so it stays visually above the body text. */
   margin: 0;
+  padding-left: var(--comparison-recommendation-text-inset);
+  font-size: var(--type-body-md-size);
+  line-height: calc(var(--type-body-md-line) + 0.08);
+  font-weight: var(--type-body-md-weight);
+  letter-spacing: var(--type-body-md-track);
+  color: var(--text-strong);
 }
 
-/* --- COI idle cash warning --- */
+@media (max-width: 1180px) {
+  .comparison-route .comparison-recommendation__grid {
+    grid-template-columns: 1fr;
+  }
+}
 
-.comparison-route .comparison-coi-warning {
-  background: rgba(213, 148, 43, 0.06);
-  border: 1px solid rgba(213, 148, 43, 0.2);
-  border-radius: var(--radius-panel);
-  padding: 1rem 1.25rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--text-strong);
+@media (max-width: 900px) {
+  .comparison-route .comparison-recommendation__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- First purchase CTA --- */
+
+.comparison-route .comparison-action-cta {
+  max-width: 39rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+
+.comparison-route .comparison-action-cta .micro-label {
+  color: rgba(92, 141, 103, 0.86);
+}
+
+.comparison-route .comparison-action-cta .action-cta__text {
+  max-width: 36rem;
 }
 
 /* --- Main content area --- */
 
 .comparison-route .comparison-main {
   position: relative;
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  padding-block-start: calc(
+    var(--comparison-header-height) + var(--comparison-shell-top-gap)
+  );
+  padding-block-end: calc(var(--comparison-shell-bottom-gap) + 0.25rem);
+  padding-inline-end: 0.2rem;
+  scroll-padding-top: calc(
+    var(--comparison-header-height) + var(--comparison-shell-top-gap)
+  );
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  z-index: 1;
+}
+
+.comparison-route .comparison-main__content {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.35rem;
@@ -393,11 +546,8 @@
   padding: clamp(1.45rem, 2.5vw, 2rem);
   border-radius: var(--radius-card);
   border: 1px solid var(--border);
-  background: linear-gradient(
-    180deg,
-    rgba(250, 249, 247, 0.98),
-    rgba(245, 243, 240, 0.98)
-  );
+  /* Bugfix: chart panel now shares the exact page surface so the right column reads as one consistent canvas. */
+  background: var(--page-bg-surface);
   box-shadow: var(--shadow-rest);
   backdrop-filter: blur(12px);
 }
@@ -494,11 +644,19 @@
 
 .comparison-route .comparison-hero__helper {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.46rem;
   max-width: 44rem;
   margin-top: -0.1rem;
   padding-left: 1rem;
+}
+
+.comparison-route .comparison-hero__helper-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
 }
 
 .comparison-route .comparison-hero__helper-icons {
@@ -515,6 +673,10 @@
   width: 3.4rem;
   height: 0.9rem;
   overflow: visible;
+}
+
+.comparison-route .comparison-hero__helper-copy {
+  display: inline-block;
 }
 
 /* --- Tooltip --- */
@@ -595,8 +757,42 @@
   line-height: var(--type-caption-sm-line);
 }
 
+.comparison-route .comparison-tooltip__pre-exit {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: var(--text-40);
+  font-size: var(--type-caption-sm-size);
+  line-height: var(--type-caption-sm-line);
+  padding-left: 1.07rem;
+}
+
+.comparison-route .comparison-tooltip__pre-exit-icon {
+  display: inline-flex;
+  width: 0.72rem;
+  height: 0.72rem;
+  flex: 0 0 auto;
+}
+
+.comparison-route .comparison-tooltip__pre-exit-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
 .comparison-route .comparison-tooltip__fee {
   grid-column: 1 / -1;
+  color: var(--text-40);
+  font-size: var(--type-caption-sm-size);
+  line-height: var(--type-caption-sm-line);
+  padding-left: 1.07rem;
+}
+
+.comparison-route .comparison-tooltip__payout {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
   color: var(--text-40);
   font-size: var(--type-caption-sm-size);
   line-height: var(--type-caption-sm-line);
@@ -680,24 +876,48 @@
 .comparison-route .comparison-effort {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: clamp(1.45rem, 2.5vw, 2rem);
-  border-radius: var(--radius-card);
-  border: 1px solid var(--border);
-  background: linear-gradient(
-    180deg,
-    rgba(250, 249, 247, 0.98),
-    rgba(245, 243, 240, 0.98)
-  );
-  box-shadow: var(--shadow-rest);
+  gap: clamp(1rem, 2.3vw, 1.55rem);
+  margin-block: clamp(1.15rem, 2.6vw, 1.85rem) clamp(0.3rem, 1vw, 0.6rem);
 }
 
 .comparison-route .comparison-effort__header {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.comparison-route .comparison-effort__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.comparison-route .comparison-effort__title {
+  position: relative;
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.comparison-route .comparison-effort__title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.14rem;
+  bottom: 0.14rem;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(92, 141, 103, 0.74),
+    rgba(200, 100, 91, 0.64)
+  );
+}
+
+.comparison-route .comparison-effort__helper {
+  max-width: 46rem;
+  margin: 0;
+  line-height: 1.62;
 }
 
 .comparison-route .comparison-effort__rows {
@@ -711,33 +931,29 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 0.82fr);
-  gap: 0.85rem;
-  padding: 1rem 0 1rem 1rem;
-  border-top: 1px solid rgba(41, 39, 35, 0.06);
+  gap: 1rem;
+  padding: 1.2rem 0 1.25rem 1.05rem;
+  border-top: 1px solid rgba(41, 39, 35, 0.07);
+}
+
+.comparison-route .comparison-effort__row:last-child {
+  border-bottom: 1px solid rgba(41, 39, 35, 0.07);
 }
 
 .comparison-route .comparison-effort__row::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 1rem;
-  bottom: 1rem;
-  width: 3px;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  width: 2px;
   border-radius: 999px;
   background: var(--comparison-effort-accent, rgba(41, 39, 35, 0.3));
-  opacity: 0.3;
-}
-
-.comparison-route .comparison-effort__row--best {
-  background: linear-gradient(
-    90deg,
-    rgba(211, 84, 74, 0.035),
-    transparent 24%
-  );
+  opacity: 0.38;
 }
 
 .comparison-route .comparison-effort__row--best::before {
-  opacity: 0.9;
+  opacity: 0.62;
 }
 
 .comparison-route .comparison-effort__instrument {
@@ -829,6 +1045,12 @@
   gap: 0.4rem;
 }
 
+.comparison-route .comparison-effort__decision-note {
+  color: var(--text-40);
+  font-size: var(--type-caption-sm-size);
+  line-height: 1.55;
+}
+
 /* --- Next steps --- */
 
 .comparison-route .comparison-next-steps {
@@ -915,30 +1137,95 @@
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
+  .comparison-route .comparison-page {
+    display: flex;
+    flex-direction: column;
+    --comparison-shell-column-gap: var(--comparison-shell-column-gap-base);
+    gap: clamp(1.1rem, 2.6vw, 1.75rem);
+    height: auto;
+    overflow: visible;
+    padding-block-end: 0;
+    padding-inline-end: clamp(1rem, 3vw, 2.5rem);
+    padding-inline-start: clamp(1rem, 3vw, 2.5rem);
+  }
+
+  .comparison-route .comparison-shell__header {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    padding-inline: 0;
+    padding-bottom: 0.55rem;
+    background: transparent;
+  }
+
   .comparison-route .comparison-layout {
     display: flex;
     flex-direction: column;
+    height: auto;
+  }
+
+  .comparison-route .comparison-layout__sidebar {
+    overflow: visible;
+    padding: 0;
+  }
+
+  .comparison-route .comparison-main {
+    overflow: visible;
+    height: auto;
+    padding: 0;
+    scroll-padding-top: 0;
   }
 
   .calculator-route.comparison-route .comparison-sidebar.card {
-    position: static;
+    height: auto;
     width: 100%;
     max-height: none;
+    overscroll-behavior: auto;
+    scrollbar-gutter: auto;
   }
 }
 
 /* --- Mobile: <= 767px --- */
 
 @media (max-width: 767px) {
+  .comparison-route .comparison-page {
+    display: flex;
+    flex-direction: column;
+    --comparison-shell-column-gap: var(--comparison-shell-column-gap-base);
+    gap: clamp(1.1rem, 2.6vw, 1.75rem);
+    height: auto;
+    overflow: visible;
+    padding-block-end: 0;
+    padding-inline-end: clamp(1rem, 3vw, 2.5rem);
+    padding-inline-start: clamp(1rem, 3vw, 2.5rem);
+  }
+
+  .comparison-route .comparison-shell__header {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    padding-inline: 0;
+    padding-bottom: 0.55rem;
+    background: transparent;
+  }
+
   .comparison-route .comparison-layout {
     display: flex;
     flex-direction: column;
+    height: auto;
+  }
+
+  .comparison-route .comparison-layout__sidebar {
+    overflow: visible;
+    padding: 0;
   }
 
   .calculator-route.comparison-route .comparison-sidebar.card {
-    position: static;
+    height: auto;
     width: 100%;
     max-height: none;
+    overscroll-behavior: auto;
+    scrollbar-gutter: auto;
     padding: 0;
     border: 0;
     background: transparent;
@@ -1020,7 +1307,10 @@
   }
 
   .comparison-route .comparison-main {
-    padding-bottom: 80px;
+    overflow: visible;
+    height: auto;
+    padding: 0 0 80px;
+    scroll-padding-top: 0;
   }
 
   .comparison-route .comparison-chart-shell {

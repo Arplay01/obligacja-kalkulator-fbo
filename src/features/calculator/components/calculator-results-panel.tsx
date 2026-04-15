@@ -8,6 +8,7 @@ import type {
 } from "@/features/calculator/domain/types";
 import { AnimatedNumberText } from "@/features/calculator/components/animated-number-text";
 import { BondBadge } from "@/features/calculator/components/bond-badge";
+import { ChallengeCta } from "@/features/calculator/components/challenge-cta";
 import { InsightIcon } from "@/features/calculator/components/icons";
 import { TermHelp } from "@/features/calculator/components/term-help";
 import { EXTERNAL_LINKS } from "@/features/calculator/lib/constants";
@@ -361,21 +362,10 @@ export function CalculatorResultsPanel({
         </div>
       </details>
 
-      <section className="action-cta" aria-label="Następny krok">
-        <h3 className="action-cta__title">Jak kupić?</h3>
-        <p className="action-cta__text">
-          7-dniowe wyzwanie mailowe od Marcina, Kasi i Maćka. Codziennie konkretna
-          instrukcja - na końcu masz swoją pierwszą obligację.
-        </p>
-        <a
-          className="action-cta__button"
-          href={EXTERNAL_LINKS.challenge}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Dołącz do wyzwania
-        </a>
-      </section>
+      <ChallengeCta
+        title="Jak kupić?"
+        description="7-dniowe wyzwanie mailowe od Marcina, Kasi i Maćka. Codziennie konkretna instrukcja - na końcu masz swoją pierwszą obligację."
+      />
     </section>
   );
 }
