@@ -3,11 +3,19 @@ import type {
   BondId,
   BondDefinition,
 } from "@/features/calculator/domain/types";
+import { CURRENT_RETAIL_BOND_OFFER } from "@/features/calculator/lib/current-bond-offer";
 import { formatPercent } from "@/features/calculator/lib/formatters";
 
 function inflation(context: BondCopyContext) {
   return context.effectiveInflation;
 }
+
+const OTS_OFFER = CURRENT_RETAIL_BOND_OFFER.OTS;
+const ROR_OFFER = CURRENT_RETAIL_BOND_OFFER.ROR;
+const DOR_OFFER = CURRENT_RETAIL_BOND_OFFER.DOR;
+const TOS_OFFER = CURRENT_RETAIL_BOND_OFFER.TOS;
+const COI_OFFER = CURRENT_RETAIL_BOND_OFFER.COI;
+const EDO_OFFER = CURRENT_RETAIL_BOND_OFFER.EDO;
 
 export const BONDS: Record<BondId, BondDefinition> = {
   OTS: {
@@ -21,13 +29,13 @@ export const BONDS: Record<BondId, BondDefinition> = {
     badgeKind: "fixed",
     badgeLabel: "Stałe oprocentowanie",
     chipBadgeLabel: "Stałe",
-    firstRate: 2.5,
-    margin: 0,
+    firstRate: OTS_OFFER.firstRate,
+    margin: OTS_OFFER.margin,
     capitalization: false,
     payout: "at_maturity",
-    introMonths: 3,
+    introMonths: OTS_OFFER.introMonths,
     description: () =>
-      "Stałe 2,50% przez 3 miesiące. Na końcu odzyskujesz kapitał i odsetki.",
+      `Stałe ${formatPercent(OTS_OFFER.firstRate)} przez 3 miesiące. Na końcu odzyskujesz kapitał i odsetki.`,
     howItWorks: () =>
       "To najprostsza seria w ofercie: kupujesz na 3 miesiące i z góry wiesz, ile odda na koniec. Nie ma tu ani inflacji, ani stopy NBP w mechanice oprocentowania.",
     pros: [
@@ -52,18 +60,18 @@ export const BONDS: Record<BondId, BondDefinition> = {
     badgeKind: "variable",
     badgeLabel: "Zmienne oprocentowanie",
     chipBadgeLabel: "Zmienne",
-    firstRate: 4.25,
-    margin: 0,
+    firstRate: ROR_OFFER.firstRate,
+    margin: ROR_OFFER.margin,
     capitalization: false,
     payout: "monthly",
-    introMonths: 3,
+    introMonths: ROR_OFFER.introMonths,
     description: (context) =>
-      `Pierwsze 3 miesiące: stałe ${formatPercent(4.25)}. Dalej: stopa NBP ${formatPercent(
+      `Pierwszy miesiąc: stałe ${formatPercent(ROR_OFFER.firstRate)}. Dalej: stopa NBP ${formatPercent(
         context.nbpRate,
       )}. Odsetki wypłacane co miesiąc.`,
     howItWorks: (context) =>
-      `Przez pierwsze 3 miesiące ROR ma stałe oprocentowanie ${formatPercent(
-        4.25,
+      `Przez pierwszy miesiąc ROR ma stałe oprocentowanie ${formatPercent(
+        ROR_OFFER.firstRate,
       )}. Potem oprocentowanie przechodzi na stopę referencyjną NBP, co w tej symulacji daje ${formatPercent(
         context.nbpRate,
       )}. Odsetki nie kapitalizują się, tylko co miesiąc wpadają na konto.`,
@@ -89,19 +97,19 @@ export const BONDS: Record<BondId, BondDefinition> = {
     badgeKind: "variable",
     badgeLabel: "Zmienne oprocentowanie",
     chipBadgeLabel: "Zmienne",
-    firstRate: 4.4,
-    margin: 0.15,
+    firstRate: DOR_OFFER.firstRate,
+    margin: DOR_OFFER.margin,
     capitalization: false,
     payout: "monthly",
-    introMonths: 3,
+    introMonths: DOR_OFFER.introMonths,
     description: (context) =>
-      `Pierwsze 3 miesiące: stałe ${formatPercent(4.4)}. Dalej: stopa NBP ${formatPercent(
+      `Pierwszy miesiąc: stałe ${formatPercent(DOR_OFFER.firstRate)}. Dalej: stopa NBP ${formatPercent(
         context.nbpRate,
-      )} + ${formatPercent(0.15)}. Odsetki wypłacane co miesiąc.`,
+      )} + ${formatPercent(DOR_OFFER.margin)}. Odsetki wypłacane co miesiąc.`,
     howItWorks: (context) =>
-      `DOR działa podobnie do ROR, ale trwa 2 lata i po pierwszych 3 miesiącach przechodzi na stopę NBP z marżą ${formatPercent(
-        0.15,
-      )}. W tej symulacji daje to ${formatPercent(context.nbpRate + 0.15)} w kolejnych okresach. Odsetki są wypłacane co miesiąc.`,
+      `DOR działa podobnie do ROR, ale trwa 2 lata i po pierwszym miesiącu przechodzi na stopę NBP z marżą ${formatPercent(
+        DOR_OFFER.margin,
+      )}. W tej symulacji daje to ${formatPercent(context.nbpRate + DOR_OFFER.margin)} w kolejnych okresach. Odsetki są wypłacane co miesiąc.`,
     pros: [
       "Miesięczne odsetki jak w ROR",
       "Lekko wyższa marża ponad stopę NBP",
@@ -124,15 +132,15 @@ export const BONDS: Record<BondId, BondDefinition> = {
     badgeKind: "fixed",
     badgeLabel: "Stałe oprocentowanie",
     chipBadgeLabel: "Stałe",
-    firstRate: 4.65,
-    margin: 0,
+    firstRate: TOS_OFFER.firstRate,
+    margin: TOS_OFFER.margin,
     capitalization: true,
     payout: "at_maturity",
-    introMonths: 36,
+    introMonths: TOS_OFFER.introMonths,
     description: () =>
-      "Stałe 4,65% przez całe 3 lata. Odsetki kapitalizują się co roku i pracują dalej.",
+      `Stałe ${formatPercent(TOS_OFFER.firstRate)} przez całe 3 lata. Odsetki kapitalizują się co roku i pracują dalej.`,
     howItWorks: () =>
-      "TOS przez całe 3 lata trzyma stałe oprocentowanie 4,65%. Odsetki dopisują się po każdym roku, więc w kolejnym roku pracują już także na siebie.",
+      `TOS przez całe 3 lata trzyma stałe oprocentowanie ${formatPercent(TOS_OFFER.firstRate)}. Odsetki dopisują się po każdym roku, więc w kolejnym roku pracują już także na siebie.`,
     pros: [
       "Wynik znasz z góry",
       "Kapitalizacja poprawia efekt końcowy",
@@ -155,22 +163,22 @@ export const BONDS: Record<BondId, BondDefinition> = {
     badgeKind: "inflation",
     badgeLabel: "Indeksowane inflacją",
     chipBadgeLabel: "Inflacja",
-    firstRate: 5,
-    margin: 1.5,
+    firstRate: COI_OFFER.firstRate,
+    margin: COI_OFFER.margin,
     capitalization: false,
     payout: "annually",
-    introMonths: 12,
+    introMonths: COI_OFFER.introMonths,
     description: (context) =>
-      `Pierwszy rok: stałe ${formatPercent(5)}. Od 2. roku: inflacja ${formatPercent(
+      `Pierwszy rok: stałe ${formatPercent(COI_OFFER.firstRate)}. Od 2. roku: inflacja ${formatPercent(
         inflation(context),
-      )} + marża ${formatPercent(1.5)}. Odsetki wypłacane co roku na konto.`,
+      )} + marża ${formatPercent(COI_OFFER.margin)}. Odsetki wypłacane co roku na konto.`,
     howItWorks: (context) =>
       `W pierwszym roku COI płaci stałe ${formatPercent(
-        5,
+        COI_OFFER.firstRate,
       )}. Od drugiego roku oprocentowanie liczy się jako inflacja + marża ${formatPercent(
-        1.5,
+        COI_OFFER.margin,
       )}, czyli w tym scenariuszu ${formatPercent(
-        inflation(context) + 1.5,
+        inflation(context) + COI_OFFER.margin,
       )}. Odsetki nie kapitalizują się, tylko raz w roku trafiają na konto.`,
     pros: [
       "Chroni lepiej przy wyższej inflacji",
@@ -194,22 +202,22 @@ export const BONDS: Record<BondId, BondDefinition> = {
     badgeKind: "inflation",
     badgeLabel: "Indeksowane inflacją",
     chipBadgeLabel: "Inflacja",
-    firstRate: 5.6,
-    margin: 2,
+    firstRate: EDO_OFFER.firstRate,
+    margin: EDO_OFFER.margin,
     capitalization: true,
     payout: "at_maturity",
-    introMonths: 12,
+    introMonths: EDO_OFFER.introMonths,
     description: (context) =>
-      `1. rok: stałe ${formatPercent(5.6)}. Od 2. roku: inflacja ${formatPercent(
+      `1. rok: stałe ${formatPercent(EDO_OFFER.firstRate)}. Od 2. roku: inflacja ${formatPercent(
         inflation(context),
-      )} + ${formatPercent(2)} marży. Odsetki kapitalizują się co roku i pracują dalej.`,
+      )} + ${formatPercent(EDO_OFFER.margin)} marży. Odsetki kapitalizują się co roku i pracują dalej.`,
     howItWorks: (context) =>
       `EDO zaczyna od ${formatPercent(
-        5.6,
+        EDO_OFFER.firstRate,
       )} w pierwszym roku, a potem przechodzi na inflację + marżę ${formatPercent(
-        2,
+        EDO_OFFER.margin,
       )}, co w tej symulacji daje ${formatPercent(
-        inflation(context) + 2,
+        inflation(context) + EDO_OFFER.margin,
       )}. Najważniejsze jest to, że odsetki są kapitalizowane, więc w kolejnych latach pracują już także na siebie.`,
     pros: [
       "Najsilniejsza ochrona przed inflacją z tej szóstki",

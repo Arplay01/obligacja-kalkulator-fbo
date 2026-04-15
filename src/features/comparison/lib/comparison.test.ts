@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   countDecisionCost,
+  formatYearsPolish,
   simulateComparisonScenario,
 } from "@/features/comparison/lib/comparison";
 import { DEFAULT_COMPARISON_STATE } from "@/features/comparison/lib/constants";
@@ -20,7 +21,7 @@ describe("comparison simulation", () => {
     expect(result.chartRows).toHaveLength(11);
     expect(result.baseline.series).toHaveLength(11);
     expect(result.allResults).toHaveLength(4);
-    expect(result.activeResults).toHaveLength(4);
+    expect(result.activeResults).toHaveLength(2);
     expect(result.chartRows[0]?.label).toBe("Start");
     expect(result.chartRows.at(-1)?.label).toBe("10 rok");
   });
@@ -87,16 +88,20 @@ describe("comparison simulation", () => {
     const edo = oneYear.allResults.find((item) => item.id === "EDO");
     const tos = oneYear.allResults.find((item) => item.id === "TOS");
 
-    expect(edo?.finalNet ?? 0).toBeLessThan(10_560);
+    expect(edo?.finalNet ?? 0).toBeLessThan(10_535);
     expect(edo?.finalNet ?? 0).toBeGreaterThan(10_000);
-    expect(tos?.finalNet ?? 0).toBeLessThan(10_465);
+    expect(tos?.finalNet ?? 0).toBeLessThan(10_440);
     expect(tos?.finalNet ?? 0).toBeGreaterThan(10_000);
   });
 
   it("switches effort ranking when display mode changes", () => {
-    const netScenario = simulateComparisonScenario(DEFAULT_COMPARISON_STATE);
+    const netScenario = simulateComparisonScenario({
+      ...DEFAULT_COMPARISON_STATE,
+      activeInstrumentIds: ["EDO", "COI", "TOS", "DEPOSIT"],
+    });
     const realScenario = simulateComparisonScenario({
       ...DEFAULT_COMPARISON_STATE,
+      activeInstrumentIds: ["EDO", "COI", "TOS", "DEPOSIT"],
       displayMode: "real",
     });
 
@@ -125,5 +130,171 @@ describe("comparison simulation", () => {
       expect(Number.isFinite(row.DEPOSIT_net)).toBe(true);
       expect(Number.isFinite(row.INACTION_real)).toBe(true);
     });
+  });
+});
+
+describe("recommendation engine", () => {
+  it("recommends TOS for 3-year horizon", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 3,
+      activeInstrumentIds: ["EDO" as const, "COI" as const, "TOS" as const],
+    };
+    const result = simulateComparisonScenario(state);
+
+    expect(result.recommendation.bestId).toBe("TOS");
+    expect(result.recommendation.isTermAligned).toBe(true);
+    expect(result.recommendation.earlyExitFee).toBe(0);
+  });
+
+  it("recommends EDO for 10-year horizon", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 10,
+      activeInstrumentIds: ["EDO" as const, "COI" as const, "TOS" as const],
+    };
+    const result = simulateComparisonScenario(state);
+
+    expect(result.recommendation.bestId).toBe("EDO");
+    expect(result.recommendation.isTermAligned).toBe(true);
+    expect(result.recommendation.depositHeading).toBe(
+      "Dlaczego lokata przegrywa",
+    );
+  });
+
+  it("shows early exit info for 6-year EDO", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 6,
+      activeInstrumentIds: ["EDO" as const, "COI" as const],
+    };
+    const result = simulateComparisonScenario(state);
+
+    expect(result.recommendation.earlyExitYearsBefore).toBe(4);
+    expect(result.recommendation.earlyExitFee).toBeGreaterThan(0);
+  });
+
+  it("suggests TOS when disabled but better", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 3,
+      activeInstrumentIds: ["EDO" as const, "COI" as const],
+    };
+    const result = simulateComparisonScenario(state);
+
+    expect(result.smartSuggestion).not.toBeNull();
+    expect(result.smartSuggestion?.instrumentId).toBe("TOS");
+    expect(result.smartSuggestion?.delta).toBeGreaterThan(0);
+  });
+
+  it("no suggestion when best instrument is already active", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 3,
+      activeInstrumentIds: [
+        "EDO" as const,
+        "COI" as const,
+        "TOS" as const,
+        "DEPOSIT" as const,
+      ],
+    };
+    const result = simulateComparisonScenario(state);
+
+    expect(result.smartSuggestion).toBeNull();
+  });
+});
+
+describe("formatYearsPolish", () => {
+  it("handles Polish plural forms", () => {
+    expect(formatYearsPolish(1)).toBe("rok");
+    expect(formatYearsPolish(2)).toBe("lata");
+    expect(formatYearsPolish(3)).toBe("lata");
+    expect(formatYearsPolish(4)).toBe("lata");
+    expect(formatYearsPolish(5)).toBe("lat");
+    expect(formatYearsPolish(10)).toBe("lat");
+    expect(formatYearsPolish(22)).toBe("lata");
+    expect(formatYearsPolish(30)).toBe("lat");
+  });
+});
+
+describe("early exit in series", () => {
+  it("marks last point as early exit when horizon < bond term", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 3,
+      activeInstrumentIds: ["COI" as const],
+    };
+    const result = simulateComparisonScenario(state);
+    const coiResult = result.allResults.find((r) => r.id === "COI")!;
+    const lastPoint = coiResult.series[coiResult.series.length - 1];
+
+    expect(lastPoint.isEarlyExit).toBe(true);
+    expect(lastPoint.earlyExitFee).toBeGreaterThan(0);
+    expect(lastPoint.preExitNetValue).toBeGreaterThan(lastPoint.netValue);
+  });
+
+  it("does not mark maturity as early exit", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 4,
+      activeInstrumentIds: ["COI" as const],
+    };
+    const result = simulateComparisonScenario(state);
+    const coiResult = result.allResults.find((r) => r.id === "COI")!;
+    const lastPoint = coiResult.series[coiResult.series.length - 1];
+
+    expect(lastPoint.isEarlyExit).toBe(false);
+    expect(lastPoint.earlyExitFee).toBe(0);
+  });
+
+  it("marks capitalized instrument early exit correctly", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 6,
+      activeInstrumentIds: ["EDO" as const],
+    };
+    const result = simulateComparisonScenario(state);
+    const edoResult = result.allResults.find((r) => r.id === "EDO")!;
+    const lastPoint = edoResult.series[edoResult.series.length - 1];
+
+    expect(lastPoint.isEarlyExit).toBe(true);
+    expect(lastPoint.earlyExitFee).toBeGreaterThan(0);
+    expect(lastPoint.preExitNetValue).toBeGreaterThan(lastPoint.netValue);
+  });
+});
+
+describe("COI fee cap", () => {
+  it("caps early exit fee at accrued interest", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      amount: 100,
+      horizonYears: 1,
+      activeInstrumentIds: ["COI" as const],
+      inflationPreset: 0.5,
+    };
+    const result = simulateComparisonScenario(state);
+    const coiResult = result.allResults.find((r) => r.id === "COI")!;
+
+    /* Fee = 1 bond * 2 PLN = 2 PLN, but interest on 100 PLN at 4.75% = 4.75 PLN gross.
+       Fee should not exceed accrued gross interest, and principal should not be lost. */
+    expect(coiResult.finalNet).toBeGreaterThanOrEqual(100);
+  });
+});
+
+describe("effort rows include early exit", () => {
+  it("includes early exit metadata in effort rows", () => {
+    const state = {
+      ...DEFAULT_COMPARISON_STATE,
+      horizonYears: 3,
+      activeInstrumentIds: ["COI" as const, "TOS" as const],
+    };
+    const result = simulateComparisonScenario(state);
+    const coiRow = result.effortRows.find((r) => r.id === "COI");
+    const tosRow = result.effortRows.find((r) => r.id === "TOS");
+
+    expect(coiRow?.hasEarlyExit).toBe(true);
+    expect(coiRow?.earlyExitFee).toBeGreaterThan(0);
+    expect(tosRow?.hasEarlyExit).toBe(false);
+    expect(tosRow?.earlyExitFee).toBe(0);
   });
 });

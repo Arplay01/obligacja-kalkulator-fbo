@@ -2,6 +2,11 @@ import type {
   ComparisonInstrumentDefinition,
   ComparisonSelectableInstrumentId,
 } from "@/features/comparison/domain/types";
+import { CURRENT_RETAIL_BOND_OFFER } from "@/features/calculator/lib/current-bond-offer";
+
+const TOS_OFFER = CURRENT_RETAIL_BOND_OFFER.TOS;
+const COI_OFFER = CURRENT_RETAIL_BOND_OFFER.COI;
+const EDO_OFFER = CURRENT_RETAIL_BOND_OFFER.EDO;
 
 export const COMPARISON_INSTRUMENT_ORDER: ComparisonSelectableInstrumentId[] = [
   "EDO",
@@ -21,9 +26,9 @@ export const COMPARISON_INSTRUMENTS: Record<
     shortLabel: "EDO",
     summary: "Kapitalizacja i wyższa marża nad inflacją.",
     termYears: 10,
-    firstRate: 5.6,
-    margin: 2,
-    feePerBond: 3,
+    firstRate: EDO_OFFER.firstRate,
+    margin: EDO_OFFER.margin,
+    feePerBond: EDO_OFFER.feePerBond,
     capitalization: true,
     decisionModel: {
       mode: "cycle",
@@ -39,9 +44,9 @@ export const COMPARISON_INSTRUMENTS: Record<
     shortLabel: "COI",
     summary: "Odsetki wypłacane co roku i brak kapitalizacji.",
     termYears: 4,
-    firstRate: 5,
-    margin: 1.5,
-    feePerBond: 2,
+    firstRate: COI_OFFER.firstRate,
+    margin: COI_OFFER.margin,
+    feePerBond: COI_OFFER.feePerBond,
     capitalization: false,
     decisionModel: {
       mode: "cycle",
@@ -57,9 +62,9 @@ export const COMPARISON_INSTRUMENTS: Record<
     shortLabel: "TOS",
     summary: "Stałe oprocentowanie i roczna kapitalizacja.",
     termYears: 3,
-    firstRate: 4.65,
-    margin: 0,
-    feePerBond: 1,
+    firstRate: TOS_OFFER.firstRate,
+    margin: TOS_OFFER.margin,
+    feePerBond: TOS_OFFER.feePerBond,
     capitalization: true,
     decisionModel: {
       mode: "cycle",

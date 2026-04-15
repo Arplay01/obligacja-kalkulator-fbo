@@ -1,44 +1,47 @@
-import { InsightIcon } from "@/features/calculator/components/icons";
-import type {
-  ComparisonInsight,
-  ComparisonValueMode,
-} from "@/features/comparison/domain/types";
-import { formatMoneyRounded } from "@/features/calculator/lib/formatters";
+import type { ComparisonRecommendation } from "@/features/comparison/domain/types";
 
-type ComparisonInsightCalloutProps = {
-  insight: ComparisonInsight | null;
-  displayMode: ComparisonValueMode;
+type ComparisonRecommendationCardProps = {
+  recommendation: ComparisonRecommendation;
 };
 
-export function ComparisonInsightCallout({
-  insight,
-  displayMode,
-}: ComparisonInsightCalloutProps) {
-  if (!insight) {
-    return null;
-  }
-
-  const delta =
-    displayMode === "real" ? insight.deltaReal : insight.deltaNet;
-  const absoluteDelta = Math.abs(delta);
-  const valueLabel = formatMoneyRounded(absoluteDelta);
-  const isEdoLeading = insight.winnerId === "EDO";
-
+export function ComparisonRecommendationCard({
+  recommendation,
+}: ComparisonRecommendationCardProps) {
   return (
-    <div className="insight-banner comparison-insight" data-comparison-insight>
-      <InsightIcon className="insight-banner__icon" />
-      <div className="insight-banner__copy">
-        <p className="insight-banner__title">
-          {isEdoLeading
-            ? `EDO daje ${valueLabel} więcej niż COI${displayMode === "real" ? " po inflacji" : ""}.`
-            : `COI daje ${valueLabel} więcej niż EDO${displayMode === "real" ? " po inflacji" : ""}.`}
-        </p>
-        <p>
-          {isEdoLeading
-            ? "W tym układzie najmocniej działa kapitalizacja, wyższa marża w EDO i podatek odsunięty do końca. W COI odsetki wpadają co roku na konto i nie pracują dalej."
-            : "Przy tym krótszym lub spokojniejszym układzie przewaga EDO nie zdążyła się jeszcze w pełni rozwinąć. Im dłuższy horyzont, tym mocniej widać efekt kapitalizacji i wyższej marży w EDO."}
-        </p>
+    <section
+      className="comparison-recommendation"
+      aria-label="Rekomendacja"
+      data-comparison-recommendation
+    >
+      <h2 className="comparison-recommendation__headline">
+        {recommendation.headline}
+      </h2>
+      <div className="comparison-recommendation__grid">
+        <article className="comparison-recommendation__panel comparison-recommendation__panel--best">
+          <p className="comparison-recommendation__label">
+            Dlaczego właśnie ta opcja
+          </p>
+          <p className="comparison-recommendation__body">
+            {recommendation.bestBody}
+          </p>
+        </article>
+        <article className="comparison-recommendation__panel comparison-recommendation__panel--inaction">
+          <p className="comparison-recommendation__label">
+            Jeśli nic nie zrobisz
+          </p>
+          <p className="comparison-recommendation__body">
+            {recommendation.inactionBody}
+          </p>
+        </article>
+        <article className="comparison-recommendation__panel comparison-recommendation__panel--deposit">
+          <p className="comparison-recommendation__label">
+            {recommendation.depositHeading}
+          </p>
+          <p className="comparison-recommendation__body">
+            {recommendation.depositBody}
+          </p>
+        </article>
       </div>
-    </div>
+    </section>
   );
 }

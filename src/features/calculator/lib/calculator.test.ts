@@ -54,7 +54,7 @@ describe("calculator logic", () => {
   });
 
   it("returns preset or custom inflation depending on mode", () => {
-    expect(getEffectiveInflation(DEFAULT_CALCULATOR_STATE)).toBe(3.5);
+    expect(getEffectiveInflation(DEFAULT_CALCULATOR_STATE)).toBe(2.7);
     expect(
       getEffectiveInflation({
         ...DEFAULT_CALCULATOR_STATE,
@@ -95,11 +95,11 @@ describe("calculator logic", () => {
       false,
     );
 
-    expect(result.totalInterest).toBeCloseTo(2000, 6);
-    expect(result.tax).toBeCloseTo(380, 6);
-    expect(result.netProfit).toBeCloseTo(1620, 6);
-    expect(result.netReturn).toBeCloseTo(11_620, 6);
-    expect(result.effectiveAnnualRate).toBeCloseTo(3.8249, 3);
+    expect(result.totalInterest).toBeCloseTo(1975, 6);
+    expect(result.tax).toBeCloseTo(375.25, 6);
+    expect(result.netProfit).toBeCloseTo(1599.75, 6);
+    expect(result.netReturn).toBeCloseTo(11_599.75, 6);
+    expect(result.effectiveAnnualRate).toBeCloseTo(3.7796, 3);
     expect(result.breakdown).toHaveLength(4);
   });
 
@@ -166,6 +166,17 @@ describe("calculator logic", () => {
     expect(result.tax).toBeCloseTo(76, 6);
     expect(result.netProfit).toBeCloseTo(324, 6);
     expect(result.netReturn).toBeCloseTo(10_324, 6);
+  });
+
+  it("reinvests only the post-tax amount after each renewed benchmark period", () => {
+    const result = calculateBenchmark(10_000, 4, 24, 3.5);
+
+    expect(result.totalInterest).toBeCloseTo(812.96, 6);
+    expect(result.tax).toBeCloseTo(154.4624, 6);
+    expect(result.netProfit).toBeCloseTo(658.4976, 6);
+    expect(result.netReturn).toBeCloseTo(10_658.4976, 6);
+    expect(result.breakdown[0]?.netBalance).toBeCloseTo(10_324, 6);
+    expect(result.breakdown[1]?.netBalance).toBeCloseTo(10_658.4976, 6);
   });
 
   it("returns a coherent breakdown for every bond series", () => {

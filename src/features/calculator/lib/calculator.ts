@@ -253,7 +253,8 @@ export function calculateBenchmark(
   const termYears = termMonths / 12;
   const breakdown: BreakdownRow[] = [];
   let totalInterest = 0;
-  let grossBalance = invested;
+  let totalTax = 0;
+  let netBalance = invested;
 
   if (termMonths < 12) {
     totalInterest = invested * (annualRate / 100) * termYears;
@@ -282,11 +283,14 @@ export function calculateBenchmark(
   }
 
   for (let year = 1; year <= termYears; year += 1) {
-    const interest = grossBalance * (annualRate / 100);
-    grossBalance += interest;
+    const interest = netBalance * (annualRate / 100);
+    const tax = interest * BELKA_TAX_RATE;
+    const netInterest = interest - tax;
+
+    // Bugfix: renewed lokaty and konta should start each next full period from the post-tax balance, not from the gross interest.
+    netBalance += netInterest;
     totalInterest += interest;
-    const taxToDate = totalInterest * BELKA_TAX_RATE;
-    const netBalance = invested + totalInterest - taxToDate;
+    totalTax += tax;
 
     breakdown.push({
       label: `${year}`,
@@ -297,9 +301,9 @@ export function calculateBenchmark(
     });
   }
 
-  const tax = totalInterest * BELKA_TAX_RATE;
+  const tax = totalTax;
   const netProfit = totalInterest - tax;
-  const netReturn = invested + netProfit;
+  const netReturn = netBalance;
 
   return {
     invested,

@@ -1,4 +1,5 @@
 import type { ComparisonScenarioState } from "@/features/comparison/domain/types";
+import { DEFAULT_INFLATION_RATE } from "@/features/calculator/lib/constants";
 
 export const COMPARISON_AMOUNT_PRESETS = [
   5_000,
@@ -8,17 +9,15 @@ export const COMPARISON_AMOUNT_PRESETS = [
   100_000,
 ];
 
-export const COMPARISON_INFLATION_PRESETS = [2, 3.5, 5, 7];
-
-export const COMPARISON_HORIZON_PRESETS = [4, 10, 20, 30];
+export const COMPARISON_INFLATION_PRESETS = [DEFAULT_INFLATION_RATE, 3.5, 5, 7];
 
 export const DEFAULT_COMPARISON_STATE: ComparisonScenarioState = {
   amount: 10_000,
   horizonYears: 10,
   inflationMode: "preset",
-  inflationPreset: 3.5,
-  customInflation: 3.5,
+  inflationPreset: DEFAULT_INFLATION_RATE,
+  customInflation: DEFAULT_INFLATION_RATE,
   depositRate: 3,
-  activeInstrumentIds: ["EDO", "COI", "TOS", "DEPOSIT"],
+  activeInstrumentIds: ["EDO", "COI"],
   displayMode: "net",
 };

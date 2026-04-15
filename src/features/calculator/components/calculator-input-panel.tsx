@@ -11,6 +11,8 @@ import { FormattedNumberInput } from "@/features/calculator/components/formatted
 import { TermHelp } from "@/features/calculator/components/term-help";
 import {
   BOND_ORDER,
+  CALCULATOR_INFLATION_PRESETS,
+  DEFAULT_NBP_RATE,
   EXTERNAL_LINKS,
   SLIDER_MAX,
 } from "@/features/calculator/lib/constants";
@@ -29,7 +31,6 @@ import {
 import type { CSSProperties, KeyboardEvent, SyntheticEvent } from "react";
 
 const AMOUNT_PRESETS = [3000, 5000, 10_000, 20_000, 50_000];
-const INFLATION_PRESETS = [2, 3.5, 5];
 const AMOUNT_SLIDER_MARKERS = [
   { label: "100 zł", amount: 100, align: "start" },
   { label: "100 tys.", amount: 100_000, align: "center" },
@@ -402,7 +403,7 @@ export function CalculatorInputPanel({
             role="radiogroup"
             aria-label="Scenariusze inflacji"
           >
-            {INFLATION_PRESETS.map((preset, index) => {
+            {CALCULATOR_INFLATION_PRESETS.map((preset, index) => {
               const isActive =
                 Math.abs(getEffectiveInflation(state) - preset) < 0.001;
 
@@ -421,13 +422,15 @@ export function CalculatorInputPanel({
                       "[data-inflation]",
                       index,
                       (nextIndex) => {
-                        onInflationPresetSelect(INFLATION_PRESETS[nextIndex]);
+                        onInflationPresetSelect(
+                          CALCULATOR_INFLATION_PRESETS[nextIndex],
+                        );
                       },
                     );
                   }}
                 >
                   {index === 0
-                    ? "Niska 2,0%"
+                    ? "Niska 2,7%"
                     : index === 1
                       ? "Umiark. 3,5%"
                       : "Wysoka 5,0%"}
@@ -514,7 +517,7 @@ export function CalculatorInputPanel({
             <div className="option-row__label">
               <strong>Stopa referencyjna NBP</strong>
               <span className="helper-text">
-                Aktualna: 3,75%. Dotyczy ROR i DOR.
+                Aktualna: {formatPercent(DEFAULT_NBP_RATE)}. Dotyczy ROR i DOR.
               </span>
             </div>
             <label className="inline-input" htmlFor="nbp-rate">

@@ -20,6 +20,7 @@ export function ViewModeSwitch({ mode }: ViewModeSwitchProps) {
         aria-current={mode === "comparison" ? "page" : undefined}
       >
         Porównuję
+        <span className="view-mode-switch__dot" aria-label="nowość" />
       </Link>
     </nav>
   );

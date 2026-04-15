@@ -11,10 +11,12 @@ import type {
   ComparisonInstrumentId,
   ComparisonInsight,
   ComparisonInstrumentResult,
+  ComparisonRecommendation,
   ComparisonScenarioResult,
   ComparisonScenarioState,
   ComparisonSelectableInstrumentId,
   ComparisonSeriesPoint,
+  ComparisonSmartSuggestion,
   ComparisonValueMode,
 } from "@/features/comparison/domain/types";
 import { BELKA_TAX_RATE } from "@/features/calculator/lib/constants";
@@ -22,6 +24,7 @@ import {
   inflationFactor,
   normaliseAmount,
 } from "@/features/calculator/lib/calculator";
+import { formatMoneyRounded } from "@/features/calculator/lib/formatters";
 
 const BOND_DENOMINATION = 100;
 
@@ -36,15 +39,28 @@ function createSeriesPoint(
   decisions: number,
   hasDecisionMarker: boolean,
   markerLabel: string | null,
+  earlyExit: {
+    isEarlyExit: boolean;
+    earlyExitFee: number;
+    preExitNetValue: number;
+  } = { isEarlyExit: false, earlyExitFee: 0, preExitNetValue: netValue },
 ): ComparisonSeriesPoint {
+  const realValue = netValue / inflationFactor(effectiveInflation, year);
+  const preExitRealValue =
+    earlyExit.preExitNetValue / inflationFactor(effectiveInflation, year);
+
   return {
     year,
     label: year === 0 ? "Start" : `Rok ${year}`,
     netValue,
-    realValue: netValue / inflationFactor(effectiveInflation, year),
+    realValue,
     decisions,
     hasDecisionMarker,
     markerLabel,
+    isEarlyExit: earlyExit.isEarlyExit,
+    earlyExitFee: earlyExit.earlyExitFee,
+    preExitNetValue: earlyExit.preExitNetValue,
+    preExitRealValue,
   };
 }
 
@@ -136,6 +152,8 @@ function simulateCapitalizedInstrument(
     let netBondValue = cycleGrossBalance;
     let hasDecisionMarker = false;
     let markerLabel: string | null = null;
+    let earlyExitFeeAmount = 0;
+    let preExitNetValue = 0;
 
     if (isMaturityYear) {
       const grossInterest = Math.max(cycleGrossBalance - cyclePrincipal, 0);
@@ -165,9 +183,18 @@ function simulateCapitalizedInstrument(
       const taxableBase = Math.max(accruedInterest - fee, 0);
       const tax = taxableBase * BELKA_TAX_RATE;
       netBondValue = cycleGrossBalance - fee - tax;
+
+      if (year === horizonYears) {
+        earlyExitFeeAmount = fee;
+        /* preExitNetValue: value without early exit fee deduction */
+        const taxWithoutFee = accruedInterest * BELKA_TAX_RATE;
+        preExitNetValue = idleCash + (cycleGrossBalance - taxWithoutFee);
+      }
     }
 
     const totalNetValue = idleCash + netBondValue;
+    const isEarlyExit =
+      year === horizonYears && cycleYear !== definition.termYears;
 
     series.push(
       createSeriesPoint(
@@ -177,6 +204,11 @@ function simulateCapitalizedInstrument(
         countDecisionCostToYear(definition.id, year),
         hasDecisionMarker,
         markerLabel,
+        {
+          isEarlyExit,
+          earlyExitFee: earlyExitFeeAmount,
+          preExitNetValue: isEarlyExit ? preExitNetValue : totalNetValue,
+        },
       ),
     );
   }
@@ -211,7 +243,7 @@ function simulateCouponInstrument(
   ];
   const markers = [];
   const bondCount = Math.floor(amount / BOND_DENOMINATION);
-  const earlyExitFee = bondCount * definition.feePerBond;
+  const maxEarlyExitFee = bondCount * definition.feePerBond;
   let couponsCash = 0;
   let cycleYear = 0;
 
@@ -223,9 +255,13 @@ function simulateCouponInstrument(
     couponsCash += netCoupon;
 
     const isMaturityYear = cycleYear === definition.termYears;
+    /* COI fee cap: fee cannot exceed accrued gross interest in current year */
+    const cappedFee = isMaturityYear
+      ? 0
+      : Math.min(maxEarlyExitFee, Math.max(grossCoupon, 0));
     const totalNetValue = isMaturityYear
       ? amount + couponsCash
-      : amount - earlyExitFee + couponsCash;
+      : amount - cappedFee + couponsCash;
     const hasDecisionMarker = isMaturityYear && year < horizonYears;
     const markerLabel = hasDecisionMarker ? buildMarkerLabel(definition) : null;
 
@@ -237,6 +273,8 @@ function simulateCouponInstrument(
       cycleYear = 0;
     }
 
+    const isEarlyExit = year === horizonYears && !isMaturityYear;
+
     series.push(
       createSeriesPoint(
         year,
@@ -245,6 +283,13 @@ function simulateCouponInstrument(
         countDecisionCostToYear(definition.id, year),
         hasDecisionMarker,
         markerLabel,
+        {
+          isEarlyExit,
+          earlyExitFee: isEarlyExit ? cappedFee : 0,
+          preExitNetValue: isEarlyExit
+            ? amount + couponsCash
+            : totalNetValue,
+        },
       ),
     );
   }
@@ -361,12 +406,20 @@ function buildChartRows(
       label: getPointLabel(baselinePoint.year),
       EDO_net: instrumentPointMap.EDO.netValue,
       EDO_real: instrumentPointMap.EDO.realValue,
+      EDO_preExitNet: instrumentPointMap.EDO.preExitNetValue,
+      EDO_preExitReal: instrumentPointMap.EDO.preExitRealValue,
       COI_net: instrumentPointMap.COI.netValue,
       COI_real: instrumentPointMap.COI.realValue,
+      COI_preExitNet: instrumentPointMap.COI.preExitNetValue,
+      COI_preExitReal: instrumentPointMap.COI.preExitRealValue,
       TOS_net: instrumentPointMap.TOS.netValue,
       TOS_real: instrumentPointMap.TOS.realValue,
+      TOS_preExitNet: instrumentPointMap.TOS.preExitNetValue,
+      TOS_preExitReal: instrumentPointMap.TOS.preExitRealValue,
       DEPOSIT_net: instrumentPointMap.DEPOSIT.netValue,
       DEPOSIT_real: instrumentPointMap.DEPOSIT.realValue,
+      DEPOSIT_preExitNet: instrumentPointMap.DEPOSIT.preExitNetValue,
+      DEPOSIT_preExitReal: instrumentPointMap.DEPOSIT.preExitRealValue,
       INACTION_net: baselinePoint.netValue,
       INACTION_real: baselinePoint.realValue,
       details: {
@@ -378,6 +431,149 @@ function buildChartRows(
       },
     } satisfies ComparisonChartRow;
   });
+}
+
+export function formatYearsPolish(years: number): string {
+  if (years === 1) return "rok";
+  const mod10 = years % 10;
+  const mod100 = years % 100;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "lata";
+  return "lat";
+}
+
+function getEarlyExitYearsBefore(
+  definition: ComparisonInstrumentDefinition,
+  horizonYears: number,
+): number {
+  const cyclesCompleted = Math.floor(horizonYears / definition.termYears);
+  const remainingYears =
+    horizonYears - cyclesCompleted * definition.termYears;
+
+  if (remainingYears === 0) return 0;
+
+  return definition.termYears - remainingYears;
+}
+
+function buildRecommendationBestBody(
+  result: ComparisonInstrumentResult,
+  definition: ComparisonInstrumentDefinition,
+  isTermAligned: boolean,
+  earlyExitFee: number,
+  earlyExitYearsBefore: number,
+): string {
+  switch (definition.id) {
+    case "COI":
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. Odsetki wpadają co roku na Twoje konto, więc masz do nich dostęp, ale same nie pracują dalej.${isTermAligned ? " W tym horyzoncie nie płacisz za wyjście przed terminem." : ` Wcześniejsze wyjście obniży wynik o około ${formatMoneyRounded(earlyExitFee)}.`}`;
+    case "EDO":
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. Odsetki są dopisywane do obligacji, więc dalej pracują.${isTermAligned ? ` Ponieważ trzymasz ją przez pełne ${definition.termYears} ${formatYearsPolish(definition.termYears)}, nie płacisz za wyjście przed terminem.` : ` To opcja na dłuższe trzymanie - wyjście ${earlyExitYearsBefore} ${formatYearsPolish(earlyExitYearsBefore)} przed końcem obniży wynik o około ${formatMoneyRounded(earlyExitFee)}.`}`;
+    case "TOS":
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. Oprocentowanie jest stałe, więc od początku wiesz, czego się spodziewać.${isTermAligned ? " W tym horyzoncie nie płacisz za wyjście przed terminem." : ` Wcześniejsze wyjście obniży wynik o około ${formatMoneyRounded(earlyExitFee)}.`}`;
+    case "DEPOSIT":
+      return `Może dać około ${formatMoneyRounded(result.finalNet)} po podatku. To najprostsza opcja, ale zwykle słabiej chroni wartość pieniędzy, gdy ceny rosną.`;
+  }
+}
+
+function buildDepositRecommendation(
+  bestActive: ComparisonInstrumentResult,
+  depositResult: ComparisonInstrumentResult | undefined,
+): Pick<ComparisonRecommendation, "depositHeading" | "depositBody"> {
+  if (!depositResult || depositResult.finalNet >= bestActive.finalNet - 1) {
+    return {
+      depositHeading: "Na co uważać przy lokacie",
+      depositBody:
+        "Nawet gdy lokata wypada tu dobrze, nadal wymaga pilnowania końca okresu i odnawiania. Podatek Belki zabiera część odsetek po każdym zakończonym okresie, więc kolejny okres startujesz z mniejszą bazą.",
+    };
+  }
+
+  return {
+    depositHeading: "Dlaczego lokata przegrywa",
+    depositBody:
+      "Wymaga ciągłej uwagi i odnawiania. Co gorsza, podatek Belki uszczupla Twój zysk po każdym okresie, więc kapitał rośnie wolniej.",
+  };
+}
+
+function buildRecommendation(
+  activeResults: ComparisonInstrumentResult[],
+  allResults: ComparisonInstrumentResult[],
+  baseline: ComparisonBaselineResult,
+  amount: number,
+  horizonYears: number,
+): ComparisonRecommendation {
+  const bestActive = [...activeResults].sort(
+    (a, b) => b.finalNet - a.finalNet,
+  )[0];
+  const definition = COMPARISON_INSTRUMENTS[bestActive.id];
+
+  const isTermAligned =
+    horizonYears >= definition.termYears &&
+    horizonYears % definition.termYears === 0;
+
+  const earlyExitYearsBefore = getEarlyExitYearsBefore(
+    definition,
+    horizonYears,
+  );
+
+  const bondCount = Math.floor(amount / BOND_DENOMINATION);
+  const earlyExitFee =
+    earlyExitYearsBefore > 0 ? bondCount * definition.feePerBond : 0;
+
+  const headline = `Na ${horizonYears} ${formatYearsPolish(horizonYears)}, spośród zaznaczonych opcji, najlepiej wypada ${definition.label}.`;
+  const bestBody = buildRecommendationBestBody(
+    bestActive,
+    definition,
+    isTermAligned,
+    earlyExitFee,
+    earlyExitYearsBefore,
+  );
+  const inactionLoss = Math.max(0, amount - baseline.finalReal);
+  const inactionBody = `Realnie stracisz ${formatMoneyRounded(inactionLoss)}, nawet jeśli w portfelu nadal widzisz ${formatMoneyRounded(baseline.finalNet)}. To znaczy, że przez wzrost cen te pieniądze kupią mniej niż dziś.`;
+  const { depositHeading, depositBody } = buildDepositRecommendation(
+    bestActive,
+    allResults.find((result) => result.id === "DEPOSIT"),
+  );
+
+  return {
+    bestId: bestActive.id,
+    bestLabel: definition.label,
+    bestFinalNet: bestActive.finalNet,
+    bestProfit: bestActive.netProfit,
+    isTermAligned,
+    earlyExitFee,
+    earlyExitYearsBefore,
+    headline,
+    bestBody,
+    inactionBody,
+    depositHeading,
+    depositBody,
+  };
+}
+
+function buildSmartSuggestion(
+  allResults: ComparisonInstrumentResult[],
+  activeResults: ComparisonInstrumentResult[],
+  activeInstrumentIds: ComparisonSelectableInstrumentId[],
+): ComparisonSmartSuggestion {
+  const bestActive = [...activeResults].sort(
+    (a, b) => b.finalNet - a.finalNet,
+  )[0];
+
+  const disabledResults = allResults.filter(
+    (r) => !activeInstrumentIds.includes(r.id),
+  );
+  const betterDisabled = disabledResults
+    .filter((r) => r.finalNet > bestActive.finalNet)
+    .sort((a, b) => b.finalNet - a.finalNet);
+
+  if (betterDisabled.length === 0) return null;
+
+  const best = betterDisabled[0];
+
+  return {
+    instrumentId: best.id,
+    label: COMPARISON_INSTRUMENTS[best.id].label,
+    delta: best.finalNet - bestActive.finalNet,
+    finalNet: best.finalNet,
+  };
 }
 
 export function getDisplayedValue(
@@ -448,15 +644,21 @@ export function simulateComparisonScenario(
         getDisplayedValue(right, state.displayMode) -
         getDisplayedValue(left, state.displayMode),
     )
-    .map((result) => ({
-      id: result.id,
-      label: result.label,
-      color: result.color,
-      finalValue: getDisplayedValue(result, state.displayMode),
-      profit: getDisplayedProfit(result, state.displayMode),
-      decisions: result.decisions,
-      isBest: result.id === bestResult?.id,
-    })) satisfies ComparisonEffortRow[];
+    .map((result) => {
+      const lastPoint = result.series[result.series.length - 1];
+
+      return {
+        id: result.id,
+        label: result.label,
+        color: result.color,
+        finalValue: getDisplayedValue(result, state.displayMode),
+        profit: getDisplayedProfit(result, state.displayMode),
+        decisions: result.decisions,
+        isBest: result.id === bestResult?.id,
+        hasEarlyExit: lastPoint?.isEarlyExit ?? false,
+        earlyExitFee: lastPoint?.earlyExitFee ?? 0,
+      };
+    }) satisfies ComparisonEffortRow[];
   const activeIds = new Set(state.activeInstrumentIds);
   const edoResult = allResults.find((result) => result.id === "EDO");
   const coiResult = allResults.find((result) => result.id === "COI");
@@ -473,6 +675,19 @@ export function simulateComparisonScenario(
         }
       : null;
 
+  const recommendation = buildRecommendation(
+    activeResults,
+    allResults,
+    baseline,
+    amount,
+    state.horizonYears,
+  );
+  const smartSuggestion = buildSmartSuggestion(
+    allResults,
+    activeResults,
+    state.activeInstrumentIds,
+  );
+
   return {
     amount,
     horizonYears: state.horizonYears,
@@ -485,5 +700,7 @@ export function simulateComparisonScenario(
     effortRows,
     bestInstrumentId: bestResult?.id ?? null,
     insight,
+    recommendation,
+    smartSuggestion,
   };
 }
