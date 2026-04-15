@@ -2,6 +2,7 @@ import {
   CartesianGrid,
   ComposedChart,
   Line,
+  ReferenceDot,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -23,26 +24,21 @@ const CHART_KEY_MAP: Record<
   ComparisonInstrumentId,
   Record<ComparisonValueMode, keyof ComparisonChartRow>
 > = {
-  EDO: {
-    net: "EDO_net",
-    real: "EDO_real",
-  },
-  COI: {
-    net: "COI_net",
-    real: "COI_real",
-  },
-  TOS: {
-    net: "TOS_net",
-    real: "TOS_real",
-  },
-  DEPOSIT: {
-    net: "DEPOSIT_net",
-    real: "DEPOSIT_real",
-  },
-  INACTION: {
-    net: "INACTION_net",
-    real: "INACTION_real",
-  },
+  EDO: { net: "EDO_net", real: "EDO_real" },
+  COI: { net: "COI_net", real: "COI_real" },
+  TOS: { net: "TOS_net", real: "TOS_real" },
+  DEPOSIT: { net: "DEPOSIT_net", real: "DEPOSIT_real" },
+  INACTION: { net: "INACTION_net", real: "INACTION_real" },
+};
+
+const PRE_EXIT_KEY_MAP: Record<
+  ComparisonSelectableInstrumentId,
+  Record<ComparisonValueMode, keyof ComparisonChartRow>
+> = {
+  EDO: { net: "EDO_preExitNet", real: "EDO_preExitReal" },
+  COI: { net: "COI_preExitNet", real: "COI_preExitReal" },
+  TOS: { net: "TOS_preExitNet", real: "TOS_preExitReal" },
+  DEPOSIT: { net: "DEPOSIT_preExitNet", real: "DEPOSIT_preExitReal" },
 };
 
 type ComparisonChartProps = {
@@ -98,21 +94,10 @@ function getNiceStep(rawStep: number) {
   const magnitude = 10 ** Math.floor(Math.log10(rawStep));
   const normalized = rawStep / magnitude;
 
-  if (normalized <= 1) {
-    return magnitude;
-  }
-
-  if (normalized <= 2) {
-    return 2 * magnitude;
-  }
-
-  if (normalized <= 2.5) {
-    return 2.5 * magnitude;
-  }
-
-  if (normalized <= 5) {
-    return 5 * magnitude;
-  }
+  if (normalized <= 1) return magnitude;
+  if (normalized <= 2) return 2 * magnitude;
+  if (normalized <= 2.5) return 2.5 * magnitude;
+  if (normalized <= 5) return 5 * magnitude;
 
   return 10 * magnitude;
 }
@@ -126,7 +111,9 @@ function getYAxisConfig(
     "INACTION",
   ];
   const chartValues = scenario.chartRows.flatMap((row) =>
-    visibleIds.map((instrumentId) => getChartValue(row, instrumentId, displayMode)),
+    visibleIds.map((instrumentId) =>
+      getChartValue(row, instrumentId, displayMode),
+    ),
   );
   const lowerRaw = Math.min(scenario.amount, ...chartValues);
   const upperRaw = Math.max(scenario.amount, ...chartValues);
@@ -134,10 +121,15 @@ function getYAxisConfig(
   const topPadding = Math.max(range * 0.12, scenario.amount * 0.02, 100);
   const tickStep = getNiceStep((upperRaw + topPadding - lowerRaw) / 5);
   const lowerBound = Math.floor(lowerRaw / tickStep) * tickStep;
-  const upperBound = Math.ceil((upperRaw + topPadding) / tickStep) * tickStep;
+  const upperBound =
+    Math.ceil((upperRaw + topPadding) / tickStep) * tickStep;
   const ticks: number[] = [];
 
-  for (let tick = lowerBound; tick <= upperBound + tickStep / 2; tick += tickStep) {
+  for (
+    let tick = lowerBound;
+    tick <= upperBound + tickStep / 2;
+    tick += tickStep
+  ) {
     ticks.push(Number(tick.toFixed(2)));
   }
 
@@ -215,7 +207,9 @@ function CustomTooltip({
             instrumentId === "INACTION"
               ? "0 decyzji"
               : formatDecisionLabel(point.decisions);
-          const instrument = activeResults.find((item) => item.id === instrumentId);
+          const instrument = activeResults.find(
+            (item) => item.id === instrumentId,
+          );
           const color = instrument?.color ?? "rgba(41, 39, 35, 0.45)";
           const labelText =
             instrumentId === "INACTION"
@@ -235,6 +229,12 @@ function CustomTooltip({
                 {formatMoneyRounded(value)}
               </span>
               <span className="comparison-tooltip__meta">{decisionCopy}</span>
+              {point.isEarlyExit && point.earlyExitFee > 0 && (
+                <span className="comparison-tooltip__fee">
+                  Opłata za wcześniejsze wyjście:{" "}
+                  {formatMoneyRounded(-point.earlyExitFee, { signed: true })}
+                </span>
+              )}
             </div>
           );
         })}
@@ -260,6 +260,34 @@ export function ComparisonChart({
   const bestInstrumentId = scenario.bestInstrumentId;
   const yAxisConfig = getYAxisConfig(scenario, displayMode);
 
+  /* Find early exit dots for the last point of each active instrument */
+  const earlyExitDots = scenario.activeResults
+    .map((result) => {
+      const lastPoint = result.series[result.series.length - 1];
+
+      if (!lastPoint?.isEarlyExit) return null;
+
+      const preExitKey = PRE_EXIT_KEY_MAP[result.id][displayMode];
+      const lastRow =
+        scenario.chartRows[scenario.chartRows.length - 1];
+      const preExitValue = lastRow
+        ? (lastRow[preExitKey] as number)
+        : lastPoint.preExitNetValue;
+
+      return {
+        id: result.id,
+        color: result.color,
+        year: lastPoint.year,
+        preExitValue,
+      };
+    })
+    .filter(Boolean) as Array<{
+    id: string;
+    color: string;
+    year: number;
+    preExitValue: number;
+  }>;
+
   return (
     <section className="comparison-hero" data-comparison-chart>
       <div className="comparison-hero__header">
@@ -269,8 +297,9 @@ export function ComparisonChart({
             Zestawienie w Twoim horyzoncie czasu
           </h2>
           <p className="comparison-hero__note">
-            {formatMoneyRounded(scenario.amount)} przez {scenario.horizonYears} lat
-            przy inflacji {formatPercent(scenario.effectiveInflation)}.
+            {formatMoneyRounded(scenario.amount)} przez{" "}
+            {scenario.horizonYears} lat przy inflacji{" "}
+            {formatPercent(scenario.effectiveInflation)}.
           </p>
         </div>
 
@@ -311,7 +340,7 @@ export function ComparisonChart({
       </div>
 
       <div className="comparison-chart-shell">
-        <ResponsiveContainer width="100%" height={340}>
+        <ResponsiveContainer width="100%" height={400}>
           <ComposedChart
             data={scenario.chartRows}
             margin={{ top: 10, right: 12, bottom: 12, left: 6 }}
@@ -327,7 +356,9 @@ export function ComparisonChart({
               tickLine={false}
               axisLine={false}
               minTickGap={12}
-              tickFormatter={(value) => (value === 0 ? "Start" : `${value}`)}
+              tickFormatter={(value) =>
+                value === 0 ? "Start" : `${value}`
+              }
             />
             <YAxis
               domain={yAxisConfig.domain}
@@ -348,7 +379,10 @@ export function ComparisonChart({
               />
             ))}
             <Tooltip
-              cursor={{ stroke: "rgba(41, 39, 35, 0.14)", strokeDasharray: "3 4" }}
+              cursor={{
+                stroke: "rgba(41, 39, 35, 0.14)",
+                strokeDasharray: "3 4",
+              }}
               content={
                 <CustomTooltip
                   displayMode={displayMode}
@@ -363,7 +397,11 @@ export function ComparisonChart({
               strokeWidth={2}
               strokeDasharray="7 8"
               dot={false}
-              activeDot={{ r: 3.5, fill: "#fff", stroke: "rgba(41, 39, 35, 0.45)" }}
+              activeDot={{
+                r: 3.5,
+                fill: "#fff",
+                stroke: "rgba(41, 39, 35, 0.45)",
+              }}
               name="Nic nie robisz"
               isAnimationActive
             />
@@ -373,11 +411,33 @@ export function ComparisonChart({
                 type="monotone"
                 dataKey={CHART_KEY_MAP[result.id][displayMode]}
                 stroke={result.color}
-                strokeWidth={result.id === bestInstrumentId ? 3.4 : 2.7}
+                strokeWidth={
+                  result.id === bestInstrumentId ? 3.4 : 2.7
+                }
                 dot={<DecisionDot />}
-                activeDot={{ r: 4.4, fill: "#fff", stroke: result.color, strokeWidth: 1.8 }}
+                activeDot={{
+                  r: 4.4,
+                  fill: "#fff",
+                  stroke: result.color,
+                  strokeWidth: 1.8,
+                }}
                 name={result.label}
                 isAnimationActive
+              />
+            ))}
+            {/* Early exit: faded dot at pre-exit value */}
+            {earlyExitDots.map((dot) => (
+              <ReferenceDot
+                key={`exit-${dot.id}`}
+                x={dot.year}
+                y={dot.preExitValue}
+                r={5}
+                fill={dot.color}
+                fillOpacity={0.25}
+                stroke={dot.color}
+                strokeOpacity={0.4}
+                strokeDasharray="3 3"
+                ifOverflow="visible"
               />
             ))}
           </ComposedChart>

@@ -3,38 +3,51 @@
 import { startTransition, useState } from "react";
 import { ViewModeSwitch } from "@/features/calculator/components/view-mode-switch";
 import { ComparisonChart } from "@/features/comparison/components/comparison-chart";
-import { ComparisonControls } from "@/features/comparison/components/comparison-controls";
+import {
+  ComparisonEntryControls,
+  ComparisonProductControls,
+  ComparisonAdvancedControls,
+} from "@/features/comparison/components/comparison-controls";
 import { ComparisonEffortGrid } from "@/features/comparison/components/comparison-effort-grid";
-import { ComparisonInsightCallout } from "@/features/comparison/components/comparison-insight-callout";
+import { ComparisonRecommendationCard } from "@/features/comparison/components/comparison-insight-callout";
+import { ComparisonNextSteps } from "@/features/comparison/components/comparison-next-steps";
 import type {
   ComparisonScenarioState,
   ComparisonSelectableInstrumentId,
   ComparisonValueMode,
 } from "@/features/comparison/domain/types";
 import { DEFAULT_COMPARISON_STATE } from "@/features/comparison/lib/constants";
-import { simulateComparisonScenario } from "@/features/comparison/lib/comparison";
+import {
+  formatYearsPolish,
+  simulateComparisonScenario,
+} from "@/features/comparison/lib/comparison";
 import { formatPercent } from "@/features/calculator/lib/formatters";
+import { formatMoneyRounded } from "@/features/calculator/lib/formatters";
 
-function updateComparisonState(
+function patch(
   setState: React.Dispatch<React.SetStateAction<ComparisonScenarioState>>,
-  patch: Partial<ComparisonScenarioState>,
+  values: Partial<ComparisonScenarioState>,
 ) {
   startTransition(() => {
-    setState((currentState) => ({
-      ...currentState,
-      ...patch,
-    }));
+    setState((current) => ({ ...current, ...values }));
   });
+}
+
+function clampPercent(value: number) {
+  return Math.max(0, Math.round(value * 100) / 100);
 }
 
 export function ComparisonApp() {
   const [state, setState] = useState<ComparisonScenarioState>(
     DEFAULT_COMPARISON_STATE,
   );
-  const [mobileControlsOpen, setMobileControlsOpen] = useState(false);
+  const [mobileAdvancedOpen, setMobileAdvancedOpen] = useState(false);
+  const [desktopAdvancedOpen, setDesktopAdvancedOpen] = useState(false);
   const scenario = simulateComparisonScenario(state);
 
-  function handleInstrumentToggle(instrumentId: ComparisonSelectableInstrumentId) {
+  function handleInstrumentToggle(
+    instrumentId: ComparisonSelectableInstrumentId,
+  ) {
     const isActive = state.activeInstrumentIds.includes(instrumentId);
 
     if (isActive && state.activeInstrumentIds.length === 1) {
@@ -42,14 +55,25 @@ export function ComparisonApp() {
     }
 
     const nextIds = isActive
-      ? state.activeInstrumentIds.filter((currentId) => currentId !== instrumentId)
+      ? state.activeInstrumentIds.filter((id) => id !== instrumentId)
       : [...state.activeInstrumentIds, instrumentId];
 
-    updateComparisonState(setState, { activeInstrumentIds: nextIds });
+    patch(setState, { activeInstrumentIds: nextIds });
   }
 
   function handleDisplayModeChange(mode: ComparisonValueMode) {
-    updateComparisonState(setState, { displayMode: mode });
+    patch(setState, { displayMode: mode });
+  }
+
+  function handleEnableSuggested() {
+    if (!scenario.smartSuggestion) return;
+
+    patch(setState, {
+      activeInstrumentIds: [
+        ...state.activeInstrumentIds,
+        scenario.smartSuggestion.instrumentId,
+      ],
+    });
   }
 
   return (
@@ -57,117 +81,208 @@ export function ComparisonApp() {
       <header className="intro comparison-intro" aria-label="Wprowadzenie">
         <div className="intro__main">
           <h1 className="intro__title">
-            Porównaj opcje i
-            <span className="gradient-text"> zobacz różnice</span>
+            Sprawdź, co się stanie z
+            <span className="gradient-text"> Twoimi oszczędnościami</span>
           </h1>
           <p className="intro__note">
-            Obligacje EDO, COI, TOS i lokata na 10, 20 albo 30 lat.
+            Wpisz kwotę i horyzont - pokażemy Ci, która opcja daje najlepszy
+            wynik.
           </p>
         </div>
         <ViewModeSwitch mode="comparison" />
       </header>
 
       <section className="comparison-layout" aria-label="Porównanie opcji">
+        {/* SIDEBAR - single card, no nested borders */}
         <aside className="comparison-sidebar card">
-          <div
-            className="comparison-sidebar__blur-shell"
-            data-comparison-sidebar-blur
-          >
-            <ComparisonControls
-              state={state}
-              mobileOpen={mobileControlsOpen}
-              effectiveInflation={scenario.effectiveInflation}
-              onMobileToggle={() => setMobileControlsOpen((current) => !current)}
-              onAmountChange={(amount) => updateComparisonState(setState, { amount })}
-              onHorizonChange={(horizonYears) =>
-                updateComparisonState(setState, { horizonYears })
-              }
-              onInflationPresetSelect={(inflationPreset) =>
-                updateComparisonState(setState, {
-                  inflationMode: "preset",
-                  inflationPreset,
-                  customInflation: inflationPreset,
-                })
-              }
-              onCustomInflationChange={(customInflation) =>
-                updateComparisonState(setState, {
-                  inflationMode: "custom",
-                  customInflation,
-                })
-              }
-              onDepositRateChange={(depositRate) =>
-                updateComparisonState(setState, {
-                  depositRate,
-                })
-              }
-              onInstrumentToggle={handleInstrumentToggle}
-            />
+          <ComparisonEntryControls
+            amount={state.amount}
+            horizonYears={state.horizonYears}
+            onAmountChange={(amount) => patch(setState, { amount })}
+            onHorizonChange={(horizonYears) =>
+              patch(setState, { horizonYears })
+            }
+          />
+
+          <ComparisonProductControls
+            state={state}
+            onInstrumentToggle={handleInstrumentToggle}
+          />
+
+          {/* Desktop accordion for advanced controls */}
+          <div className="comparison-accordion">
+            <button
+              className="comparison-accordion__trigger"
+              type="button"
+              aria-expanded={desktopAdvancedOpen}
+              onClick={() => setDesktopAdvancedOpen((o) => !o)}
+            >
+              <span className="comparison-accordion__trigger-label">
+                Więcej opcji
+              </span>
+              <span className="comparison-accordion__trigger-state">
+                {desktopAdvancedOpen ? "Zwiń" : "Rozwiń"}
+              </span>
+            </button>
+            <div
+              className={`comparison-accordion__panel${desktopAdvancedOpen ? " is-open" : ""}`}
+            >
+              <ComparisonAdvancedControls
+                idPrefix="comparison-desktop"
+                state={state}
+                effectiveInflation={scenario.effectiveInflation}
+                onInflationPresetSelect={(inflationPreset) =>
+                  patch(setState, {
+                    inflationMode: "preset",
+                    inflationPreset,
+                    customInflation: inflationPreset,
+                  })
+                }
+                onCustomInflationChange={(customInflation) =>
+                  patch(setState, {
+                    inflationMode: "custom",
+                    customInflation: clampPercent(customInflation),
+                  })
+                }
+                onDepositRateChange={(depositRate) =>
+                  patch(setState, { depositRate: clampPercent(depositRate) })
+                }
+              />
+            </div>
           </div>
         </aside>
 
+        {/* MAIN CONTENT */}
         <section className="comparison-main">
-          <div className="comparison-main__blur-shell" data-comparison-main-blur>
-            <ComparisonChart
-              scenario={scenario}
-              displayMode={state.displayMode}
-              onDisplayModeChange={handleDisplayModeChange}
-            />
-
-            <ComparisonEffortGrid
-              rows={scenario.effortRows}
-              displayMode={state.displayMode}
-            />
-
-            <div className="comparison-assumptions card">
-              <p className="micro-label">Założenia symulacji</p>
-              <div className="comparison-assumptions__grid">
-                <span className="comparison-assumption-pill">
-                  Stała inflacja: {formatPercent(scenario.effectiveInflation)}
-                </span>
-                <span className="comparison-assumption-pill">
-                  Przyszłe serie liczone na parametrach z marca 2026
-                </span>
-                <span className="comparison-assumption-pill">
-                  Nie liczymy dyskonta zamiany 99,90 zł
-                </span>
-                <span className="comparison-assumption-pill">
-                  To symulacja edukacyjna, nie rekomendacja
-                </span>
-              </div>
-              <p className="helper-text comparison-assumptions__note">
-                Cel NBP to 2,5% +/- 1 pkt proc. Presety mają dać kontekst, a nie
-                przewidywać przyszłą inflację.
+          {/* Smart suggestion banner */}
+          {scenario.smartSuggestion && (
+            <div className="comparison-smart-suggestion">
+              <p className="comparison-smart-suggestion__text">
+                Na {state.horizonYears}{" "}
+                {formatYearsPolish(state.horizonYears)}{" "}
+                <strong>{scenario.smartSuggestion.label}</strong> daje{" "}
+                {formatMoneyRounded(scenario.smartSuggestion.delta)} więcej.
               </p>
-            </div>
-
-            <ComparisonInsightCallout
-              insight={scenario.insight}
-              displayMode={state.displayMode}
-            />
-          </div>
-
-          <div
-            className="comparison-main__overlay"
-            data-comparison-overlay
-            role="status"
-            aria-live="polite"
-          >
-            <div className="comparison-main__overlay-card">
-              <span className="comparison-main__overlay-loader" aria-hidden="true">
-                <span className="comparison-main__overlay-loader-dot" />
-                <span className="comparison-main__overlay-loader-dot" />
-                <span className="comparison-main__overlay-loader-dot" />
-              </span>
-              <p
-                className="comparison-main__overlay-title"
-                data-comparison-overlay-title
+              <button
+                className="comparison-smart-suggestion__button"
+                type="button"
+                onClick={handleEnableSuggested}
               >
-                Praca w trakcie
-              </p>
+                Włącz i porównaj
+              </button>
             </div>
+          )}
+
+          {/* Recommendation hero */}
+          <ComparisonRecommendationCard
+            recommendation={scenario.recommendation}
+          />
+
+          {/* Chart */}
+          <ComparisonChart
+            scenario={scenario}
+            displayMode={state.displayMode}
+            onDisplayModeChange={handleDisplayModeChange}
+          />
+
+          {/* Effort grid */}
+          <ComparisonEffortGrid
+            rows={scenario.effortRows}
+            displayMode={state.displayMode}
+          />
+
+          {/* COI idle cash warning */}
+          {state.activeInstrumentIds.includes("COI") && (
+            <div className="comparison-coi-warning">
+              <strong>Uwaga o COI:</strong> Obligacje COI wypłacają odsetki co
+              rok na Twoje konto bankowe. Te pieniądze nie pracują dalej - leżą.
+              Rozważ ich reinwestowanie, np. w krótkoterminowe obligacje.
+            </div>
+          )}
+
+          {/* Assumptions */}
+          <div className="comparison-assumptions card">
+            <p className="micro-label">Założenia symulacji</p>
+            <div className="comparison-assumptions__grid">
+              <span className="comparison-assumption-pill">
+                Stała inflacja: {formatPercent(scenario.effectiveInflation)}
+              </span>
+              <span className="comparison-assumption-pill">
+                Przyszłe serie liczone na parametrach z marca 2026
+              </span>
+              <span className="comparison-assumption-pill">
+                Nie liczymy dyskonta zamiany 99,90 zł
+              </span>
+              <span className="comparison-assumption-pill">
+                To symulacja edukacyjna, nie rekomendacja
+              </span>
+            </div>
+            <p className="helper-text comparison-assumptions__note">
+              Cel NBP to 2,5% +/- 1 pkt proc. Presety mają dać kontekst, a nie
+              przewidywać przyszłą inflację.
+            </p>
           </div>
+
+          {/* Next steps */}
+          <ComparisonNextSteps />
         </section>
       </section>
+
+      {/* Mobile fixed CTA */}
+      <div className="comparison-mobile-cta">
+        <button
+          className="comparison-mobile-cta__button"
+          type="button"
+          onClick={() => setMobileAdvancedOpen((o) => !o)}
+          aria-expanded={mobileAdvancedOpen}
+        >
+          Więcej opcji - {mobileAdvancedOpen ? "zwiń" : "rozwiń"}
+        </button>
+      </div>
+
+      {/* Mobile slide-up panel */}
+      <div
+        className={`comparison-advanced--mobile${mobileAdvancedOpen ? " comparison-advanced--open" : ""}`}
+      >
+        <div className="comparison-advanced__content">
+          <ComparisonProductControls
+            state={state}
+            onInstrumentToggle={handleInstrumentToggle}
+          />
+
+          <ComparisonAdvancedControls
+            idPrefix="comparison-mobile"
+            state={state}
+            effectiveInflation={scenario.effectiveInflation}
+            onInflationPresetSelect={(inflationPreset) =>
+              patch(setState, {
+                inflationMode: "preset",
+                inflationPreset,
+                customInflation: inflationPreset,
+              })
+            }
+            onCustomInflationChange={(customInflation) =>
+              patch(setState, {
+                inflationMode: "custom",
+                customInflation: clampPercent(customInflation),
+              })
+            }
+            onDepositRateChange={(depositRate) =>
+              patch(setState, { depositRate: clampPercent(depositRate) })
+            }
+          />
+
+          <div className="comparison-advanced__apply">
+            <button
+              className="comparison-advanced__apply-button"
+              type="button"
+              onClick={() => setMobileAdvancedOpen(false)}
+            >
+              Zastosuj
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

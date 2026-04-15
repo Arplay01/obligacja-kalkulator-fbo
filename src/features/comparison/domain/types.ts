@@ -55,6 +55,10 @@ export type ComparisonSeriesPoint = {
   decisions: number;
   hasDecisionMarker: boolean;
   markerLabel: string | null;
+  isEarlyExit: boolean;
+  earlyExitFee: number;
+  preExitNetValue: number;
+  preExitRealValue: number;
 };
 
 export type ComparisonMarker = {
@@ -99,12 +103,20 @@ export type ComparisonChartRow = {
   label: string;
   EDO_net: number;
   EDO_real: number;
+  EDO_preExitNet: number;
+  EDO_preExitReal: number;
   COI_net: number;
   COI_real: number;
+  COI_preExitNet: number;
+  COI_preExitReal: number;
   TOS_net: number;
   TOS_real: number;
+  TOS_preExitNet: number;
+  TOS_preExitReal: number;
   DEPOSIT_net: number;
   DEPOSIT_real: number;
+  DEPOSIT_preExitNet: number;
+  DEPOSIT_preExitReal: number;
   INACTION_net: number;
   INACTION_real: number;
   details: Record<ComparisonInstrumentId, ComparisonSeriesPoint>;
@@ -118,7 +130,29 @@ export type ComparisonEffortRow = {
   profit: number;
   decisions: number;
   isBest: boolean;
+  hasEarlyExit: boolean;
+  earlyExitFee: number;
 };
+
+export type ComparisonRecommendation = {
+  bestId: ComparisonSelectableInstrumentId;
+  bestLabel: string;
+  bestFinalNet: number;
+  bestProfit: number;
+  isTermAligned: boolean;
+  earlyExitFee: number;
+  earlyExitYearsBefore: number;
+  headline: string;
+  subheadline: string;
+  body: string;
+};
+
+export type ComparisonSmartSuggestion = {
+  instrumentId: ComparisonSelectableInstrumentId;
+  label: string;
+  delta: number;
+  finalNet: number;
+} | null;
 
 export type ComparisonScenarioState = {
   amount: number;
@@ -143,4 +177,6 @@ export type ComparisonScenarioResult = {
   effortRows: ComparisonEffortRow[];
   bestInstrumentId: ComparisonSelectableInstrumentId | null;
   insight: ComparisonInsight | null;
+  recommendation: ComparisonRecommendation;
+  smartSuggestion: ComparisonSmartSuggestion;
 };

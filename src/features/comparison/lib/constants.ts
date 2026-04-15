@@ -10,7 +10,7 @@ export const COMPARISON_AMOUNT_PRESETS = [
 
 export const COMPARISON_INFLATION_PRESETS = [2, 3.5, 5, 7];
 
-export const COMPARISON_HORIZON_PRESETS = [4, 10, 20, 30];
+export const COMPARISON_HORIZON_PRESETS = [3, 4, 6, 10, 30];
 
 export const DEFAULT_COMPARISON_STATE: ComparisonScenarioState = {
   amount: 10_000,
@@ -19,6 +19,6 @@ export const DEFAULT_COMPARISON_STATE: ComparisonScenarioState = {
   inflationPreset: 3.5,
   customInflation: 3.5,
   depositRate: 3,
-  activeInstrumentIds: ["EDO", "COI", "TOS", "DEPOSIT"],
+  activeInstrumentIds: ["EDO", "COI"],
   displayMode: "net",
 };

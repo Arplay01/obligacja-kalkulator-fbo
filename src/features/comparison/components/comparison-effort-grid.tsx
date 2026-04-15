@@ -10,7 +10,9 @@ import {
   formatDecisionLabel,
 } from "@/features/comparison/components/decision-meter";
 import { AnimatedNumberText } from "@/features/calculator/components/animated-number-text";
-import { formatMoneyRounded } from "@/features/calculator/lib/formatters";
+import {
+  formatMoneyRounded,
+} from "@/features/calculator/lib/formatters";
 
 type ComparisonEffortGridProps = {
   rows: ComparisonEffortRow[];
@@ -97,6 +99,11 @@ export function ComparisonEffortGrid({
                 <span className="comparison-effort__caption">
                   {displayMode === "real" ? "Realna zmiana" : "Zysk netto"}
                 </span>
+                {row.hasEarlyExit && row.earlyExitFee > 0 && (
+                  <span className="comparison-effort__fee-note">
+                    (w tym opłata: {formatMoneyRounded(-row.earlyExitFee, { signed: true })})
+                  </span>
+                )}
               </div>
 
               <div className="comparison-effort__metric comparison-effort__metric--decisions">
